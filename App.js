@@ -11,6 +11,16 @@ import axios from "axios";
 const API_KEY = '9dd86907fe501cec50da3d087e4e9dc0&units=metric&lang=uz';
 export default function App() {
       const [isLoading, setIsLoading] = useState(true);
+      const [location, setLocation] = useState(null);
+
+      const getWeather = async (latitude, longitude) => {
+            const {data} = await axios.get(
+                `https://api.openweathermap.org/data/2.8/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,
+                        alerts&appid=${API_KEY}`
+            );
+            setLocation(data);
+            setIsLoading(false);
+      }
 
       const getLocation = async () => {
             try {
@@ -19,26 +29,27 @@ export default function App() {
                         Alert.alert('Permission to access location was denied');
                         return;
                   }
+
                   const {coords:{latitude, longitude}} = await Location.getCurrentPositionAsync({});
 
-                  const {data} = await axios.get(
-                      `https://api.openweathermap.org/data/2.8/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,
-                        alerts&appid=${API_KEY}`
-                  )
-                  console.log (data)
+                  getWeather(latitude, longitude);
             }catch (error){
-                  console.log (error)
+                  Alert.alert("I can't find your current location, so bad :(")
             }
       }
 
       useEffect(()=>{
-            setTimeout(() => {
-                  setIsLoading(false);
-                  getLocation();
-            }, 2000)
+            getLocation();
       },[])
 
-      return isLoading ? <Loader/> : <Weather/>
+      return isLoading ? (<Loader/>) : (
+          <Weather
+              location = {location.current.temp}
+              // temp={Math.round(location.main.temp)}
+              // name={location.name}
+              // condition={location.weather[0].main}
+          />
+      );
   // return (
     // <View style={styles.container}>
     //   <View style={styles.box1}></View>
