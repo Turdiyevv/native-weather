@@ -15,19 +15,22 @@ import TextField from "../../components/TextField";
 interface Task {
   id: string;
   title: string;
+  description?: string;
   done: boolean;
   deadline?: string;
-  time: string; // task qo'shilgan vaqt
+  time: string;
 }
 
 export default function AddPage({ navigation }: any) {
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+  const [description, setDescription] = useState("");
+
 
   const addTask = async () => {
     if (task.trim() === "") return;
-
+    if (description.trim() === "") return;
     try {
       const data = await AsyncStorage.getItem("tasks");
       const tasks: Task[] = data ? JSON.parse(data) : [];
@@ -36,15 +39,16 @@ export default function AddPage({ navigation }: any) {
       const newTask: Task = {
         id: Date.now().toString(),
         title: task,
+        description: description,
         done: false,
         deadline: deadline.toISOString(),
-        time: now.toISOString(), // qo'shilgan vaqt
+        time: now.toISOString(),
       };
 
       const newTasks = [...tasks, newTask];
       await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
 
-      navigation.goBack(); // qo‘shgandan keyin MainPage-ga qaytish
+      navigation.goBack();
     } catch (e) {
       console.log("Error adding task", e);
     }
@@ -65,7 +69,13 @@ export default function AddPage({ navigation }: any) {
           onChangeText={setTask}
           placeholder="Yangi vazifa"
         />
-
+        <TextField
+          label="Description"
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Vazifa tafsilotlarini kiriting"
+          multiline height={100}
+        />
         {/* Deadline */}
         <TouchableOpacity
           style={styles.dateButton}
