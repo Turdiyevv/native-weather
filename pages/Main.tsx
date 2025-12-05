@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, Modal } from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "../components/TodoItem";
 import { Ionicons } from '@expo/vector-icons';
@@ -9,8 +9,6 @@ export default function MainPage({ navigation }) {
   const [tasks, setTasks] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [avatar, setAvatar] = useState<string>("");
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -32,7 +30,6 @@ export default function MainPage({ navigation }) {
     const unsubscribe = navigation.addListener('focus', () => {
       loadTasks();
     });
-
     return unsubscribe;
   }, [navigation]);
 
@@ -45,84 +42,44 @@ export default function MainPage({ navigation }) {
     }
   };
 
-  const toggleTask = async (id) => {
-    const newTasks = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+  const markDone = async (item) => {
+    const newTasks = tasks.map(t => t.id === item.id ? { ...t, done: true } : t);
     setTasks(newTasks);
     await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
+  };
+
+  const editTask = (item) => {
+    navigation.navigate("AddPage", { task: item });
   };
 
   const deleteTask = async (id) => {
     const newTasks = tasks.filter(t => t.id !== id);
     setTasks(newTasks);
     await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
-    setMenuVisible(false);
-  };
-
-  const onItemPress = (item) => {
-    setSelectedTask(item);
-    setMenuVisible(true);
   };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.username}>{firstName ? firstName : `Noma'lum`}</Text>
+        <Text style={styles.username}>{firstName || "Noma'lum"}</Text>
         <Image source={avatar ? { uri: avatar } : Avatar} style={styles.avatar}/>
       </View>
 
       {/* Task List */}
       <FlatList
-          data={tasks.slice().reverse()} // oxirgi qo'shilgan tepada
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => onItemPress(item)}>
-              <TodoItem item={item} onToggle={toggleTask} />
-            </TouchableOpacity>
-          )}
+        data={tasks.slice().reverse()}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TodoItem
+            item={item}
+            onToggle={() => {}}
+            onDone={markDone}
+            onEdit={editTask}
+            onDelete={deleteTask}
+          />
+        )}
       />
-
-      {/* Menu Modal */}
-      <Modal
-        transparent
-        visible={menuVisible}
-        animationType="fade"
-        onRequestClose={() => setMenuVisible(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          onPress={() => setMenuVisible(false)}
-        >
-          <View style={styles.menu}>
-            <TouchableOpacity
-              style={styles.menuButton}
-              onPress={() => {
-                navigation.navigate("ProfileView", { task: selectedTask });
-                setMenuVisible(false);
-              }}
-            >
-              <Text style={styles.menuText}>View</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.menuButton}
-              onPress={() => {
-                navigation.navigate("AddPage", { task: selectedTask });
-                setMenuVisible(false);
-              }}
-            >
-              <Text style={styles.menuText}>Edit</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.menuButton}
-              onPress={() => deleteTask(selectedTask.id)}
-            >
-              <Text style={[styles.menuText, { color: "red" }]}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
 
       {/* Bottom Buttons */}
       <View style={styles.leftButtons}>
@@ -157,8 +114,4 @@ const styles = StyleSheet.create({
   leftButtons: { position: "absolute", bottom: 30, left: 20, flexDirection: "row", gap: 15 },
   sideButton: { backgroundColor: "#fff", width: 50, height: 50, borderRadius: 25, justifyContent: "center", alignItems: "center",
       shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 4, elevation: 5 },
-  modalOverlay: { flex:1, backgroundColor:"rgba(0,0,0,0.2)", justifyContent:"center", alignItems:"center" },
-  menu: { backgroundColor:"#fff", width:200, borderRadius:10, paddingVertical:10, shadowColor:"#000", shadowOpacity:0.2, shadowRadius:4, elevation:5 },
-  menuButton: { paddingVertical:12, paddingHorizontal:20 },
-  menuText: { fontSize:16 },
 });
