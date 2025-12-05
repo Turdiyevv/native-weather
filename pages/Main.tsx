@@ -3,6 +3,7 @@ import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, Modal } from
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "../components/TodoItem";
 import { Ionicons } from '@expo/vector-icons';
+import Avatar from '../assets/empty_avatar.png';
 
 export default function MainPage({ navigation }) {
   const [tasks, setTasks] = useState([]);
@@ -10,7 +11,6 @@ export default function MainPage({ navigation }) {
   const [avatar, setAvatar] = useState<string>("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const placeholderImage = "https://via.placeholder.com/150";
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -67,8 +67,8 @@ export default function MainPage({ navigation }) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.username}>{firstName}</Text>
-        <Image source={{ uri: avatar || placeholderImage }} style={styles.avatar} />
+        <Text style={styles.username}>{firstName ? firstName : `Noma'lum`}</Text>
+        <Image source={avatar ? { uri: avatar } : Avatar} style={styles.avatar}/>
       </View>
 
       {/* Task List */}
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: "#f5f5f5" },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   username: { fontSize: 22, fontWeight: "bold" },
-  avatar: { width: 40, height: 40, borderRadius: 20 },
-  addButton: { backgroundColor: "black", width: 50, height: 50, borderRadius: 30, justifyContent: "center",
+  avatar: { backgroundColor: "#121", width: 40, height: 40, borderRadius: 20 },
+  addButton: { backgroundColor: "#121", width: 50, height: 50, borderRadius: 30, justifyContent: "center",
       alignItems: "center", position: "absolute", bottom: 30, right: 30,
       shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 4, elevation: 5 },
   addText: { color: "white", fontSize: 32 },

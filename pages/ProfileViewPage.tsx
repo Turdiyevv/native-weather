@@ -44,8 +44,12 @@ export function ProfileViewPage() {
 
     if (!user) {
         return (
-            <View style={styles.container}>
-                <Text>Profil maʼlumotlari topilmadi</Text>
+            <View style={styles.container1}>
+                <Image
+                    source={ require("../assets/empty_avatar.png")}
+                    style={styles.avatar}
+                />
+                <Text>Profil maʼlumotlari topilmadi !</Text>
                 <TouchableOpacity
                     style={styles.editButton}
                     onPress={() => navigation.navigate("ProfileEdit")}
@@ -90,6 +94,7 @@ export function ProfileViewPage() {
 }
 
 const styles = StyleSheet.create({
+    container1: { flex: 1, alignItems: "center", justifyContent:"flex-end", padding: 20, backgroundColor: "#f5f5f5" },
     container: { flex: 1, alignItems: "center", padding: 20, backgroundColor: "#f5f5f5" },
 
     avatar: { width: 150, height: 150, borderRadius: 75, backgroundColor: "#ddd", marginBottom: 20, marginTop: 10 },
