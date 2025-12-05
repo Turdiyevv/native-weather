@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "../components/TodoItem";
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,9 @@ export default function MainPage({ navigation }) {
   const [tasks, setTasks] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [avatar, setAvatar] = useState<string>("");
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -46,16 +49,24 @@ export default function MainPage({ navigation }) {
     const newTasks = tasks.map(t => t.id === item.id ? { ...t, done: true } : t);
     setTasks(newTasks);
     await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
+    setSelectedTaskId(null);
   };
 
   const editTask = (item) => {
     navigation.navigate("AddPage", { task: item });
+    setSelectedTaskId(null);
   };
 
   const deleteTask = async (id) => {
     const newTasks = tasks.filter(t => t.id !== id);
     setTasks(newTasks);
     await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
+    setSelectedTaskId(null);
+  };
+
+  const openMenu = (itemId, y) => {
+    setSelectedTaskId(itemId);
+    setMenuPosition({ x: 20, y }); // menu ekran bo‘ylab joylashadi
   };
 
   return (
@@ -68,18 +79,38 @@ export default function MainPage({ navigation }) {
 
       {/* Task List */}
       <FlatList
+        ref={flatListRef}
         data={tasks.slice().reverse()}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <TodoItem
             item={item}
             onToggle={() => {}}
-            onDone={markDone}
-            onEdit={editTask}
-            onDelete={deleteTask}
+            onLongPress={(y) => openMenu(item.id, y)}
           />
         )}
       />
+
+      {selectedTaskId && (
+      <TouchableOpacity
+        style={styles.menuOverlay}
+        activeOpacity={1}
+        onPress={() => setSelectedTaskId(null)} // ekranni bosganda menu yopiladi
+      >
+        <View style={[styles.menu, { top: menuPosition.y }]}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => markDone(tasks.find(t => t.id === selectedTaskId))}>
+            <Text>Bajarildi</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => editTask(tasks.find(t => t.id === selectedTaskId))}>
+            <Text>Tahrirlash</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuButton} onPress={() => deleteTask(selectedTaskId)}>
+            <Text style={{ color: "red" }}>O'chirish</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    )}
+
 
       {/* Bottom Buttons */}
       <View style={styles.leftButtons}>
@@ -114,4 +145,30 @@ const styles = StyleSheet.create({
   leftButtons: { position: "absolute", bottom: 30, left: 20, flexDirection: "row", gap: 15 },
   sideButton: { backgroundColor: "#fff", width: 50, height: 50, borderRadius: 25, justifyContent: "center", alignItems: "center",
       shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 4, elevation: 5 },
+  menu: {
+    position: "absolute",
+    right: 20,
+    width: 200,
+    backgroundColor: "#eee",
+    borderRadius: 8,
+    padding: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 999,
+  },
+  menuButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  menuOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 998,
+  },
+
 });

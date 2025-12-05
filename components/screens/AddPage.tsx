@@ -17,40 +17,53 @@ interface Task {
   title: string;
   description?: string;
   done: boolean;
-  deadline?: string;
+  deadline?: string | null;
   time: string;
 }
 
-export default function AddPage({ navigation }: any) {
-  const [task, setTask] = useState("");
-  const [deadline, setDeadline] = useState(new Date());
+export default function AddPage({ navigation, route }: any) {
+  const taskToEdit: Task | undefined = route.params?.task;
+
+  const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
+  const [description, setDescription] = useState(taskToEdit ? taskToEdit.description || "" : "");
+  const [deadline, setDeadline] = useState<Date | null>(
+    taskToEdit && taskToEdit.deadline ? new Date(taskToEdit.deadline) : null
+  );
   const [showPicker, setShowPicker] = useState(false);
-  const [description, setDescription] = useState("");
 
+  const saveTask = async () => {
+    if (task.trim() === "" || description.trim() === "") return;
 
-  const addTask = async () => {
-    if (task.trim() === "") return;
-    if (description.trim() === "") return;
     try {
       const data = await AsyncStorage.getItem("tasks");
       const tasks: Task[] = data ? JSON.parse(data) : [];
 
-      const now = new Date();
-      const newTask: Task = {
-        id: Date.now().toString(),
-        title: task,
-        description: description,
-        done: false,
-        deadline: deadline.toISOString(),
-        time: now.toISOString(),
-      };
-
-      const newTasks = [...tasks, newTask];
-      await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
+      if (taskToEdit) {
+        // Edit qilish
+        const updatedTasks = tasks.map(t =>
+          t.id === taskToEdit.id
+            ? { ...t, title: task, description, deadline: deadline ? deadline.toISOString() : null }
+            : t
+        );
+        await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
+      } else {
+        // Yangi task qo‘shish
+        const now = new Date();
+        const newTask: Task = {
+          id: Date.now().toString(),
+          title: task,
+          description,
+          done: false,
+          deadline: deadline ? deadline.toISOString() : null,
+          time: now.toISOString(),
+        };
+        const newTasks = [...tasks, newTask];
+        await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
+      }
 
       navigation.goBack();
     } catch (e) {
-      console.log("Error adding task", e);
+      console.log("Error saving task", e);
     }
   };
 
@@ -60,35 +73,49 @@ export default function AddPage({ navigation }: any) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Yangi Vazifa Qo‘shish</Text>
+        <Text style={styles.title}>
+          {taskToEdit ? "Vazifani Tahrirlash" : "Yangi Vazifa Qo‘shish"}
+        </Text>
 
-        {/* Task nomi */}
         <TextField
-          label="Vazifa nomi"
+          label="Vazifa"
           value={task}
           onChangeText={setTask}
-          placeholder="Yangi vazifa"
+          placeholder="Vazifa nomi"
         />
         <TextField
-          label="Description"
+          label="Tafsilot"
           value={description}
           onChangeText={setDescription}
-          placeholder="Vazifa tafsilotlarini kiriting"
-          multiline height={100}
+          placeholder="Vazifa tafsilotlari"
+          multiline
+          height={100}
         />
-        {/* Deadline */}
-        <TouchableOpacity
-          style={styles.dateButton}
-          onPress={() => setShowPicker(true)}
-        >
-          <Text style={styles.dateText}>
-            {deadline ? deadline.toLocaleDateString() : "Deadline"}
-          </Text>
-        </TouchableOpacity>
+
+        {/* Deadline + X tugmasi */}
+        <View style={styles.deadlineContainer}>
+          <TouchableOpacity
+            style={styles.dateButton}
+            onPress={() => setShowPicker(true)}
+          >
+            <Text style={styles.dateText}>
+              {deadline ? deadline.toLocaleDateString() : "Deadline belgilanmadi"}
+            </Text>
+          </TouchableOpacity>
+
+          {deadline && (
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={() => setDeadline(null)}
+            >
+              <Text style={styles.clearText}>X</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
         {showPicker && (
           <DateTimePicker
-            value={deadline}
+            value={deadline || new Date()}
             mode="date"
             display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={(event, selectedDate) => {
@@ -98,9 +125,8 @@ export default function AddPage({ navigation }: any) {
           />
         )}
 
-        {/* Qo‘shish tugmasi */}
-        <TouchableOpacity style={styles.addButton} onPress={addTask}>
-          <Text style={styles.addText}>Qo‘shish</Text>
+        <TouchableOpacity style={styles.addButton} onPress={saveTask}>
+          <Text style={styles.addText}>{taskToEdit ? "Saqlash" : "Qo‘shish"}</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -121,15 +147,34 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+  deadlineContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
   dateButton: {
+    marginTop: 20,
+    flex: 1,
     backgroundColor: "#fff",
     padding: 12,
     borderRadius: 10,
-    marginBottom: 20,
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   dateText: {
-    fontSize: 18,
+    fontSize: 15,
+  },
+  clearButton: {
+    marginTop: 15,
+    marginLeft: 10,
+    backgroundColor: "#ff4d4d",
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  clearText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 14,
   },
   addButton: {
     backgroundColor: "black",
