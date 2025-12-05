@@ -70,7 +70,7 @@ export default function MainPage({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: "#f5f5f5" },
-  title: { fontSize: 32, fontWeight: "bold", marginBottom: 20 },
+  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   addButton: {
       backgroundColor: "black", width: 50, height: 50, borderRadius: 30, justifyContent: "center",
       alignItems: "center", position: "absolute", bottom: 30, right: 30,
