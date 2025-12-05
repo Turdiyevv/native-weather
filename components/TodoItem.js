@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   done: {
-    backgroundColor: "#d1ffd1",
+    backgroundColor: "#ffd1d8",
   },
   text: {
     fontSize: 18,
