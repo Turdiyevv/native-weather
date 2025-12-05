@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainPage from "./pages/Main";
 import AddPage from "./components/screens/AddPage";
 import ProfilePage from "./pages/ProfilePage";
-import ProfileViewPage from "./pages/ProfileViewPage";
+import {ProfileViewPage} from "./pages/ProfileViewPage";
 
 const Stack = createNativeStackNavigator();
 
