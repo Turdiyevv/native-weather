@@ -38,7 +38,7 @@ export default function MainPage({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Offline To-Do List</Text>
+      <Text style={styles.title}>Vega-chat List</Text>
 
       <FlatList
         data={tasks}
@@ -71,7 +71,14 @@ export default function MainPage({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: "#f5f5f5" },
   title: { fontSize: 32, fontWeight: "bold", marginBottom: 20 },
-  addButton: { backgroundColor: "black", width: 60, height: 60, borderRadius: 30, justifyContent: "center", alignItems: "center", position: "absolute", bottom: 30, right: 30 },
+  addButton: {
+      backgroundColor: "black", width: 50, height: 50, borderRadius: 30, justifyContent: "center",
+      alignItems: "center", position: "absolute", bottom: 30, right: 30,
+      shadowColor: "#000",
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 5,
+  },
   addText: { color: "white", fontSize: 32 },
     leftButtons: {
     position: "absolute",
