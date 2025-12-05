@@ -17,7 +17,11 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
   const createdTime = new Date(item.time);
   const formattedTime = createdTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const formattedDeadline = item.deadline ? new Date(item.deadline).toLocaleDateString() : null;
-  const displayTitle = item.title.length > 30 ? item.title.slice(0, 30) + "..." : item.title;
+
+  // title uzunligini 26 ta belgidan oshsa ... qo'shish
+  const displayTitle = item.title.length > 26
+    ? item.title.slice(0, 26) + "..."
+    : item.title;
 
   return (
     <TouchableOpacity
@@ -36,6 +40,7 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
     </TouchableOpacity>
   );
 }
+
 
 const styles = StyleSheet.create({
   item: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginVertical: 6, minHeight: 50, justifyContent: "center" },
