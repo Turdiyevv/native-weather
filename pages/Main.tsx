@@ -1,11 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "../components/TodoItem";
 import { Ionicons } from '@expo/vector-icons';
 
 export default function MainPage({ navigation }) {
   const [tasks, setTasks] = useState([]);
+  const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState<string>("");
+  const placeholderImage = "https://via.placeholder.com/150";
+
+
+  useEffect(() => {
+      const loadProfile = async () => {
+        try {
+          const json = await AsyncStorage.getItem("profile");
+          if (json) {
+            const data = JSON.parse(json);
+            setUsername(data.username || "");
+            setAvatar(data.avatar || "");
+          }
+        } catch (e) {
+          console.log("Error loading profile", e);
+        }
+      };
+      loadProfile();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -38,7 +58,12 @@ export default function MainPage({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Vega-chat List</Text>
+      <View style={styles.header}>
+          <Text style={styles.username}>{username}</Text>
+          <Image source={{ uri: avatar || placeholderImage }} style={styles.avatar}/>
+
+      </View>
+
 
       <FlatList
         data={tasks}
@@ -70,7 +95,15 @@ export default function MainPage({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: "#f5f5f5" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
+  header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 20,
+  },
+  username: { fontSize: 22, fontWeight: "bold" },
+  avatar: { width: 40, height: 40, borderRadius: 20 },
+
   addButton: {
       backgroundColor: "black", width: 50, height: 50, borderRadius: 30, justifyContent: "center",
       alignItems: "center", position: "absolute", bottom: 30, right: 30,
