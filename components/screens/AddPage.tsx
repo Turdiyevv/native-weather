@@ -12,7 +12,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import TextField from "../../components/TextField";
 
-export default function AddPage({ navigation }) {
+interface Task {
+  id: string;
+  title: string;
+  done: boolean;
+  deadline?: string;
+  time: string; // task qo'shilgan vaqt
+}
+
+export default function AddPage({ navigation }: any) {
   const [task, setTask] = useState("");
   const [deadline, setDeadline] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -22,13 +30,15 @@ export default function AddPage({ navigation }) {
 
     try {
       const data = await AsyncStorage.getItem("tasks");
-      const tasks = data ? JSON.parse(data) : [];
+      const tasks: Task[] = data ? JSON.parse(data) : [];
 
-      const newTask = {
+      const now = new Date();
+      const newTask: Task = {
         id: Date.now().toString(),
         title: task,
         done: false,
         deadline: deadline.toISOString(),
+        time: now.toISOString(), // qo'shilgan vaqt
       };
 
       const newTasks = [...tasks, newTask];
@@ -93,7 +103,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     backgroundColor: "#f5f5f5",
     flexGrow: 1,
-      justifyContent: "flex-end",
+    justifyContent: "flex-end",
   },
   title: {
     fontSize: 24,
