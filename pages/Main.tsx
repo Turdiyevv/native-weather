@@ -48,29 +48,46 @@ export default function MainPage({ navigation }) {
 
   const loadTasks = async () => {
     try {
-      const data = await AsyncStorage.getItem("tasks");
-      if (data) setTasks(JSON.parse(data));
+      const activeUserStr = await AsyncStorage.getItem("activeUser");
+      if (!activeUserStr) return;
+      const activeUser = JSON.parse(activeUserStr);
+      setTasks(activeUser.usertasks || []);
     } catch (e) {
       console.log("Error loading tasks", e);
     }
   };
 
-  const markDone = async (item) => {
-    const newTasks = tasks.map((t) => {
-      if (t.id === item.id) {
-        const isReturning = item.done;
-        const updatedTask = { ...t, done: !item.done };
-        if (isReturning) {
-          updatedTask.isReturning = (t.isReturning || 0) + 1;
-        }
-        return updatedTask;
-      }
-      return t;
-    });
 
-    setTasks(newTasks);
-    await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
-    closeMenu();
+  const markDone = async (item) => {
+    try {
+      const activeUserStr = await AsyncStorage.getItem("activeUser");
+      if (!activeUserStr) return;
+      const activeUser = JSON.parse(activeUserStr);
+
+      const newTasks = activeUser.usertasks.map((t) => {
+        if (t.id === item.id) {
+          const isReturning = t.done;
+          const updatedTask = { ...t, done: !t.done };
+          if (isReturning) updatedTask.isReturning = (t.isReturning || 0) + 1;
+          return updatedTask;
+        }
+        return t;
+      });
+
+      activeUser.usertasks = newTasks;
+      setTasks(newTasks);
+
+      // users array yangilash
+      const storedUsers = await AsyncStorage.getItem("users");
+      let users = storedUsers ? JSON.parse(storedUsers) : [];
+      users = users.map((u) => (u.username === activeUser.username ? activeUser : u));
+
+      await AsyncStorage.setItem("users", JSON.stringify(users));
+      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+      closeMenu();
+    } catch (e) {
+      console.log("Error marking task done", e);
+    }
   };
 
   const editTask = (item) => {
@@ -79,11 +96,27 @@ export default function MainPage({ navigation }) {
   };
 
   const deleteTask = async (id) => {
-    const newTasks = tasks.filter((t) => t.id !== id);
-    setTasks(newTasks);
-    await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
-    closeMenu();
+    try {
+      const activeUserStr = await AsyncStorage.getItem("activeUser");
+      if (!activeUserStr) return;
+      const activeUser = JSON.parse(activeUserStr);
+
+      const newTasks = activeUser.usertasks.filter((t) => t.id !== id);
+      activeUser.usertasks = newTasks;
+      setTasks(newTasks);
+
+      const storedUsers = await AsyncStorage.getItem("users");
+      let users = storedUsers ? JSON.parse(storedUsers) : [];
+      users = users.map((u) => (u.username === activeUser.username ? activeUser : u));
+
+      await AsyncStorage.setItem("users", JSON.stringify(users));
+      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+      closeMenu();
+    } catch (e) {
+      console.log("Error deleting task", e);
+    }
   };
+
 
   const openMenu = (itemId, y) => {
     setSelectedTaskId(itemId);
@@ -123,7 +156,7 @@ export default function MainPage({ navigation }) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.username}>{firstName || "Noma'lum"}</Text>
+        <Text style={styles.username}>{firstName || "-"}</Text>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileView")}>
           <Image
             source={avatar ? { uri: avatar } : Avatar}

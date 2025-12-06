@@ -32,40 +32,53 @@ export default function AddPage({ navigation, route }: any) {
   const [showPicker, setShowPicker] = useState(false);
 
   const saveTask = async () => {
-    if (task.trim() === "" || description.trim() === "") return;
+  if (task.trim() === "" || description.trim() === "") return;
 
-    try {
-      const data = await AsyncStorage.getItem("tasks");
-      const tasks: Task[] = data ? JSON.parse(data) : [];
+  try {
+    // Active user olish
+    const activeUserStr = await AsyncStorage.getItem("activeUser");
+    if (!activeUserStr) return;
 
-      if (taskToEdit) {
-        // Edit qilish
-        const updatedTasks = tasks.map(t =>
-          t.id === taskToEdit.id
-            ? { ...t, title: task, description, deadline: deadline ? deadline.toISOString() : null }
-            : t
-        );
-        await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      } else {
-        // Yangi task qo‘shish
-        const now = new Date();
-        const newTask: Task = {
-          id: Date.now().toString(),
-          title: task,
-          description,
-          done: false,
-          deadline: deadline ? deadline.toISOString() : null,
-          time: now.toISOString(),
-        };
-        const newTasks = [...tasks, newTask];
-        await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
-      }
+    const activeUser = JSON.parse(activeUserStr);
 
-      navigation.goBack();
-    } catch (e) {
-      console.log("Error saving task", e);
+    // Barcha users olish
+    const storedUsers = await AsyncStorage.getItem("users");
+    let users = storedUsers ? JSON.parse(storedUsers) : [];
+
+    if (taskToEdit) {
+      // Edit qilish
+      activeUser.usertasks = activeUser.usertasks.map((t: Task) =>
+        t.id === taskToEdit.id
+          ? { ...t, title: task, description, deadline: deadline ? deadline.toISOString() : null }
+          : t
+      );
+    } else {
+      // Yangi task yaratish
+      const now = new Date();
+      const newTask: Task = {
+        id: Date.now().toString(),
+        title: task,
+        description,
+        done: false,
+        deadline: deadline ? deadline.toISOString() : null,
+        time: now.toISOString(),
+      };
+      activeUser.usertasks.push(newTask);
     }
-  };
+
+    // users arrayda active userni yangilash
+    users = users.map((u: any) => (u.username === activeUser.username ? activeUser : u));
+
+    // Saqlash
+    await AsyncStorage.setItem("users", JSON.stringify(users));
+    await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+
+    navigation.goBack();
+  } catch (e) {
+    console.log("Error saving task", e);
+  }
+};
+
 
   return (
     <KeyboardAvoidingView
