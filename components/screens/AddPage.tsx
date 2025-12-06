@@ -84,15 +84,14 @@ export default function AddPage({ navigation, route }: any) {
           placeholder="Vazifa nomi"
         />
         <TextField
-          label="Tafsilot"
+          label="Description"
           value={description}
           onChangeText={setDescription}
-          placeholder="Vazifa tafsilotlari"
-          multiline
-          height={100}
+          placeholder="Enter description..."
+          multiline={true}
+          minHeight={50}
+          maxHeight={300}
         />
-
-        {/* Deadline + X tugmasi */}
         <View style={styles.deadlineContainer}>
           <TouchableOpacity
             style={styles.dateButton}

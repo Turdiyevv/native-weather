@@ -129,27 +129,35 @@ export default function MainPage({ navigation }) {
           onPress={() => setSelectedTaskId(null)}
         >
           <View style={[styles.menu, { top: menuPosition.y }]}>
+
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => markDone(tasks.find((t) => t.id === selectedTaskId))}
             >
-              <Text>Bajarildi</Text>
+              <Text style={styles.menuText}>Bajarildi</Text>
+              <Ionicons name="checkmark-circle-outline" size={20} color="green" />
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.menuButton}
               onPress={() => editTask(tasks.find((t) => t.id === selectedTaskId))}
             >
-              <Text>Tahrirlash</Text>
+              <Text style={styles.menuText}>Tahrirlash</Text>
+              <Ionicons name="create-outline" size={20} color="blue" />
             </TouchableOpacity>
+
             <TouchableOpacity
-              style={styles.menuButton}
+              style={styles.menuButtonDel}
               onPress={() => deleteTask(selectedTaskId)}
             >
-              <Text style={{ color: "red" }}>O'chirish</Text>
+              <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
+              <Ionicons name="trash-outline" size={20} color="red" />
             </TouchableOpacity>
+
           </View>
         </TouchableOpacity>
       )}
+
 
       {/* Bottom Buttons */}
       <View style={styles.leftButtons}>
@@ -212,25 +220,46 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  menu: {
-    position: "absolute",
-    right: 20,
-    width: 200,
-    backgroundColor: "#eee",
-    borderRadius: 8,
-    padding: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    zIndex: 999,
-  },
-  menuButton: { paddingVertical: 5, paddingHorizontal: 10 },
-  menuOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 998 },
   sectionHeader: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#555",
     marginVertical: 5,
+  },
+  menuOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
+  menu: {
+    position: "absolute",
+    right: 20,
+    width: 200,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingVertical: 10,
+    elevation: 5,
+  },
+  menuButton: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  menuButtonDel: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  menuText: {
+    fontSize: 16,
   },
 });

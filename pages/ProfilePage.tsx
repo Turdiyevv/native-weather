@@ -101,7 +101,7 @@ export default function ProfilePage() {
         <TextField label="Familiya" value={lastName} onChangeText={setLastName} placeholder="Familiya" />
         <TextField label="Telefon raqam" value={phone} onChangeText={setPhone} placeholder="+998..." keyboardType="phone-pad" />
         <TextField label="Faoliyat turi" value={job} onChangeText={setJob} placeholder="Faoliyat turi" />
-        <TextField label="Description" value={description} onChangeText={setDescription} placeholder="O‘zingiz haqingizda" multiline height={100} />
+        <TextField label="Description" value={description} onChangeText={setDescription} placeholder="O‘zingiz haqingizda" multiline minHeight={50} maxHeight={300}/>
 
         <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
           <Text style={styles.saveText}>Saqlash</Text>

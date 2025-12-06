@@ -1,14 +1,16 @@
-import React from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
 
-interface TextFieldProps {
+interface TextFieldProps extends TextInputProps {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
   keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
   multiline?: boolean;
-  height?: number;
+  minHeight?: number;
+  maxHeight?: number;
+  lineHeight?: number; // optional: satr balandligi
 }
 
 export default function TextField({
@@ -18,18 +20,42 @@ export default function TextField({
   placeholder,
   keyboardType = "default",
   multiline = false,
-  height = 50
+  minHeight = 50,
+  maxHeight = 300,
+  lineHeight = 20,
+  ...rest
 }: TextFieldProps) {
+  const [inputHeight, setInputHeight] = useState(minHeight);
+
+  // Initial value bilan balandlikni hisoblash
+  useEffect(() => {
+    if (multiline && value) {
+      const lines = value.split("\n").length;
+      const newHeight = Math.min(Math.max(lines * lineHeight + 20, minHeight), maxHeight);
+      setInputHeight(newHeight);
+    }
+  }, [value, multiline, lineHeight, minHeight, maxHeight]);
+
   return (
     <View style={{ width: "100%", marginBottom: 5 }}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        style={[styles.input, { height }]}
+        style={[
+          styles.input,
+          { height: inputHeight, textAlignVertical: multiline ? "top" : "center" },
+        ]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
         keyboardType={keyboardType}
         multiline={multiline}
+        onContentSizeChange={(e) => {
+          if (multiline) {
+            const newHeight = e.nativeEvent.contentSize.height + 20;
+            setInputHeight(Math.min(Math.max(newHeight, minHeight), maxHeight));
+          }
+        }}
+        {...rest}
       />
     </View>
   );
