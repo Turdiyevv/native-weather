@@ -11,11 +11,13 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 import TextField from "../components/TextField";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function LoginPage({ navigation }: any) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [userCount, setUserCount] = useState(0);
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   useEffect(() => {
     const loadCount = async () => {
@@ -29,7 +31,6 @@ export default function LoginPage({ navigation }: any) {
     if (!username.trim() || !password.trim()) {
       return;
     }
-
     try {
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
@@ -42,10 +43,9 @@ export default function LoginPage({ navigation }: any) {
         });
         return;
       }
-
       let user = users.find((u: any) => u.username === username);
-
       if (!user) {
+        setModalVisible(true)
         user = {
           username,
           password,
@@ -115,6 +115,16 @@ export default function LoginPage({ navigation }: any) {
             <Text style={styles.btnText}>Kirish</Text>
           </TouchableOpacity>
         </View>
+        <ConfirmModal
+          visible={modalVisible}
+          message="Ishonchingiz komilmi?"
+          onConfirm={() => {
+            setModalVisible(false);
+          }}
+          onCancel={() => {
+            setModalVisible(false);
+          }}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );

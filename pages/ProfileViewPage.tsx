@@ -16,6 +16,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
 import { logout } from "../utills/LogOut";
 import { Ionicons } from "@expo/vector-icons";
+import ConfirmModal from "../components/ConfirmModal";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -25,6 +26,7 @@ export function ProfileViewPage() {
   const navigation = useNavigation<ProfileViewNavProp>();
   const [user, setUser] = useState<any>(null);
   const avatarAnim = useRef(new Animated.Value(0)).current;
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   const loadActiveUser = async () => {
     try {
@@ -140,11 +142,23 @@ export function ProfileViewPage() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.outButton}
-          onPress={() => logout(navigation)}
+          onPress={() => setModalVisible(true)}
         >
           <Text style={styles.outText}>Chiqish</Text>
         </TouchableOpacity>
       </View>
+
+      <ConfirmModal
+        visible={modalVisible}
+        message="Ishonchingiz komilmi?"
+        onConfirm={() => {
+          logout(navigation);
+          setModalVisible(false);
+        }}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+      />
     </ScrollView>
   );
 }

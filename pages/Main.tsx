@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "../components/TodoItem";
 import { Ionicons } from "@expo/vector-icons";
 import {showMessage} from "react-native-flash-message";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function MainPage({ navigation }) {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -20,6 +21,7 @@ export default function MainPage({ navigation }) {
   const [avatar, setAvatar] = useState<string>("");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   const menuAnim = useRef(new Animated.Value(0)).current;
 
@@ -243,7 +245,6 @@ export default function MainPage({ navigation }) {
                   color={task.done ? "orange" : "green"}
                 />
               </TouchableOpacity>
-
               <TouchableOpacity
                 style={styles.menuButton}
                 onPress={() => editTask(task)}
@@ -251,15 +252,26 @@ export default function MainPage({ navigation }) {
                 <Text style={styles.menuText}>Tahrirlash</Text>
                 <Ionicons name="create-outline" size={20} color="blue" />
               </TouchableOpacity>
-
               <TouchableOpacity
                 style={styles.menuButtonDel}
-                onPress={() => deleteTask(task.id)}
+                onPress={() => setModalVisible(true)}
               >
                 <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
                 <Ionicons name="trash-outline" size={20} color="red" />
               </TouchableOpacity>
             </Animated.View>
+
+            <ConfirmModal
+              visible={modalVisible}
+              message="Ishonchingiz komilmi?"
+              onConfirm={() => {
+                deleteTask(task.id);
+                setModalVisible(false);
+              }}
+              onCancel={() => {
+                setModalVisible(false);
+              }}
+            />
           </TouchableOpacity>
         );
       })()}
@@ -273,7 +285,6 @@ export default function MainPage({ navigation }) {
           <Ionicons name="help-circle-outline" size={32} color="black" />
         </TouchableOpacity>
       </View>
-
       {/* Add Button */}
       <TouchableOpacity
         style={styles.addButton}
