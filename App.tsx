@@ -31,7 +31,15 @@ const App: React.FC = () => {
         <Stack.Screen name="Chat" component={ChatPage} />
         <Stack.Screen name="Support" component={SupportPage} />
       </Stack.Navigator>
-      <FlashMessage position="top" />
+      <FlashMessage
+          position="top"
+          style={{
+            top: 40,
+            marginHorizontal: 20,
+            borderRadius: 12,
+            overflow: "hidden",
+          }}
+      />
     </NavigationContainer>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
 
 interface TextFieldProps extends TextInputProps {
@@ -6,11 +6,8 @@ interface TextFieldProps extends TextInputProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
-  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
-  multiline?: boolean;
-  minHeight?: number;
-  maxHeight?: number;
-  lineHeight?: number; // optional: satr balandligi
+  required?: boolean;
+  errorMessage?: string;
 }
 
 export default function TextField({
@@ -18,45 +15,38 @@ export default function TextField({
   value,
   onChangeText,
   placeholder,
-  keyboardType = "default",
-  multiline = false,
-  minHeight = 40,
-  maxHeight = 300,
-  lineHeight = 20,
+  required = false,
+  errorMessage = "Bu maydon to‘ldirilishi shart!",
   ...rest
 }: TextFieldProps) {
-  const [inputHeight, setInputHeight] = useState(minHeight);
+  const [touched, setTouched] = useState(false);
 
-  // Initial value bilan balandlikni hisoblash
-  useEffect(() => {
-    if (multiline && value) {
-      const lines = value.split("\n").length;
-      const newHeight = Math.min(Math.max(lines * lineHeight + 20, minHeight), maxHeight);
-      setInputHeight(newHeight);
-    }
-  }, [value, multiline, lineHeight, minHeight, maxHeight]);
+  const showError = required && touched && value.trim().length === 0;
 
   return (
-    <View style={{ width: "100%", marginBottom: 6 }}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={{ width: "100%", marginBottom: 10 }}>
+      <Text style={styles.label}>
+        {label} {required && <Text style={{ color: "red" }}>*</Text>}
+      </Text>
+
       <TextInput
         style={[
           styles.input,
-          { height: inputHeight, textAlignVertical: multiline ? "top" : "center" },
+          showError && styles.errorBorder
         ]}
         value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        keyboardType={keyboardType}
-        multiline={multiline}
-        onContentSizeChange={(e) => {
-          if (multiline) {
-            const newHeight = e.nativeEvent.contentSize.height + 20;
-            setInputHeight(Math.min(Math.max(newHeight, minHeight), maxHeight));
-          }
+        onChangeText={(text) => {
+          onChangeText(text);
+          if (!touched) setTouched(true); // birinchi yozishda touched true
         }}
+        onBlur={() => setTouched(true)} // inputdan chiqsa touched true bo‘ladi
+        placeholder={placeholder}
         {...rest}
       />
+
+      {showError && (
+        <Text style={styles.errorText}>{errorMessage}</Text>
+      )}
     </View>
   );
 }
@@ -68,6 +58,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
     fontSize: 16,
+  },
+  errorBorder: {
+    borderColor: "#ff9292",
+  },
+  errorText: {
+    color: "#ff5353",
+    fontSize: 12,
+    marginTop: 3,
   },
 });

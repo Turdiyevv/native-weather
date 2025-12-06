@@ -15,6 +15,7 @@ import TextField from "../components/TextField";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
+import {showMessage} from "react-native-flash-message";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 export default function ProfilePage() {
@@ -42,7 +43,11 @@ export default function ProfilePage() {
           setAvatar(user.userinfo?.avatar || "");
         }
       } catch (e) {
-        console.log("Error loading activeUser", e);
+        showMessage({
+          message: e,
+          type: "danger",
+          icon: "danger",
+        });
       }
     };
     loadProfile();
@@ -59,7 +64,6 @@ export default function ProfilePage() {
       allowsEditing: true,
       quality: 0.7,
     });
-
     if (!result.canceled) {
       setAvatar(result.assets[0].uri);
     }
@@ -74,11 +78,15 @@ export default function ProfilePage() {
       await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
       const usersStr = await AsyncStorage.getItem("users");
       let users = usersStr ? JSON.parse(usersStr) : [];
-
       const updatedUsers = users.map((u: any) =>
         u.username === activeUser.username ? activeUser : u
       );
       await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
+      showMessage({
+        message: "Ma'lumot to'ldirildi!",
+        type: "success",
+        icon: "success",
+      });
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -86,7 +94,11 @@ export default function ProfilePage() {
         })
       );
     } catch (e) {
-      console.log("Error saving profile", e);
+      showMessage({
+        message: e,
+        type: "danger",
+        icon: "danger",
+      });
     }
   };
   return (
@@ -104,7 +116,7 @@ export default function ProfilePage() {
         <TextField label="Familiya" value={lastName} onChangeText={setLastName} placeholder="Familiya" />
         <TextField label="Telefon raqam" value={phone} onChangeText={setPhone} placeholder="+998..." keyboardType="phone-pad" />
         <TextField label="Faoliyat turi" value={job} onChangeText={setJob} placeholder="Faoliyat turi" />
-        <TextField label="Description" value={description} onChangeText={setDescription} placeholder="O‘zingiz haqingizda" multiline minHeight={50} maxHeight={300}/>
+        <TextField label="Description" value={description} onChangeText={setDescription} placeholder="O‘zingiz haqingizda" multiline/>
 
         <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
           <Text style={styles.saveText}>Saqlash</Text>

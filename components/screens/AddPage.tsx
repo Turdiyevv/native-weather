@@ -11,6 +11,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import TextField from "../../components/TextField";
+import {showMessage} from "react-native-flash-message";
 
 interface Task {
   id: string;
@@ -23,7 +24,6 @@ interface Task {
 
 export default function AddPage({ navigation, route }: any) {
   const taskToEdit: Task | undefined = route.params?.task;
-
   const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
   const [description, setDescription] = useState(taskToEdit ? taskToEdit.description || "" : "");
   const [deadline, setDeadline] = useState<Date | null>(
@@ -35,25 +35,18 @@ export default function AddPage({ navigation, route }: any) {
   if (task.trim() === "" || description.trim() === "") return;
 
   try {
-    // Active user olish
     const activeUserStr = await AsyncStorage.getItem("activeUser");
     if (!activeUserStr) return;
-
     const activeUser = JSON.parse(activeUserStr);
-
-    // Barcha users olish
     const storedUsers = await AsyncStorage.getItem("users");
     let users = storedUsers ? JSON.parse(storedUsers) : [];
-
     if (taskToEdit) {
-      // Edit qilish
       activeUser.usertasks = activeUser.usertasks.map((t: Task) =>
         t.id === taskToEdit.id
           ? { ...t, title: task, description, deadline: deadline ? deadline.toISOString() : null }
           : t
       );
     } else {
-      // Yangi task yaratish
       const now = new Date();
       const newTask: Task = {
         id: Date.now().toString(),
@@ -65,17 +58,21 @@ export default function AddPage({ navigation, route }: any) {
       };
       activeUser.usertasks.push(newTask);
     }
-
-    // users arrayda active userni yangilash
     users = users.map((u: any) => (u.username === activeUser.username ? activeUser : u));
-
-    // Saqlash
     await AsyncStorage.setItem("users", JSON.stringify(users));
     await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
-
+      showMessage({
+        message: "Muvaffaqiyatli !",
+        type: "success",
+        icon: "success",
+      });
     navigation.goBack();
   } catch (e) {
-    console.log("Error saving task", e);
+    showMessage({
+      message: e,
+      type: "danger",
+      icon: "danger",
+    });
   }
 };
 
@@ -102,8 +99,6 @@ export default function AddPage({ navigation, route }: any) {
           onChangeText={setDescription}
           placeholder="Enter description..."
           multiline={true}
-          minHeight={50}
-          maxHeight={300}
         />
         <View style={styles.deadlineContainer}>
           <TouchableOpacity

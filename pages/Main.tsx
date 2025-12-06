@@ -12,7 +12,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "../components/TodoItem";
 import { Ionicons } from "@expo/vector-icons";
-import Avatar from "../assets/empty_avatar.png";
+import {showMessage} from "react-native-flash-message";
 
 export default function MainPage({ navigation }) {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -33,7 +33,11 @@ export default function MainPage({ navigation }) {
           setAvatar(user.userinfo?.avatar || "");
         }
       } catch (e) {
-        console.log("Error loading profile", e);
+        showMessage({
+          message: e,
+          type: "danger",
+          icon: "danger",
+        });
       }
     };
     const unsubscribe = navigation.addListener("focus", () => {
@@ -58,7 +62,11 @@ export default function MainPage({ navigation }) {
       const activeUser = JSON.parse(activeUserStr);
       setTasks(activeUser.usertasks || []);
     } catch (e) {
-      console.log("Error loading tasks", e);
+      showMessage({
+        message: e,
+        type: "danger",
+        icon: "danger",
+      });
     }
   };
   const markDone = async (item) => {
@@ -66,7 +74,6 @@ export default function MainPage({ navigation }) {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
       if (!activeUserStr) return;
       const activeUser = JSON.parse(activeUserStr);
-
       const newTasks = activeUser.usertasks.map((t) => {
         if (t.id === item.id) {
           const isReturning = t.done;
@@ -76,20 +83,25 @@ export default function MainPage({ navigation }) {
         }
         return t;
       });
-
       activeUser.usertasks = newTasks;
       setTasks(newTasks);
-
-      // users array yangilash
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
       users = users.map((u) => (u.username === activeUser.username ? activeUser : u));
-
       await AsyncStorage.setItem("users", JSON.stringify(users));
       await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+      showMessage({
+        message: "Vazifa almashtirildi!",
+        type: "success",
+        icon: "success",
+      });
       closeMenu();
     } catch (e) {
-      console.log("Error marking task done", e);
+      showMessage({
+        message: e,
+        type: "danger",
+        icon: "danger",
+      });
     }
   };
 
@@ -103,20 +115,26 @@ export default function MainPage({ navigation }) {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
       if (!activeUserStr) return;
       const activeUser = JSON.parse(activeUserStr);
-
       const newTasks = activeUser.usertasks.filter((t) => t.id !== id);
       activeUser.usertasks = newTasks;
       setTasks(newTasks);
-
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
       users = users.map((u) => (u.username === activeUser.username ? activeUser : u));
-
       await AsyncStorage.setItem("users", JSON.stringify(users));
       await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+      showMessage({
+        message: "Vazifa o'chirildi!",
+        type: "success",
+        icon: "success",
+      });
       closeMenu();
     } catch (e) {
-      console.log("Error deleting task", e);
+      showMessage({
+        message: e,
+        type: "danger",
+        icon: "danger",
+      });
     }
   };
 
