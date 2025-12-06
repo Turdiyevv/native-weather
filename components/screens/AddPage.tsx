@@ -117,6 +117,7 @@ export default function AddPage({ navigation, route }: any) {
             value={deadline || new Date()}
             mode="date"
             display={Platform.OS === "ios" ? "spinner" : "default"}
+            minimumDate={new Date()}
             onChange={(event, selectedDate) => {
               setShowPicker(false);
               if (selectedDate) setDeadline(selectedDate);
