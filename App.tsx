@@ -13,9 +13,11 @@ import ProfilePage from "./pages/ProfilePage";
 import { ProfileViewPage } from "./pages/ProfileViewPage";
 import ChatPage from "./pages/ChatPage";
 import SupportPage from "./pages/SupportPage";
+import LoginPage from "./pages/LogIn";
 
 // Stack parametrlari (TypeScript uchun)
 export type RootStackParamList = {
+  LoginPage: undefined;
   MainPage: undefined;
   AddPage: undefined;
   ProfileView: undefined;
@@ -31,11 +33,12 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="MainPage"
+        initialRouteName="LoginPage"
         screenOptions={{
           headerShown: false, // Header ishlatilmaydi
         }}
       >
+        <Stack.Screen name="LoginPage" component={LoginPage} />
         <Stack.Screen name="MainPage" component={MainPage} />
         <Stack.Screen name="AddPage" component={AddPage} />
         <Stack.Screen name="ProfileView" component={ProfileViewPage} />

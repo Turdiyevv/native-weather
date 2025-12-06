@@ -14,10 +14,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types";
+import {logout} from "../utills/LogOut";
+import {Ionicons} from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
-const maxSize = screenWidth - 40; // Katta holat
-const minSize = 150;              // Kichik holat
+const maxSize = screenWidth - 40;
+const minSize = 150;
 
 type ProfileViewNavProp = NativeStackNavigationProp<RootStackParamList, "ProfileView">;
 
@@ -26,7 +28,17 @@ export function ProfileViewPage() {
     const [user, setUser] = useState<any>(null);
     const avatarAnim = useRef(new Animated.Value(1)).current; // 0 → small, 1 → big
 
-    // AsyncStorage dan profil ma'lumotlarini yuklash
+    useEffect(() => {
+      const loadUser = async () => {
+        const userData = await AsyncStorage.getItem("activeUser");
+        if (userData) {
+          setUser(JSON.parse(userData));
+        }
+      };
+    
+      loadUser();
+    }, []);
+
     const loadUser = async () => {
         try {
             const saved = await AsyncStorage.getItem("profile");
@@ -93,12 +105,17 @@ export function ProfileViewPage() {
                 />
             </View>
 
-            <Text style={styles.title}>
-                {user?.firstName} {user?.lastName}
-            </Text>
-
-            <Text style={styles.username}>@{user?.username}</Text>
-
+            <View style={styles.containerLog}>
+                <View style={styles.container}>
+                    <Text style={styles.title}>
+                        {user?.firstName} {user?.lastName}
+                    </Text>
+                    <Text style={styles.username}>@{user?.username}</Text>
+                </View>
+                <TouchableOpacity onPress={() => logout(navigation)} style={styles.logoutBtn}>
+                    <Ionicons name="log-out-outline" size={40} color="red" />
+                </TouchableOpacity>
+            </View>
             <View style={styles.infoBox}>
                 <Text style={styles.label}>Telefon:</Text>
                 <Text style={styles.value}>{user?.phone}</Text>
@@ -121,6 +138,19 @@ export function ProfileViewPage() {
 }
 
 const styles = StyleSheet.create({
+      logoutBtn: {
+          // borderColor: "#121",
+          // borderWidth: 1,
+          borderRadius: 20,
+          paddingHorizontal: 5,
+          paddingVertical: 5,
+          // backgroundColor: "#fff",
+        marginTop: 0,
+        marginRight: 0,
+        padding: 0,
+        alignItems: "center",
+        justifyContent: "center",
+      },
     scrollContainer: {
         padding: 20,
         alignItems: "center",
@@ -129,8 +159,15 @@ const styles = StyleSheet.create({
     },
     container: {
         alignItems: "center",
+        flex: 1,
     },
-
+    containerLog: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 0,
+      marginBottom: 10,
+    },
     avatarBase: {
         backgroundColor: "#ddd",
         marginBottom: 20,
@@ -138,7 +175,7 @@ const styles = StyleSheet.create({
     },
 
     title: { fontSize: 24, fontWeight: "bold" },
-    username: { fontSize: 18, color: "#666", marginBottom: 20 },
+    username: { fontSize: 18, color: "#666" },
 
     infoBox: {
         width: "100%",
