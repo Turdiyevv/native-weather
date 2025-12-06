@@ -20,7 +20,7 @@ export default function TextField({
   placeholder,
   keyboardType = "default",
   multiline = false,
-  minHeight = 50,
+  minHeight = 40,
   maxHeight = 300,
   lineHeight = 20,
   ...rest
@@ -37,7 +37,7 @@ export default function TextField({
   }, [value, multiline, lineHeight, minHeight, maxHeight]);
 
   return (
-    <View style={{ width: "100%", marginBottom: 5 }}>
+    <View style={{ width: "100%", marginBottom: 6 }}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={[
@@ -62,12 +62,12 @@ export default function TextField({
 }
 
 const styles = StyleSheet.create({
-  label: { fontSize: 16, marginBottom: 5, color: "#333" },
+  label: { fontSize: 14, marginBottom: 3, color: "#858484" },
   input: {
     width: "100%",
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 12,
+    padding: 10,
     fontSize: 16,
   },
 });

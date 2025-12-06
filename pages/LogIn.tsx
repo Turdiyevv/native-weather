@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {showMessage} from "react-native-flash-message";
 
 export default function LoginPage({ navigation }: any) {
   const [username, setUsername] = useState("");
@@ -26,10 +27,13 @@ export default function LoginPage({ navigation }: any) {
     try {
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
-
-      // Maksimal 3 user cheklovi
       if (!users.find((u: any) => u.username === username) && users.length >= 3) {
-        Alert.alert("Limit", "Faqat 3 ta user yaratilishi mumkin!");
+        showMessage({
+          message: "Userlar soni allaqachon 3ta !",
+          type: "warning",
+          icon: "warning",
+          duration: 3000,
+        });
         return;
       }
 
@@ -62,8 +66,12 @@ export default function LoginPage({ navigation }: any) {
       await AsyncStorage.setItem("activeUser", JSON.stringify(user));
       navigation.replace("MainPage");
     } catch (error) {
-      console.log("Login error:", error);
-      Alert.alert("Error", "Login paytida xatolik yuz berdi!");
+      showMessage({
+        message: error,
+        type: "danger",
+        icon: "danger",
+        duration: 3000,
+      });
     }
   };
 
@@ -103,6 +111,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", paddingHorizontal: 30 },
   title: { fontSize: 32, fontWeight: "700", marginBottom: 40, textAlign: "center" },
   input: { height: 50, borderWidth: 1, borderColor: "#ccc", borderRadius: 10, paddingHorizontal: 15, marginBottom: 20, fontSize: 18 },
-  btn: { backgroundColor: "#121", paddingVertical: 15, borderRadius: 10 },
+  btn: { backgroundColor: "#121", paddingVertical: 10, borderRadius: 10 },
   btnText: { color: "#fff", textAlign: "center", fontSize: 18, fontWeight: "600" },
 });

@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   changeText: { textAlign: "center", marginBottom: 20, color: "#007AFF" },
   saveButton: {
     marginTop: 20,
-    backgroundColor: "black",
+    backgroundColor: "#121",
     padding: 15,
     borderRadius: 10,
     width: "100%",

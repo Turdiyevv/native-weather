@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import {Ionicons} from "@expo/vector-icons";
 
 interface TodoItemProps {
   item: {
@@ -44,11 +45,21 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
       )}
       <View style={styles.titleContainer}>
         <Text style={[styles.text, item.done && styles.doneText]}>{displayTitle}</Text>
-
+        {item.done ? (
+            <Ionicons
+              name="checkmark-circle"
+              size={22}
+              color="#4CAF50"
+            />
+          ) : (
+            <Ionicons
+              name="alert-circle"
+              size={22}
+              color="grey"
+            />
+          )}
       </View>
-
       {formattedDeadline && <Text style={styles.deadline}>{formattedDeadline}</Text>}
-
       <View style={styles.timeContainer}>
         <Text style={styles.time}>{formattedTime}</Text>
       </View>
@@ -64,14 +75,15 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: "#fff",
-    padding: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 10,
     marginVertical: 6,
     marginLeft: 5,
-    minHeight: 50,
+    minHeight: 60,
     justifyContent: "center",
   },
-  done: { backgroundColor: "#d4f7dc" },
+  done: { borderColor: "#4CAF50", borderWidth: 1 },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -96,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
   },
-  deadline: { fontSize: 14, color: "#007AFF", marginTop: 4 },
+  deadline: { fontSize: 14, color: "#007AFF", marginTop: 0 },
   timeContainer: { position: "absolute", bottom: 5, right: 10 },
   time: { fontSize: 12, color: "gray" },
 });

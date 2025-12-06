@@ -302,9 +302,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   sectionHeader: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: "bold",
-    color: "#555",
+    color: "#b3b3b3",
     marginVertical: 5,
   },
   menuOverlay: {
