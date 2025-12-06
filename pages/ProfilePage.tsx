@@ -79,7 +79,6 @@ export default function ProfilePage() {
         u.username === activeUser.username ? activeUser : u
       );
       await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
-      console.log(users)
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

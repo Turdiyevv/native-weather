@@ -61,7 +61,6 @@ export default function LoginPage({ navigation }: any) {
       }
       await AsyncStorage.setItem("activeUser", JSON.stringify(user));
       navigation.replace("MainPage");
-        console.log(users)
     } catch (error) {
       console.log("Login error:", error);
       Alert.alert("Error", "Login paytida xatolik yuz berdi!");
