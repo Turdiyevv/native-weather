@@ -48,24 +48,20 @@ export default function LoginPage({ navigation }: any) {
             job: "",
             description: "",
           },
-          usertasks: [], // tasklar shu formatda qo‘shiladi keyin
+          usertasks: [],
         };
         users.push(user);
         await AsyncStorage.setItem("users", JSON.stringify(users));
-        console.log(users)
         setUserCount(users.length);
       } else {
-        // Parolni tekshirish
         if (user.password !== password) {
           Alert.alert("Xato", "Password noto‘g‘ri!");
           return;
         }
       }
-
-      // Active user sifatida saqlash
       await AsyncStorage.setItem("activeUser", JSON.stringify(user));
-
       navigation.replace("MainPage");
+        console.log(users)
     } catch (error) {
       console.log("Login error:", error);
       Alert.alert("Error", "Login paytida xatolik yuz berdi!");

@@ -26,18 +26,22 @@ export default function MainPage({ navigation }) {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const json = await AsyncStorage.getItem("profile");
-        if (json) {
-          const data = JSON.parse(json);
-          setFirstName(data.firstName || "");
-          setAvatar(data.avatar || "");
+        const activeUserStr = await AsyncStorage.getItem("activeUser");
+        if (activeUserStr) {
+          const user = JSON.parse(activeUserStr);
+          setFirstName(user.userinfo?.firstName || "");
+          setAvatar(user.userinfo?.avatar || "");
         }
       } catch (e) {
         console.log("Error loading profile", e);
       }
     };
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadProfile();
+    });
     loadProfile();
-  }, []);
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -45,6 +49,7 @@ export default function MainPage({ navigation }) {
     });
     return unsubscribe;
   }, [navigation]);
+
 
   const loadTasks = async () => {
     try {
@@ -56,8 +61,6 @@ export default function MainPage({ navigation }) {
       console.log("Error loading tasks", e);
     }
   };
-
-
   const markDone = async (item) => {
     try {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
@@ -158,14 +161,20 @@ export default function MainPage({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.username}>{firstName || "-"}</Text>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileView")}>
-          <Image
-            source={avatar ? { uri: avatar } : Avatar}
-            style={styles.avatar}
-          />
+          {avatar ? (
+            <Image
+              source={{ uri: avatar }}
+              style={styles.avatar}
+            />
+          ) : (
+            <Ionicons
+              name="person-circle-outline"
+              size={50}
+              color="#555"
+            />
+          )}
         </TouchableOpacity>
       </View>
-
-      {/* SectionList bilan tasklar */}
       <SectionList
         sections={groupedTasks}
         keyExtractor={(item) => item.id}

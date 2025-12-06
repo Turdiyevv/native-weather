@@ -19,8 +19,6 @@ import { RootStackParamList } from "./types";
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 export default function ProfilePage() {
   const navigation = useNavigation<NavProp>();
-
-  const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -33,19 +31,18 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const json = await AsyncStorage.getItem("profile");
-        if (json) {
-          const data = JSON.parse(json);
-          setUsername(data.username || "");
-          setFirstName(data.firstName || "");
-          setLastName(data.lastName || "");
-          setPhone(data.phone || "");
-          setJob(data.job || "");
-          setDescription(data.description || "");
-          setAvatar(data.avatar || "");
+        const activeUserStr = await AsyncStorage.getItem("activeUser");
+        if (activeUserStr) {
+          const user = JSON.parse(activeUserStr);
+          setFirstName(user.userinfo?.firstName || "");
+          setLastName(user.userinfo?.lastName || "");
+          setPhone(user.userinfo?.phone || "");
+          setJob(user.userinfo?.job || "");
+          setDescription(user.userinfo?.description || "");
+          setAvatar(user.userinfo?.avatar || "");
         }
       } catch (e) {
-        console.log("Error loading profile", e);
+        console.log("Error loading activeUser", e);
       }
     };
     loadProfile();
@@ -57,7 +54,6 @@ export default function ProfilePage() {
       alert("Rasm galereyasiga ruxsat berish kerak");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -69,11 +65,21 @@ export default function ProfilePage() {
     }
   };
 
-  // --- Saqlash ---
   const saveProfile = async () => {
-    const profile = { username, firstName, lastName, phone, job, description, avatar };
     try {
-      await AsyncStorage.setItem("profile", JSON.stringify(profile));
+      const activeUserStr = await AsyncStorage.getItem("activeUser");
+      if (!activeUserStr) return;
+      const activeUser = JSON.parse(activeUserStr);
+      activeUser.userinfo = { firstName, lastName, avatar, phone, job, description };
+      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+      const usersStr = await AsyncStorage.getItem("users");
+      let users = usersStr ? JSON.parse(usersStr) : [];
+
+      const updatedUsers = users.map((u: any) =>
+        u.username === activeUser.username ? activeUser : u
+      );
+      await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
+      console.log(users)
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -84,7 +90,6 @@ export default function ProfilePage() {
       console.log("Error saving profile", e);
     }
   };
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -96,7 +101,6 @@ export default function ProfilePage() {
           <Text style={styles.changeText}>Rasmni o'zgartirish</Text>
         </TouchableOpacity>
 
-        <TextField label="Username" value={username} onChangeText={setUsername} placeholder="Username" />
         <TextField label="Ism" value={firstName} onChangeText={setFirstName} placeholder="Ism" />
         <TextField label="Familiya" value={lastName} onChangeText={setLastName} placeholder="Familiya" />
         <TextField label="Telefon raqam" value={phone} onChangeText={setPhone} placeholder="+998..." keyboardType="phone-pad" />
@@ -113,7 +117,7 @@ export default function ProfilePage() {
 
 const styles = StyleSheet.create({
   container: { padding: 20, backgroundColor: "#f5f5f5", alignItems: "center" },
-  avatar: { width: 150, height: 150, borderRadius: 75, marginBottom: 10, backgroundColor: "#ccc" },
+  avatar: { width: 150, height: 150, borderRadius: 75, marginVertical: 10, backgroundColor: "#ccc" },
   changeText: { textAlign: "center", marginBottom: 20, color: "#007AFF" },
   saveButton: {
     marginTop: 20,
