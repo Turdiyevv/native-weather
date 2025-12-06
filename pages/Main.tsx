@@ -97,7 +97,12 @@ export default function MainPage({ navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.username}>{firstName || "Noma'lum"}</Text>
-        <Image source={avatar ? { uri: avatar } : Avatar} style={styles.avatar} />
+        <TouchableOpacity onPress={() => navigation.navigate("ProfileView")}>
+            <Image
+                source={avatar ? { uri: avatar } : Avatar}
+                style={styles.avatar}
+            />
+        </TouchableOpacity>
       </View>
 
       {/* SectionList bilan tasklar */}
@@ -148,16 +153,16 @@ export default function MainPage({ navigation }) {
 
       {/* Bottom Buttons */}
       <View style={styles.leftButtons}>
-        <TouchableOpacity
-          style={styles.sideButton}
-          onPress={() => navigation.navigate("ProfileView")}
-        >
-          <Ionicons name="person-circle-outline" size={32} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sideButton} onPress={() => console.log("Chat")}>
+        {/*<TouchableOpacity*/}
+        {/*  style={styles.sideButton}*/}
+        {/*  onPress={() => navigation.navigate("ProfileView")}*/}
+        {/*>*/}
+        {/*  <Ionicons name="person-circle-outline" size={32} color="black" />*/}
+        {/*</TouchableOpacity>*/}
+        <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("Chat")}>
           <Ionicons name="chatbubble-outline" size={32} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sideButton} onPress={() => console.log("Support")}>
+        <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("Support")}>
           <Ionicons name="help-circle-outline" size={32} color="black" />
         </TouchableOpacity>
       </View>
@@ -177,7 +182,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: "#f5f5f5" },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   username: { fontSize: 22, fontWeight: "bold" },
-  avatar: { backgroundColor: "#121", width: 40, height: 40, borderRadius: 20 },
+  avatar: { backgroundColor: "#121", width: 50, height: 50, borderRadius: 25 },
   addButton: {
     backgroundColor: "#121",
     width: 50,

@@ -15,7 +15,11 @@ interface TodoItemProps {
 
 export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps) {
   const createdTime = new Date(item.time);
-  const formattedTime = createdTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formattedTime = createdTime.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
   const formattedDeadline = item.deadline ? new Date(item.deadline).toLocaleDateString() : null;
 
   // title uzunligini 26 ta belgidan oshsa ... qo'shish
