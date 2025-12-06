@@ -6,6 +6,8 @@ import {
   SectionList,
   TouchableOpacity,
   StyleSheet,
+  Animated,
+  Vibration
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TodoItem from "../components/TodoItem";
@@ -18,6 +20,8 @@ export default function MainPage({ navigation }) {
   const [avatar, setAvatar] = useState<string>("");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+
+  const menuAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -52,32 +56,55 @@ export default function MainPage({ navigation }) {
   };
 
   const markDone = async (item) => {
-    const newTasks = tasks.map((t) =>
-      t.id === item.id ? { ...t, done: true } : t
-    );
+    const newTasks = tasks.map((t) => {
+      if (t.id === item.id) {
+        const isReturning = item.done;
+        const updatedTask = { ...t, done: !item.done };
+        if (isReturning) {
+          updatedTask.isReturning = (t.isReturning || 0) + 1;
+        }
+        return updatedTask;
+      }
+      return t;
+    });
+
     setTasks(newTasks);
     await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
-    setSelectedTaskId(null);
+    closeMenu();
   };
 
   const editTask = (item) => {
     navigation.navigate("AddPage", { task: item });
-    setSelectedTaskId(null);
+    closeMenu();
   };
 
   const deleteTask = async (id) => {
     const newTasks = tasks.filter((t) => t.id !== id);
     setTasks(newTasks);
     await AsyncStorage.setItem("tasks", JSON.stringify(newTasks));
-    setSelectedTaskId(null);
+    closeMenu();
   };
 
   const openMenu = (itemId, y) => {
     setSelectedTaskId(itemId);
     setMenuPosition({ x: 20, y });
+    Vibration.vibrate(20);
+    menuAnim.setValue(0);
+    Animated.timing(menuAnim, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
   };
 
-  // Tasksni sanaga qarab guruhlash
+  const closeMenu = () => {
+    Animated.timing(menuAnim, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: false,
+    }).start(() => setSelectedTaskId(null));
+  };
+
   const groupedTasks = tasks
     .slice()
     .reverse()
@@ -98,10 +125,10 @@ export default function MainPage({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.username}>{firstName || "Noma'lum"}</Text>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileView")}>
-            <Image
-                source={avatar ? { uri: avatar } : Avatar}
-                style={styles.avatar}
-            />
+          <Image
+            source={avatar ? { uri: avatar } : Avatar}
+            style={styles.avatar}
+          />
         </TouchableOpacity>
       </View>
 
@@ -120,53 +147,65 @@ export default function MainPage({ navigation }) {
           />
         )}
       />
+      {selectedTaskId && (() => {
+        const task = tasks.find((t) => t.id === selectedTaskId);
+        if (!task) return null;
 
-      {/* Menu */}
-      {selectedTaskId && (
-        <TouchableOpacity
-          style={styles.menuOverlay}
-          activeOpacity={1}
-          onPress={() => setSelectedTaskId(null)}
-        >
-          <View style={[styles.menu, { top: menuPosition.y }]}>
+        const menuStyle: Animated.AnimatedProps<any> = {
+          position: "absolute",
+          right: 20,
+          top: menuPosition.y,
+          width: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 200] }),
+          opacity: menuAnim,
+          transform: [{ scale: menuAnim }],
+          backgroundColor: "#fff",
+          borderRadius: 10,
+          paddingVertical: 10,
+          overflow: "hidden",
+        };
+        return (
+          <TouchableOpacity
+            style={styles.menuOverlay}
+            activeOpacity={1}
+            onPress={closeMenu}
+          >
+            <Animated.View style={menuStyle}>
+              <TouchableOpacity
+                style={styles.menuButton}
+                onPress={() => markDone(task)}
+              >
+                <Text style={styles.menuText}>
+                  {task.done ? "Qaytarish" : "Bajarildi"}
+                </Text>
+                <Ionicons
+                  name={task.done ? "arrow-undo-outline" : "checkmark-circle-outline"}
+                  size={20}
+                  color={task.done ? "orange" : "green"}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.menuButton}
-              onPress={() => markDone(tasks.find((t) => t.id === selectedTaskId))}
-            >
-              <Text style={styles.menuText}>Bajarildi</Text>
-              <Ionicons name="checkmark-circle-outline" size={20} color="green" />
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.menuButton}
+                onPress={() => editTask(task)}
+              >
+                <Text style={styles.menuText}>Tahrirlash</Text>
+                <Ionicons name="create-outline" size={20} color="blue" />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.menuButton}
-              onPress={() => editTask(tasks.find((t) => t.id === selectedTaskId))}
-            >
-              <Text style={styles.menuText}>Tahrirlash</Text>
-              <Ionicons name="create-outline" size={20} color="blue" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.menuButtonDel}
-              onPress={() => deleteTask(selectedTaskId)}
-            >
-              <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
-              <Ionicons name="trash-outline" size={20} color="red" />
-            </TouchableOpacity>
-
-          </View>
-        </TouchableOpacity>
-      )}
-
+              <TouchableOpacity
+                style={styles.menuButtonDel}
+                onPress={() => deleteTask(task.id)}
+              >
+                <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
+                <Ionicons name="trash-outline" size={20} color="red" />
+              </TouchableOpacity>
+            </Animated.View>
+          </TouchableOpacity>
+        );
+      })()}
 
       {/* Bottom Buttons */}
       <View style={styles.leftButtons}>
-        {/*<TouchableOpacity*/}
-        {/*  style={styles.sideButton}*/}
-        {/*  onPress={() => navigation.navigate("ProfileView")}*/}
-        {/*>*/}
-        {/*  <Ionicons name="person-circle-outline" size={32} color="black" />*/}
-        {/*</TouchableOpacity>*/}
         <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("Chat")}>
           <Ionicons name="chatbubble-outline" size={32} color="black" />
         </TouchableOpacity>
@@ -187,10 +226,10 @@ export default function MainPage({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: "#f5f5f5" },
+  container: { flex: 1, paddingTop: 60, paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
   username: { fontSize: 22, fontWeight: "bold" },
-  avatar: { backgroundColor: "#121", width: 50, height: 50, borderRadius: 25 },
+  avatar: {borderColor: "#121", borderWidth: 1, backgroundColor: "#121", width: 50, height: 50, borderRadius: 25 },
   addButton: {
     backgroundColor: "#121",
     width: 50,
@@ -233,15 +272,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(0,0,0,0.2)",
-  },
-  menu: {
-    position: "absolute",
-    right: 20,
-    width: 200,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 10,
-    elevation: 5,
   },
   menuButton: {
     flexDirection: "row",
