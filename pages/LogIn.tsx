@@ -34,50 +34,38 @@ export default function LoginPage({ navigation }: any) {
     try {
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
-
-      if (!users.find((u: any) => u.username === username) && users.length >= 3) {
+      const existingUser = users.find((u: any) => u.username === username);
+      if (!existingUser && users.length >= 3) {
         showMessage({
-          message: "Userlar soni allaqachon 3ta!",
+          message: "User topilmadi. Yangi user yaratish imkoni ham yo'q!",
           type: "warning",
           icon: "warning",
         });
         return;
       }
-      let user = users.find((u: any) => u.username === username);
-      if (!user) {
-        setModalVisible(true)
-        user = {
-          username,
-          password,
-          userinfo: {
-            firstName: "",
-            lastName: "",
-            avatar: "",
-            phone: "",
-            job: "",
-            description: "",
-          },
-          usertasks: [],
-        };
-        users.push(user);
-        await AsyncStorage.setItem("users", JSON.stringify(users));
-      } else {
-        if (user.password !== password) {
-          showMessage({
-            message: "Password noto‘g‘ri!",
-            type: "danger",
-            icon: "danger",
-          });
-          return;
-        }
+      if (!existingUser && users.length < 3) {
+        setModalVisible(true);
+        return;
       }
-      await AsyncStorage.setItem("activeUser", JSON.stringify(user));
-      navigation.replace("MainPage");
-      showMessage({
-        message: "Muvaffaqiyatli kirish!",
-        type: "success",
-        icon: "success",
-      });
+      if (existingUser && existingUser.password !== password) {
+        showMessage({
+          message: "Password noto‘g‘ri!",
+          type: "danger",
+          icon: "danger",
+        });
+        return;
+      }
+
+      const userToSet = existingUser || null;
+      if (userToSet) {
+        await AsyncStorage.setItem("activeUser", JSON.stringify(userToSet));
+        navigation.replace("MainPage");
+        showMessage({
+          message: "Muvaffaqiyatli kirish!",
+          type: "success",
+          icon: "success",
+        });
+      }
     } catch (error) {
       showMessage({
         message: String(error),
@@ -117,13 +105,37 @@ export default function LoginPage({ navigation }: any) {
         </View>
         <ConfirmModal
           visible={modalVisible}
-          message="Ishonchingiz komilmi?"
-          onConfirm={() => {
+          message="Yangi hisob yaratilsinmi?"
+          onConfirm={async () => {
             setModalVisible(false);
+            const storedUsers = await AsyncStorage.getItem("users");
+            let users = storedUsers ? JSON.parse(storedUsers) : [];
+
+            const newUser = {
+              username,
+              password,
+              userinfo: {
+                firstName: "",
+                lastName: "",
+                avatar: "",
+                phone: "",
+                job: "",
+                description: "",
+              },
+              usertasks: [],
+            };
+            users.push(newUser);
+            await AsyncStorage.setItem("users", JSON.stringify(users));
+            await AsyncStorage.setItem("activeUser", JSON.stringify(newUser));
+            setUserCount(users.length);
+            navigation.replace("MainPage");
+            showMessage({
+              message: "Yangi user yaratildi!",
+              type: "success",
+              icon: "success",
+            });
           }}
-          onCancel={() => {
-            setModalVisible(false);
-          }}
+          onCancel={() => setModalVisible(false)}
         />
       </ScrollView>
     </KeyboardAvoidingView>

@@ -14,10 +14,12 @@ import TodoItem from "../components/TodoItem";
 import { Ionicons } from "@expo/vector-icons";
 import {showMessage} from "react-native-flash-message";
 import ConfirmModal from "../components/ConfirmModal";
+import AdminIcon from "../assets/admin_icon.png";
 
 export default function MainPage({ navigation }) {
   const [tasks, setTasks] = useState<any[]>([]);
   const [firstName, setFirstName] = useState("");
+  const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState<string>("");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
@@ -33,6 +35,7 @@ export default function MainPage({ navigation }) {
           const user = JSON.parse(activeUserStr);
           setFirstName(user.userinfo?.firstName || "");
           setAvatar(user.userinfo?.avatar || "");
+          setUsername(user.username || "@");
         }
       } catch (e) {
         showMessage({
@@ -179,7 +182,10 @@ export default function MainPage({ navigation }) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.username}>{firstName || "-"}</Text>
+        <View>
+          <Text style={styles.username}>{firstName || "-"}</Text>
+          <Text style={styles.keyUsername}>@{username || "-"}</Text>
+        </View>
         <TouchableOpacity onPress={() => navigation.navigate("ProfileView")}>
           {avatar ? (
             <Image
@@ -208,11 +214,18 @@ export default function MainPage({ navigation }) {
             onLongPress={(y) => openMenu(item.id, y)}
           />
         )}
+        ListEmptyComponent={() => (
+          <View style={{ padding: 20, alignItems: "center" }}>
+            <Image source={AdminIcon} style={styles.icon} />
+            <Text style={{ fontSize: 16, color: "#555" }}>
+              Vazifalaringiz ro'yxati chiqadi
+            </Text>
+          </View>
+        )}
       />
       {selectedTaskId && (() => {
         const task = tasks.find((t) => t.id === selectedTaskId);
         if (!task) return null;
-
         const menuStyle: Animated.AnimatedProps<any> = {
           position: "absolute",
           right: 20,
@@ -278,11 +291,14 @@ export default function MainPage({ navigation }) {
 
       {/* Bottom Buttons */}
       <View style={styles.leftButtons}>
+        <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("ProfileView")}>
+          <Ionicons name="person-circle-outline" size={32} color="#121" />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("Chat")}>
-          <Ionicons name="chatbubble-outline" size={32} color="black" />
+          <Ionicons name="chatbubble-outline" size={32} color="#121" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("Support")}>
-          <Ionicons name="help-circle-outline" size={32} color="black" />
+          <Ionicons name="help-circle-outline" size={32} color="#121" />
         </TouchableOpacity>
       </View>
       {/* Add Button */}
@@ -297,10 +313,16 @@ export default function MainPage({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: 60, paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 20 },
+  container: { flex: 1, paddingTop: 30, paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
+  header: { borderColor: "#121", borderBottomWidth: 1, borderRightWidth: 1, borderBottomEndRadius: 25, borderTopEndRadius: 24, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   username: { fontSize: 22, fontWeight: "bold" },
-  avatar: {borderColor: "#121", borderWidth: 1, backgroundColor: "#121", width: 50, height: 50, borderRadius: 25 },
+  keyUsername: { fontSize: 12, color: 'gray' },
+  avatar: {borderColor: "#121", borderWidth: 2, backgroundColor: "#121", width: 50, height: 50, borderRadius: 25 },
+  icon: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
+  },
   addButton: {
     backgroundColor: "#121",
     width: 50,

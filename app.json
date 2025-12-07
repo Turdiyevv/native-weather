@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Vega chat",
-    "slug": "VegaChat",
+    "slug": "vega_chat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/admin_icon.png",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/admin_icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.Turdiyev.vegaChat",
-      "buildNumber": "1.0.0"
+      "buildNumber": "2.0.0"
     },
     "android": {
       "package": "com.Turdiyev.vegaChat",

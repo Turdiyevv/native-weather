@@ -2,13 +2,13 @@ import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
-  BackHandler,
   ScrollView,
   Animated,
-  Dimensions
+  Dimensions,
+  Alert,
+  BackHandler
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, CommonActions } from "@react-navigation/native";
@@ -17,6 +17,7 @@ import { RootStackParamList } from "./types";
 import { logout } from "../utills/LogOut";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "../components/ConfirmModal";
+import {showMessage} from "react-native-flash-message";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -26,15 +27,14 @@ export function ProfileViewPage() {
   const navigation = useNavigation<ProfileViewNavProp>();
   const [user, setUser] = useState<any>(null);
   const avatarAnim = useRef(new Animated.Value(0)).current;
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const loadActiveUser = async () => {
     try {
       const userData = await AsyncStorage.getItem("activeUser");
       if (!userData) return;
       const activeUser = JSON.parse(userData);
-
-      // userinfo bilan ishlash
       const profile = activeUser.userinfo || {};
       setUser({
         username: activeUser.username,
@@ -46,13 +46,18 @@ export function ProfileViewPage() {
         description: profile.description || ""
       });
     } catch (e) {
-      console.log("Error loading active user", e);
+      showMessage({
+        message: e,
+        type: "danger",
+        icon: "danger",
+      });
     }
   };
 
   useEffect(() => {
     loadActiveUser();
     const unsubscribe = navigation.addListener("focus", loadActiveUser);
+
     const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
       navigation.dispatch(
         CommonActions.reset({
@@ -78,6 +83,25 @@ export function ProfileViewPage() {
     inputRange: [0, 1],
     outputRange: [75, 10],
   });
+
+  const deleteAccount = async () => {
+    setDeleteModalVisible(true);
+  };
+  const handleDeleteConfirm = async () => {
+    if (!user) return;
+    const storedUsers = await AsyncStorage.getItem("users");
+    let users = storedUsers ? JSON.parse(storedUsers) : [];
+    users = users.filter((u: any) => u.username !== user.username);
+    await AsyncStorage.setItem("users", JSON.stringify(users));
+    await AsyncStorage.removeItem("activeUser");
+    setDeleteModalVisible(false);
+    showMessage({
+      message: "Hisob muvaffaqiyatli o‘chirildi!",
+      type: "success",
+      icon: "success",
+    });
+    navigation.replace("LoginPage");
+  };
 
   return (
     <ScrollView
@@ -108,19 +132,18 @@ export function ProfileViewPage() {
         ) : (
           <Ionicons
             name="person-circle-outline"
-            size={150} // avatar bilan bir xil
+            size={150}
             color="#555"
           />
         )}
       </View>
 
-
-        <View style={styles.container}>
-          <Text style={styles.title}>
-            {user?.firstName} {user?.lastName}
-          </Text>
-          <Text style={styles.username}>@{user?.username}</Text>
-        </View>
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          {user?.firstName} {user?.lastName}
+        </Text>
+        <Text style={styles.username}>@{user?.username}</Text>
+      </View>
 
       <View style={styles.infoBox}>
         <Text style={styles.label}>Telefon:</Text>
@@ -131,6 +154,16 @@ export function ProfileViewPage() {
 
         <Text style={styles.label}>Izoh:</Text>
         <Text style={styles.value}>{user?.description}</Text>
+      </View>
+
+      <View style={styles.infoBox}>
+        <View style={styles.settingsText}>
+          <Ionicons name="settings" size={24} color="#555"/>
+          <Text style={styles.settingsTitle}>Sozlamalar</Text>
+        </View>
+        <TouchableOpacity onPress={deleteAccount}>
+          <Text style={styles.deleteText}>Hisobni butunlay o'chirish</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.btns}>
@@ -148,6 +181,7 @@ export function ProfileViewPage() {
         </TouchableOpacity>
       </View>
 
+      {/* Logout confirm modal */}
       <ConfirmModal
         visible={modalVisible}
         message="Ishonchingiz komilmi?"
@@ -155,25 +189,20 @@ export function ProfileViewPage() {
           logout(navigation);
           setModalVisible(false);
         }}
-        onCancel={() => {
-          setModalVisible(false);
-        }}
+        onCancel={() => setModalVisible(false)}
+      />
+      {/* Delete account confirm modal */}
+      <ConfirmModal
+        visible={deleteModalVisible}
+        message="Hisobni butunlay o‘chirmoqchimisiz?"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteModalVisible(false)}
       />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  logoutBtn: {
-    borderRadius: 20,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-    marginTop: 0,
-    marginRight: 0,
-    padding: 0,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   scrollContainer: {
     padding: 20,
     alignItems: "center",
@@ -183,7 +212,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     flex: 1,
-    marginBottom:10,
+    marginBottom: 10,
   },
   avatarBase: {
     backgroundColor: "#ddd",
@@ -221,4 +250,8 @@ const styles = StyleSheet.create({
   },
   editText: { color: "white", fontSize: 18 },
   outText: { color: "red", fontSize: 18 },
+  settings: { marginTop: 20 },
+  settingsText: { flexDirection: "row", justifyContent: "flex-start" },
+  settingsTitle: { fontSize: 18, marginLeft: 3, marginBottom: 8 },
+  deleteText: { color: "red", fontSize: 16, textDecorationLine: "underline" },
 });
