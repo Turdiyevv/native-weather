@@ -23,9 +23,12 @@ export default function MainPage({ navigation }) {
   const [avatar, setAvatar] = useState<string>("");
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [menuDirection, setMenuDirection] = useState<"top" | "bottom">("bottom");
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const menuAnim = useRef(new Animated.Value(0)).current;
+  const MENU_HEIGHT = 200;
+  const BOTTOM_AREA = 100;
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -58,7 +61,6 @@ export default function MainPage({ navigation }) {
     });
     return unsubscribe;
   }, [navigation]);
-
 
   const loadTasks = async () => {
     try {
@@ -109,12 +111,10 @@ export default function MainPage({ navigation }) {
       });
     }
   };
-
   const editTask = (item) => {
     navigation.navigate("AddPage", { task: item });
     closeMenu();
   };
-
   const deleteTask = async (id) => {
     try {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
@@ -143,10 +143,17 @@ export default function MainPage({ navigation }) {
     }
   };
 
-
   const openMenu = (itemId, y) => {
     setSelectedTaskId(itemId);
-    setMenuPosition({ x: 20, y });
+    const screenHeight = globalThis.window?.innerHeight || 800;
+    const spaceBelow = screenHeight - y;
+    if (spaceBelow < MENU_HEIGHT + BOTTOM_AREA) {
+      setMenuDirection("top");
+      setMenuPosition({ x: 20, y: y - MENU_HEIGHT });
+    } else {
+      setMenuDirection("bottom");
+      setMenuPosition({ x: 20, y });
+    }
     Vibration.vibrate(20);
     menuAnim.setValue(0);
     Animated.timing(menuAnim, {
@@ -239,6 +246,7 @@ export default function MainPage({ navigation }) {
             paddingVertical: 10,
             overflow: "hidden",
           };
+          const displayTitle = task.title.length > 16 ? task.title.slice(0, 16) + "..." : task.title;
           return (
             <TouchableOpacity
               style={styles.menuOverlay}
@@ -246,10 +254,11 @@ export default function MainPage({ navigation }) {
               onPress={closeMenu}
             >
               <Animated.View style={menuStyle}>
-                <TouchableOpacity
-                  style={styles.menuButton}
-                  onPress={() => markDone(task)}
-                >
+                <View style={styles.menuButtonTitle}>
+                  <Text style={styles.taskTitle}>{displayTitle}</Text>
+                  <Ionicons name="document-outline" size={20} color="gray" />
+                </View>
+                <TouchableOpacity style={styles.menuButton} onPress={() => markDone(task)}>
                   <Text style={styles.menuText}>
                     {task.done ? "Qaytarish" : "Bajarildi"}
                   </Text>
@@ -259,17 +268,11 @@ export default function MainPage({ navigation }) {
                     color={task.done ? "orange" : "green"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.menuButton}
-                  onPress={() => editTask(task)}
-                >
+                <TouchableOpacity style={styles.menuButton} onPress={() => editTask(task)}>
                   <Text style={styles.menuText}>Tahrirlash</Text>
                   <Ionicons name="create-outline" size={20} color="blue" />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.menuButtonDel}
-                  onPress={() => setModalVisible(true)}
-                >
+                <TouchableOpacity style={styles.menuButtonDel} onPress={() => setModalVisible(true)}>
                   <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
                   <Ionicons name="trash-outline" size={20} color="red" />
                 </TouchableOpacity>
@@ -290,7 +293,6 @@ export default function MainPage({ navigation }) {
           );
         })()}
 
-        {/* Bottom Buttons */}
         <View style={styles.leftButtons}>
           <View style={styles.buttonBox}>
             <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("ProfileView")}>
@@ -307,7 +309,6 @@ export default function MainPage({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-        {/* Add Button */}
       </View>
     </View>
   );
@@ -375,6 +376,19 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(0,0,0,0.2)",
+  },
+  taskTitle:{
+    fontSize: 16,
+    color:"#007AFF",
+  },
+  menuButtonTitle: {
+    paddingBottom: 5,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   menuButton: {
     flexDirection: "row",
