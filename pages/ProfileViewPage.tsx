@@ -164,6 +164,9 @@ export function ProfileViewPage() {
         <TouchableOpacity onPress={deleteAccount}>
           <Text style={styles.deleteText}>Hisobni butunlay o'chirish</Text>
         </TouchableOpacity>
+        {/*<TouchableOpacity onPress={() => navigation.navigate("Bussiness")}>*/}
+        {/*  <Text style={styles.deleteText}>Blur</Text>*/}
+        {/*</TouchableOpacity>*/}
       </View>
 
       <View style={styles.btns}>

@@ -6,4 +6,5 @@ export type RootStackParamList = {
   ProfileEdit: undefined;
   Chat: undefined;
   Support: undefined;
+  Bussiness: undefined;
 };

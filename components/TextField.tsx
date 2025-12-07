@@ -32,14 +32,17 @@ export default function TextField({
       <TextInput
         style={[
           styles.input,
+            { color: "#121" },
           showError && styles.errorBorder
         ]}
+        cursorColor="#000"
+        selectionColor="#000"
         value={value}
         onChangeText={(text) => {
           onChangeText(text);
-          if (!touched) setTouched(true); // birinchi yozishda touched true
+          if (!touched) setTouched(true);
         }}
-        onBlur={() => setTouched(true)} // inputdan chiqsa touched true bo‘ladi
+        onBlur={() => setTouched(true)}
         placeholder={placeholder}
         {...rest}
       />

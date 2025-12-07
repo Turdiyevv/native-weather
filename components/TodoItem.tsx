@@ -43,6 +43,9 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
           <Text style={styles.returnCountText}>{item.isReturning}</Text>
         </View>
       )}
+      {/*<View style={styles.draft}>*/}
+      {/*  <Ionicons name="flag" size={12} color="#fff" />*/}
+      {/*</View>*/}
       <View style={styles.titleContainer}>
         <Text style={[styles.text, item.done && styles.doneText]}>{displayTitle}</Text>
         {item.done ? (
@@ -59,7 +62,11 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
             />
           )}
       </View>
-      {formattedDeadline && <Text style={styles.deadline}>{formattedDeadline}</Text>}
+      {
+        formattedDeadline ?
+            <Text style={styles.deadline}>{formattedDeadline}</Text> :
+            <Text style={styles.deadlineBox}></Text>
+      }
       <View style={styles.timeContainer}>
         <Text style={styles.time}>{formattedTime}</Text>
       </View>
@@ -87,7 +94,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between", // title va counter o'ng va chap
+    justifyContent: "space-between",
   },
   text: { fontSize: 18 },
   doneText: { textDecorationLine: "line-through", color: "gray" },
@@ -103,12 +110,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  draft: {
+    position: "absolute",
+    borderTopRightRadius: 1,
+    borderTopLeftRadius: 1,
+    top: -2,
+    right: 50,
+    width: 14,
+    height: 20,
+    backgroundColor: "green",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   returnCountText: {
     color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
   },
   deadline: { fontSize: 14, color: "#007AFF", marginTop: 0 },
+  deadlineBox: { height: 14, marginTop: 0 },
   timeContainer: { position: "absolute", bottom: 5, right: 10 },
   time: { fontSize: 12, color: "gray" },
 });

@@ -12,12 +12,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 import TextField from "../components/TextField";
 import ConfirmModal from "../components/ConfirmModal";
+import {maskPassword} from "../utills/utill";
 
 export default function LoginPage({ navigation }: any) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [userCount, setUserCount] = useState(0);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [pass, setPass] = useState("");
 
   useEffect(() => {
     const loadCount = async () => {
@@ -48,6 +50,8 @@ export default function LoginPage({ navigation }: any) {
         return;
       }
       if (existingUser && existingUser.password !== password) {
+        setPass(maskPassword(existingUser.password));
+        setTimeout(() => {setPass("")}, 3000);
         showMessage({
           message: "Password noto‘g‘ri!",
           type: "danger",
@@ -83,22 +87,23 @@ export default function LoginPage({ navigation }: any) {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
           <Text style={styles.title}>Xush kelibsiz!</Text>
-          <Text style={styles.count}>Ro‘yxat: {userCount} / 3</Text>
+          <View style={styles.countBox}>
+            <Text style={styles.count}>Ro‘yxat: {userCount} / 3</Text>
+            <Text style={styles.pass}> {pass}</Text>
+          </View>
           <TextField
             label="username"
             value={username}
             onChangeText={setUsername}
             required
           />
-
           <TextField
-            label="password"
+            label={"password"}
             value={password}
             secureTextEntry
             onChangeText={setPassword}
             required
           />
-
           <TouchableOpacity style={styles.btn} onPress={handleLogin}>
             <Text style={styles.btnText}>Kirish</Text>
           </TouchableOpacity>
@@ -145,7 +150,9 @@ export default function LoginPage({ navigation }: any) {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", paddingHorizontal: 30 },
   title: { fontSize: 32, fontWeight: "700", marginBottom: 10, textAlign: "center" },
-  count: { textAlign: "center", marginBottom: 20, color: "#555", fontSize: 16 },
+  countBox: { flexDirection: "row", alignItems:"center", justifyContent: "center", marginBottom: 20 },
+  pass:{color: "orange", fontSize: 11, marginLeft: 2},
+  count: { color: "#555", fontSize: 16 },
   btn: { backgroundColor: "#121", paddingVertical: 12, borderRadius: 10, marginTop: 20 },
   btnText: { color: "#fff", textAlign: "center", fontSize: 18, fontWeight: "600" },
 });

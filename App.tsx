@@ -8,40 +8,81 @@ import ProfilePage from "./pages/ProfilePage";
 import { ProfileViewPage } from "./pages/ProfileViewPage";
 import ChatPage from "./pages/ChatPage";
 import SupportPage from "./pages/SupportPage";
+import Bussiness from "./pages/Bussiness";
 import LoginPage from "./pages/LogIn";
-import {RootStackParamList} from "./pages/types";
+import { RootStackParamList } from "./pages/types";
 import FlashMessage from "react-native-flash-message";
+import CustomHeader from "./components/CustomHeader";
+import {Platform, StatusBar, View, StyleSheet} from "react-native";
+
 enableScreens();
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
 const App: React.FC = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="LoginPage"
-        screenOptions={{
-          headerShown: false, // Header ishlatilmaydi
-        }}
-      >
-        <Stack.Screen name="LoginPage" component={LoginPage} />
-        <Stack.Screen name="MainPage" component={MainPage} />
-        <Stack.Screen name="AddPage" component={AddPage} />
-        <Stack.Screen name="ProfileView" component={ProfileViewPage} />
-        <Stack.Screen name="ProfileEdit" component={ProfilePage} />
-        <Stack.Screen name="Chat" component={ChatPage} />
-        <Stack.Screen name="Support" component={SupportPage} />
-      </Stack.Navigator>
-      <FlashMessage
-          position="top"
-          style={{
-            top: 40,
-            marginHorizontal: 20,
-            borderRadius: 12,
-            overflow: "hidden",
-          }}
-      />
-    </NavigationContainer>
+      <>
+        <StatusBar
+            barStyle={Platform.OS === "ios" ? "light-content" : "dark-content"}
+            backgroundColor="#121"
+        />
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="LoginPage"
+            screenOptions={{
+              headerShown: true,
+            }}
+          >
+            <Stack.Screen options={{ headerShown: false }} name="LoginPage" component={LoginPage} />
+            <Stack.Screen
+              name="MainPage"
+              component={MainPage}
+              options={{ headerShown: false }}
+              // options={{
+              //   header: () => (
+              //     <CustomHeader
+              //       title="Vega Chat"
+              //       rightIconName="user"
+              //       onRightPress={() => console.log("Profile")}
+              //     />
+              //   ),
+              // }}
+            />
+
+            {/* Other Pages */}
+            <Stack.Screen name="AddPage" options={{ headerShown: false }} component={AddPage} />
+            <Stack.Screen name="ProfileView" options={{ headerShown: false }} component={ProfileViewPage} />
+            <Stack.Screen name="ProfileEdit" options={{ headerShown: false }} component={ProfilePage} />
+            <Stack.Screen name="Chat" options={{ headerShown: false }} component={ChatPage} />
+            <Stack.Screen name="Support" options={{ headerShown: false }} component={SupportPage} />
+            <Stack.Screen name="Bussiness" options={{ headerShown: false }} component={Bussiness} />
+          </Stack.Navigator>
+
+          <View style={styles.flashWrapper}>
+              <FlashMessage
+                position="top"
+                style={styles.flashBox}
+              />
+          </View>
+        </NavigationContainer>
+      </>
   );
 };
+const styles = StyleSheet.create({
+    flashWrapper: {
+      position: "absolute",
+      top: 40,
+      width: "100%",
+      alignItems: "center",
+      zIndex: 9999,
+    },
 
+    flashBox: {
+        marginHorizontal:20,
+        borderRadius: 18,
+        overflow: "hidden",
+        paddingVertical: 6,
+        paddingHorizontal: 17,
+    },
+})
 export default App;
