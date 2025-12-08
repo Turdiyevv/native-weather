@@ -302,21 +302,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   editButton: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#bcddbc",
-    padding: 6,
+    padding: 10,
     borderRadius: 10,
     width: "48%",
     alignItems: "center"
   },
   outButton: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#fbd1d1",
-    padding: 6,
+    padding: 10,
     borderRadius: 10,
     width: "48%",
     alignItems: "center"

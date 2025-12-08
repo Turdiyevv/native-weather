@@ -9,6 +9,7 @@ interface TextFieldProps extends TextInputProps {
   required?: boolean;
   errorMessage?: string;
   minLength?: number;
+  minHeight?: number;
 }
 
 export default function TextField({
@@ -19,6 +20,7 @@ export default function TextField({
   required = false,
   errorMessage = "Bu maydon to‘ldirilishi shart!",
   minLength = 6,
+  minHeight,
   ...rest
 }: TextFieldProps) {
   const [touched, setTouched] = useState(false);
@@ -36,6 +38,7 @@ export default function TextField({
         style={[
           styles.input,
             { color: "#121" },
+          minHeight ? { minHeight: minHeight } : {},
           (showError || showMinLengthError) && styles.errorBorder
         ]}
         cursorColor="#000"
@@ -71,7 +74,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#ddd",
-    fontSize: 16,
+    fontSize: 18,
   },
   errorBorder: {
     borderColor: "#ff9292",

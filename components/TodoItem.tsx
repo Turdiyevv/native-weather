@@ -10,6 +10,9 @@ interface TodoItemProps {
     deadline?: string | Date;
     time: string | Date;
     isReturning?: number;
+    status?: number;
+    isDeleted?: boolean;
+    files?: []
   };
   onToggle: (id: string) => void;
   onLongPress?: (y: number) => void;
@@ -31,6 +34,7 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
         styles.item,
         item.done && styles.done,
         item.isReturning && item.isReturning > 0 && !item.done ? styles.returningBorder : null,
+        item.isDeleted && styles.deleted
       ]}
       onPress={() => onToggle(item.id)}
       onLongPress={(event: any) => {
@@ -43,24 +47,37 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
           <Text style={styles.returnCountText}>{item.isReturning}</Text>
         </View>
       )}
-      {/*<View style={styles.draft}>*/}
-      {/*  <Ionicons name="flag" size={12} color="#fff" />*/}
-      {/*</View>*/}
+      <View style={styles.draft}>
+        {item.status > 1 && (
+          <Ionicons name="bookmark" size={20}
+                    color={item.status === 2 ? "orange" : "red"} />
+        )}
+      </View>
       <View style={styles.titleContainer}>
-        <Text style={[styles.text, item.done && styles.doneText]}>{displayTitle}</Text>
-        {item.done ? (
+        <Text style={[styles.text, item.isDeleted && styles.doneText]}>{displayTitle}</Text>
+        <View style={styles.iconBox}>
+          {item.done ? (
+              <Ionicons
+                name="checkmark-circle"
+                size={22}
+                color="#4CAF50"
+              />
+            ) : (
+              <Ionicons
+                name="alert-circle"
+                size={22}
+                color="grey"
+              />
+            )
+          }
+          {item.isDeleted &&(
             <Ionicons
-              name="checkmark-circle"
-              size={22}
-              color="#4CAF50"
-            />
-          ) : (
-            <Ionicons
-              name="alert-circle"
-              size={22}
-              color="grey"
+              name="trash-outline"
+              size={18}
+              color="red"
             />
           )}
+        </View>
       </View>
       {
         formattedDeadline ?
@@ -75,10 +92,21 @@ export default function TodoItem({ item, onToggle, onLongPress }: TodoItemProps)
 }
 
 const styles = StyleSheet.create({
+  deleted: {
+    borderColor: "#b6b5b5",
+    borderWidth: 1,
+    borderStyle: "dotted",
+    backgroundColor: "#b6b5b5",
+  },
   returningBorder: {
     borderColor: "orange",
     borderWidth: 1,
     borderStyle: "dashed",
+  },
+  done: {
+    borderColor: "#4CAF50",
+    borderWidth: 1,
+    borderStyle: "solid"
   },
   item: {
     backgroundColor: "#fff",
@@ -90,11 +118,14 @@ const styles = StyleSheet.create({
     minHeight: 60,
     justifyContent: "center",
   },
-  done: { borderColor: "#4CAF50", borderWidth: 1 },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  iconBox:{
+    flexDirection: "row",
+    alignItems: "center"
   },
   text: { fontSize: 18 },
   doneText: { textDecorationLine: "line-through", color: "gray" },
@@ -112,15 +143,8 @@ const styles = StyleSheet.create({
   },
   draft: {
     position: "absolute",
-    borderTopRightRadius: 1,
-    borderTopLeftRadius: 1,
-    top: -2,
-    right: 50,
-    width: 14,
-    height: 20,
-    backgroundColor: "green",
-    justifyContent: "center",
-    alignItems: "center",
+    top: -4,
+    right: 44,
   },
   returnCountText: {
     color: "#fff",

@@ -120,28 +120,38 @@ export default function MainPage({ navigation }) {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
       if (!activeUserStr) return;
       const activeUser = JSON.parse(activeUserStr);
-      const newTasks = activeUser.usertasks.filter((t) => t.id !== id);
-      activeUser.usertasks = newTasks;
-      setTasks(newTasks);
+      // 🔥 1. Taskni filter qilmasdan, ichidan topamiz
+      const updatedTasks = activeUser.usertasks.map((t) =>
+        t.id === id ? { ...t, isDeleted: true } : t
+      );
+      // 🔥 2. Yangilangan tasklar massivini yozamiz
+      activeUser.usertasks = updatedTasks;
+      setTasks(updatedTasks);
+      // 🔥 3. Users massivini yangilaymiz
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
-      users = users.map((u) => (u.username === activeUser.username ? activeUser : u));
+      users = users.map((u) =>
+        u.username === activeUser.username ? activeUser : u
+      );
+      // 🔥 4. Hammasini qayta saqlaymiz
       await AsyncStorage.setItem("users", JSON.stringify(users));
       await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
       showMessage({
-        message: "Vazifa o'chirildi!",
+        message: "Vazifa o'chirildi! (soft-delete)",
         type: "success",
         icon: "success",
       });
+
       closeMenu();
     } catch (e) {
       showMessage({
-        message: e,
+        message: String(e),
         type: "danger",
         icon: "danger",
       });
     }
   };
+
 
   const openMenu = (itemId, y) => {
     setSelectedTaskId(itemId);

@@ -12,6 +12,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import TextField from "../../components/TextField";
 import {showMessage} from "react-native-flash-message";
+import Toggle from "../Toggle";
+import SingleCheckBox from "../CheckBox";
+import FilePickerComponent from "../FilePicker";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface Task {
   id: string;
@@ -20,6 +24,9 @@ interface Task {
   done: boolean;
   deadline?: string | null;
   time: string;
+  status?: number;
+  isDeleted?: boolean;
+  files:string[]
 }
 
 export default function AddPage({ navigation, route }: any) {
@@ -30,129 +37,218 @@ export default function AddPage({ navigation, route }: any) {
     taskToEdit && taskToEdit.deadline ? new Date(taskToEdit.deadline) : null
   );
   const [showPicker, setShowPicker] = useState(false);
+  const [selected, setSelected] = useState<number | null>(taskToEdit ? taskToEdit.status : 1);
+  const [isActive, setIsActive] = useState<boolean>(taskToEdit ? taskToEdit.isDeleted : false);
+  const [attachments, setAttachments] = useState<string[]>(taskToEdit ? taskToEdit.files : []);
+
+  const options = [
+    {id: 1, text: "Yengil", color: 'green'},
+    {id: 2, text: "O'rtacha", color: 'orange'},
+    {id: 3, text: "Og'ir", color: 'red'},
+  ];
 
   const saveTask = async () => {
-  if (task.trim() === "" || description.trim() === "") return;
-
-  try {
-    const activeUserStr = await AsyncStorage.getItem("activeUser");
-    if (!activeUserStr) return;
-    const activeUser = JSON.parse(activeUserStr);
-    const storedUsers = await AsyncStorage.getItem("users");
-    let users = storedUsers ? JSON.parse(storedUsers) : [];
-    if (taskToEdit) {
-      activeUser.usertasks = activeUser.usertasks.map((t: Task) =>
-        t.id === taskToEdit.id
-          ? { ...t, title: task, description, deadline: deadline ? deadline.toISOString() : null }
-          : t
-      );
-    } else {
-      const now = new Date();
-      const newTask: Task = {
-        id: Date.now().toString(),
-        title: task,
-        description,
-        done: false,
-        deadline: deadline ? deadline.toISOString() : null,
-        time: now.toISOString(),
-      };
-      activeUser.usertasks.push(newTask);
-    }
-    users = users.map((u: any) => (u.username === activeUser.username ? activeUser : u));
-    await AsyncStorage.setItem("users", JSON.stringify(users));
-    await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+    if (task.trim() === "" || description.trim() === "") {
       showMessage({
-        message: "Muvaffaqiyatli !",
+        message: "Vazifa nomi va description bo‘sh bo‘lishi mumkin emas",
+        type: "warning",
+      });
+      return;
+    }
+
+    try {
+      const activeUserStr = await AsyncStorage.getItem("activeUser");
+      if (!activeUserStr) return;
+      const activeUser = JSON.parse(activeUserStr);
+      if (!Array.isArray(activeUser.usertasks)) activeUser.usertasks = [];
+
+      const storedUsers = await AsyncStorage.getItem("users");
+      let users = storedUsers ? JSON.parse(storedUsers) : [];
+
+      const chosenStatus = selected ?? (taskToEdit ? taskToEdit.status : 0);
+      const chosenDeleted = isActive !== null ? isActive : (taskToEdit ? taskToEdit.isDeleted : false);
+      const chosenFiles = attachments.length > 0 ? attachments : (taskToEdit ? taskToEdit.files : []);
+
+      if (taskToEdit) {
+        // Edit existing task
+        activeUser.usertasks = activeUser.usertasks.map((t: Task) =>
+          t.id === taskToEdit.id
+            ? {
+                ...t,
+                title: task,
+                description,
+                deadline: deadline ? deadline.toISOString() : null,
+                status: chosenStatus,
+                isDeleted: chosenDeleted,
+                files: chosenFiles,
+              }
+            : t
+        );
+      } else {
+        // New task
+        const now = new Date();
+        const newTask: Task = {
+          id: Date.now().toString(),
+          title: task,
+          description,
+          done: false,
+          deadline: deadline ? deadline.toISOString() : null,
+          time: now.toISOString(),
+          status: chosenStatus,
+          isDeleted: chosenDeleted,
+          files: chosenFiles,
+        };
+        activeUser.usertasks.push(newTask);
+      }
+
+      // Update users array
+      const idx = users.findIndex((u: any) => u.username === activeUser.username);
+      if (idx >= 0) {
+        users[idx] = activeUser;
+      } else {
+        users.push(activeUser);
+      }
+
+      await AsyncStorage.setItem("users", JSON.stringify(users));
+      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+
+      showMessage({
+        message: "Muvaffaqiyatli saqlandi!",
         type: "success",
         icon: "success",
       });
-    navigation.goBack();
-  } catch (e) {
-    showMessage({
-      message: e,
-      type: "danger",
-      icon: "danger",
-    });
-  }
-};
 
+      navigation.goBack();
+    } catch (e) {
+      showMessage({
+        message: String(e),
+        type: "danger",
+        icon: "danger",
+      });
+    }
+  };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>
-          {taskToEdit ? "Vazifani Tahrirlash" : "Yangi Vazifa Qo‘shish"}
-        </Text>
-
-        <TextField
-          label="Vazifa"
-          value={task}
-          onChangeText={setTask}
-          placeholder="Vazifa nomi"
-        />
-        <TextField
-          label="Description"
-          value={description}
-          onChangeText={setDescription}
-          placeholder="Enter description..."
-          multiline={true}
-        />
-        <View style={styles.deadlineContainer}>
-          <TouchableOpacity
-            style={styles.dateButton}
-            onPress={() => setShowPicker(true)}
-          >
-            <Text style={styles.dateText}>
-              {deadline ? deadline.toLocaleDateString() : "Deadline belgilanmadi"}
+      <View style={{flex: 1}}>
+        <KeyboardAwareScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "flex-end", paddingTop: 40, paddingBottom: 30, paddingHorizontal: 10 }}
+          enableOnAndroid={true}
+          extraHeight={100}
+          keyboardShouldPersistTaps="handled"
+        >
+            <Text style={styles.title}>
+              {taskToEdit ? "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
             </Text>
-          </TouchableOpacity>
 
-          {deadline && (
-            <TouchableOpacity
-              style={styles.clearButton}
-              onPress={() => setDeadline(null)}
-            >
-              <Text style={styles.clearText}>X</Text>
+            <View style={styles.containerInputs}>
+              <TextField
+                label="Vazifa"
+                value={task}
+                onChangeText={setTask}
+                placeholder="Vazifa nomi"
+              />
+              <TextField
+                label="Batafsil izoh"
+                value={description}
+                onChangeText={setDescription}
+                placeholder="Enter description..."
+                multiline={true}
+                minHeight={100}
+              />
+              <View style={styles.selectsBox}>
+                {options.map((option) => (
+                  <SingleCheckBox
+                    key={option.id}
+                    label={option.text}
+                    value={selected === option.id}
+                    onChange={() => setSelected(option.id)}
+                    color={option.color}
+                  />
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.containerInputs}>
+              <FilePickerComponent
+                  onChange={setAttachments}
+                  initialFiles={taskToEdit ? taskToEdit.files : []}
+              />
+            </View>
+
+            <View style={styles.deadlineContainer}>
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setShowPicker(true)}
+              >
+                <Text style={styles.dateText}>
+                  {deadline ? deadline.toLocaleDateString() : "Deadline belgilanmadi"}
+                </Text>
+              </TouchableOpacity>
+
+              {deadline && (
+                <TouchableOpacity
+                  style={styles.clearButton}
+                  onPress={() => setDeadline(null)}
+                >
+                  <Text style={styles.clearText}>X</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            {showPicker && (
+              <DateTimePicker
+                value={deadline || new Date()}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                minimumDate={new Date()}
+                onChange={(event, selectedDate) => {
+                  setShowPicker(false);
+                  if (selectedDate) setDeadline(selectedDate);
+                }}
+              />
+            )}
+
+            <View>
+              <Toggle value={isActive} onChange={setIsActive} />
+            </View>
+
+            <TouchableOpacity style={styles.addButton} onPress={saveTask}>
+              <Text style={styles.addText}>{taskToEdit ? "Saqlash" : "Qo‘shish"}</Text>
             </TouchableOpacity>
-          )}
-        </View>
-
-        {showPicker && (
-          <DateTimePicker
-            value={deadline || new Date()}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
-            minimumDate={new Date()}
-            onChange={(event, selectedDate) => {
-              setShowPicker(false);
-              if (selectedDate) setDeadline(selectedDate);
-            }}
-          />
-        )}
-
-        <TouchableOpacity style={styles.addButton} onPress={saveTask}>
-          <Text style={styles.addText}>{taskToEdit ? "Saqlash" : "Qo‘shish"}</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
+  selectsBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginVertical: 12,
+    paddingHorizontal: 2
+  },
   container: {
-    padding: 20,
-    paddingBottom: 40,
+    padding: 10,
     backgroundColor: "#f5f5f5",
     flexGrow: 1,
     justifyContent: "flex-end",
   },
+  containerInputs: {
+    marginTop:20,
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
     textAlign: "center",
   },
   deadlineContainer: {

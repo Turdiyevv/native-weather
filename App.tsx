@@ -35,9 +35,6 @@ const App: React.FC = () => {
     useEffect(() => {
         checkUsers();
     }, []);
-
-
-  // Hali aniqlanmagan bo‘lsa, hech nima chizmay turamiz
   if (!initialRoute) return null;
   return (
       <>
@@ -91,18 +88,16 @@ const App: React.FC = () => {
 const styles = StyleSheet.create({
     flashWrapper: {
       position: "absolute",
-      top: 40,
+      top: 37,
       width: "100%",
-      alignItems: "center",
       zIndex: 9999,
     },
-
     flashBox: {
         marginHorizontal:20,
-        borderRadius: 18,
-        overflow: "hidden",
-        paddingVertical: 6,
-        paddingHorizontal: 17,
+        flex: 1,
+        paddingVertical:10,
+        borderRadius: 16,
+        opacity: 0.95,
     },
 })
 export default App;
