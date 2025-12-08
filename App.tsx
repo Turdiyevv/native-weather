@@ -16,6 +16,7 @@ import CustomHeader from "./components/CustomHeader";
 import {Platform, StatusBar, View, StyleSheet} from "react-native";
 import LoginCodePage from "./pages/LoginCodePage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DeletedTasks from "./pages/DeletedTasks";
 
 enableScreens();
 
@@ -73,6 +74,7 @@ const App: React.FC = () => {
             <Stack.Screen name="Chat" options={{ headerShown: false }} component={ChatPage} />
             <Stack.Screen name="Support" options={{ headerShown: false }} component={SupportPage} />
             <Stack.Screen name="Bussiness" options={{ headerShown: false }} component={Bussiness} />
+            <Stack.Screen name="DeletedTasks" options={{ headerShown: false }} component={DeletedTasks} />
           </Stack.Navigator>
 
           <View style={styles.flashWrapper}>

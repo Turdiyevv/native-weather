@@ -16,7 +16,7 @@ import {showMessage} from "react-native-flash-message";
 import ConfirmModal from "../components/ConfirmModal";
 import AdminIcon from "../assets/admin_icon.png";
 
-export default function MainPage({ navigation }) {
+export default function DeletedTasks({ navigation }) {
   const [tasks, setTasks] = useState<any[]>([]);
   const [firstName, setFirstName] = useState("");
   const [username, setUsername] = useState("");
@@ -182,7 +182,7 @@ export default function MainPage({ navigation }) {
   };
 
   const groupedTasks = tasks
-    .filter(t => !t?.isDeleted)
+    .filter(t => t?.isDeleted)
     .slice()
     .reverse()
     .reduce((acc, task) => {
@@ -237,7 +237,7 @@ export default function MainPage({ navigation }) {
             <View style={{ padding: 20, alignItems: "center" }}>
               <Image source={AdminIcon} style={styles.icon} />
               <Text style={{ fontSize: 16, color: "#555" }}>
-                Vazifalaringiz ro'yxati chiqadi
+                O'chirilgan vazifalaringiz ro'yxati chiqadi.
               </Text>
             </View>
           )}
@@ -279,14 +279,16 @@ export default function MainPage({ navigation }) {
                     color={task.done ? "orange" : "green"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton} onPress={() => editTask(task)}>
+                <TouchableOpacity style={task?.isDeleted ? styles.menuButtonDel : styles.menuButton} onPress={() => editTask(task)}>
                   <Text style={styles.menuText}>Tahrirlash</Text>
                   <Ionicons name="create-outline" size={20} color="blue" />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButtonDel} onPress={() => setModalVisible(true)}>
-                  <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
-                  <Ionicons name="trash-outline" size={20} color="red" />
-                </TouchableOpacity>
+                {!task?.isDeleted && (
+                  <TouchableOpacity style={styles.menuButtonDel} onPress={() => setModalVisible(true)}>
+                    <Text style={[styles.menuText, { color: "red" }]}>{task?.isDeleted}O'chirish</Text>
+                    <Ionicons name="trash-outline" size={20} color="red" />
+                  </TouchableOpacity>
+                )}
               </Animated.View>
 
               <ConfirmModal
@@ -303,23 +305,10 @@ export default function MainPage({ navigation }) {
             </TouchableOpacity>
           );
         })()}
-
         <View style={styles.leftButtons}>
           <View style={styles.buttonBox}>
-            <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("ProfileView")}>
-              <Ionicons name="person-circle-outline" size={32} color="#121" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("Chat")}>
-              <Ionicons name="chatbubble-outline" size={32} color="#121" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("Support")}>
-              <Ionicons name="help-circle-outline" size={32} color="#121" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("DeletedTasks")}>
-              <Ionicons name="trash-outline" size={32} color="#121" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("AddPage")}>
-              <Text style={styles.addText}>+</Text>
+            <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("MainPage")}>
+              <Ionicons name="home-outline" size={32} color="#121" />
             </TouchableOpacity>
           </View>
         </View>
@@ -329,40 +318,14 @@ export default function MainPage({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f5f5" },
-  containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
-  bar:{height: 35, width: "100%"},
-  header: { borderColor: "#121", borderBottomWidth: 1, borderRightWidth: 1, borderBottomEndRadius: 25, borderTopEndRadius: 24, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  username: { fontSize: 22, fontWeight: "bold" },
-  keyUsername: { fontSize: 12, color: 'gray' },
-  avatar: {borderColor: "#121", borderWidth: 2, backgroundColor: "#121", width: 50, height: 50, margin:1, borderRadius: 25 },
-  icon: {
-    width: 200,
-    height: 200,
-    resizeMode: "contain",
-  },
-  addButton: {
-    backgroundColor: "#121",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    marginLeft: "auto"
-  },
-  addText: { color: "white", fontSize: 32 },
   leftButtons: {
     height: 100, borderTopLeftRadius: 35, borderTopEndRadius: 35,
-    width: "100%", marginHorizontal: 10, backgroundColor: "rgba(18, 18, 18, 0.01)", position: "absolute",
+    marginHorizontal: 10, backgroundColor: "rgba(18, 18, 18, 0)", position: "absolute",
     bottom: 0, flexDirection: "row", alignItems: "flex-start"
   },
   buttonBox: {
     borderRadius:40, padding:10,
-    width: "100%", backgroundColor: "rgba(195,194,194,0.3)",
+    backgroundColor: "rgba(195,194,194,0.3)",
     flexDirection: "row", gap: 15
   },
   sideButton: {
@@ -376,6 +339,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
+  },
+  container: { flex: 1, backgroundColor: "#f5f5f5" },
+  containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
+  bar:{height: 35, width: "100%"},
+  header: { borderColor: "#121", borderBottomWidth: 1, borderRightWidth: 1, borderBottomEndRadius: 25, borderTopEndRadius: 24, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  username: { fontSize: 22, fontWeight: "bold" },
+  keyUsername: { fontSize: 12, color: 'gray' },
+  avatar: {borderColor: "#121", borderWidth: 2, backgroundColor: "#121", width: 50, height: 50, margin:1, borderRadius: 25 },
+  icon: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
   },
   sectionHeader: {
     fontSize: 11,

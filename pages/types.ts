@@ -8,4 +8,5 @@ export type RootStackParamList = {
   Support: undefined;
   Bussiness: undefined;
   LoginCodePage: undefined;
+  DeletedTasks: undefined;
 };
