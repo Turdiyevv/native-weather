@@ -18,6 +18,7 @@ import { logout } from "../utills/LogOut";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "../components/ConfirmModal";
 import {showMessage} from "react-native-flash-message";
+import PasswordCodeInput from "../components/PasswordCodeInput";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -29,6 +30,10 @@ export function ProfileViewPage() {
   const avatarAnim = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [passwordCode, setPasswordCode] = useState("");
+  const [statusTitle, setStatusTitle] = useState("");
+  const [statusColor, setStatusColor] = useState("");
+  const [passwordBoxVisible, setPasswordBoxVisible] = useState(false);
 
   const loadActiveUser = async () => {
     try {
@@ -102,6 +107,9 @@ export function ProfileViewPage() {
     });
     navigation.replace("LoginPage");
   };
+  const openPasswordBox = async () => {
+    setPasswordBoxVisible(!passwordBoxVisible);
+  }
 
   return (
     <ScrollView
@@ -146,6 +154,22 @@ export function ProfileViewPage() {
       </View>
 
       <View style={styles.infoBox}>
+        <View style={styles.btns}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => navigation.navigate("ProfileEdit")}
+          >
+            <Text style={styles.editText}>Tahrirlash</Text>
+            <Ionicons name="pencil" size={14} color="#121" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.outButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.outText}>Chiqish</Text>
+            <Ionicons name="log-out" size={14} color="red" />
+          </TouchableOpacity>
+        </View>
         <Text style={styles.label}>Telefon:</Text>
         <Text style={styles.value}>{user?.phone}</Text>
 
@@ -158,9 +182,12 @@ export function ProfileViewPage() {
 
       <View style={styles.infoBox}>
         <View style={styles.settingsText}>
-          <Ionicons name="settings" size={24} color="#555"/>
+          <Ionicons name="settings" size={20} color="#555"/>
           <Text style={styles.settingsTitle}>Sozlamalar</Text>
         </View>
+        <TouchableOpacity onPress={openPasswordBox}>
+          <Text style={styles.loginCode}>Oson kirish kodi</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={deleteAccount}>
           <Text style={styles.deleteText}>Hisobni butunlay o'chirish</Text>
         </TouchableOpacity>
@@ -169,22 +196,60 @@ export function ProfileViewPage() {
         {/*</TouchableOpacity>*/}
       </View>
 
-      <View style={styles.btns}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate("ProfileEdit")}
-        >
-          <Text style={styles.editText}>Tahrirlash</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.outButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.outText}>Chiqish</Text>
-        </TouchableOpacity>
-      </View>
 
-      {/* Logout confirm modal */}
+      {passwordBoxVisible && (
+        <View style={styles.infoBox}>
+          <PasswordCodeInput
+            onComplete={async (code) => {
+              setPasswordCode(code);
+
+              const activeUserStr = await AsyncStorage.getItem("activeUser");
+              const activeUser = activeUserStr ? JSON.parse(activeUserStr) : null;
+              if (!activeUser) return;
+
+              const usersStr = await AsyncStorage.getItem("users");
+              let users = usersStr ? JSON.parse(usersStr) : [];
+
+              // Kod boshqa userlarda mavjudligini tekshirish
+              const isCodeTaken = users.some(
+                (u: any) => u.username !== activeUser.username && u.passwordCode === code
+              );
+
+              if (isCodeTaken) {
+                setStatusTitle("⚠ Allaqachon egallangan");
+                setStatusColor("orange");
+                setTimeout(() => {
+                  setStatusTitle("");
+                  setStatusColor("");
+                }, 2000);
+                return;
+              }
+
+              // Agar kod erkin bo‘lsa, activeUser ga qo‘shish
+              activeUser.passwordCode = code;
+              const updatedUsers = users.map((u: any) =>
+                u.username === activeUser.username ? activeUser : u
+              );
+
+              await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
+              await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+
+              setStatusTitle("✔ Tasdiqlandi");
+              setStatusColor("green");
+              setTimeout(() => {
+                setStatusTitle("");
+                setStatusColor("");
+                openPasswordBox();
+              }, 2000);
+            }}
+            title={statusTitle}
+            color={statusColor}
+          />
+          <TouchableOpacity onPress={openPasswordBox}>
+            <Text style={styles.closeBox}>Yopish</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <ConfirmModal
         visible={modalVisible}
         message="Ishonchingiz komilmi?"
@@ -194,7 +259,6 @@ export function ProfileViewPage() {
         }}
         onCancel={() => setModalVisible(false)}
       />
-      {/* Delete account confirm modal */}
       <ConfirmModal
         visible={deleteModalVisible}
         message="Hisobni butunlay o‘chirmoqchimisiz?"
@@ -238,23 +302,31 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   editButton: {
-    backgroundColor: "#121",
-    padding: 10,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#bcddbc",
+    padding: 6,
     borderRadius: 10,
     width: "48%",
     alignItems: "center"
   },
   outButton: {
-    backgroundColor: "#fff",
-    padding: 10,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#fbd1d1",
+    padding: 6,
     borderRadius: 10,
     width: "48%",
     alignItems: "center"
   },
-  editText: { color: "white", fontSize: 18 },
-  outText: { color: "red", fontSize: 18 },
+  editText: { color: "#121", fontSize: 14 },
+  outText: { color: "red", fontSize: 14 },
   settings: { marginTop: 20 },
-  settingsText: { flexDirection: "row", justifyContent: "flex-start" },
-  settingsTitle: { fontSize: 18, marginLeft: 3, marginBottom: 8 },
-  deleteText: { color: "red", fontSize: 16, textDecorationLine: "underline" },
+  settingsText: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginBottom: 8 },
+  settingsTitle: { fontSize: 18, marginLeft: 3 },
+  loginCode: { color: "blue", fontSize: 17, textDecorationLine: "underline" },
+  deleteText: { color: "red", fontSize: 17, textDecorationLine: "underline",marginTop:10 },
+  closeBox: { color: "red", fontSize: 16, marginTop: 6, justifyContent: "center", marginHorizontal: "auto" },
 });

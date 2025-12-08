@@ -3,11 +3,10 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 
 export const logout = async (navigation: any) => {
   try {
-    // await AsyncStorage.clear();
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: "LoginPage" }],
+        routes: [{ name: "LoginCodePage" }],
       })
     );
   } catch (error) {

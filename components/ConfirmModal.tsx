@@ -41,12 +41,12 @@ export default function ConfirmModal({ visible, message, onConfirm, onCancel }: 
 const styles = StyleSheet.create({
     divider: {
       width: 1,
-      backgroundColor: "#e8e8e8",
+      backgroundColor: "#cdcdcd",
       marginVertical: 3,
     },
   overlay: {
     flex:1,
-    backgroundColor: "rgba(108,108,108,0.58)",
+    backgroundColor: "rgba(60,60,60,0.58)",
     justifyContent:"center",
     alignItems:"center",
   },
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   canBtnText: {
-    color: "gray",
+    color: "#000",
     fontSize: 16,
   },
   btnText: {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from "react-native-screens";
@@ -14,12 +14,31 @@ import { RootStackParamList } from "./pages/types";
 import FlashMessage from "react-native-flash-message";
 import CustomHeader from "./components/CustomHeader";
 import {Platform, StatusBar, View, StyleSheet} from "react-native";
+import LoginCodePage from "./pages/LoginCodePage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 enableScreens();
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App: React.FC = () => {
+    const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList | null>(null);
+    const checkUsers = async () => {
+      const usersStr = await AsyncStorage.getItem("users");
+      const users = usersStr ? JSON.parse(usersStr) : [];
+      if (users.length > 0) {
+        setInitialRoute("LoginCodePage");
+      } else {
+        setInitialRoute("LoginPage");
+      }
+    };
+    useEffect(() => {
+        checkUsers();
+    }, []);
+
+
+  // Hali aniqlanmagan bo‘lsa, hech nima chizmay turamiz
+  if (!initialRoute) return null;
   return (
       <>
         <StatusBar
@@ -28,11 +47,12 @@ const App: React.FC = () => {
         />
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="LoginPage"
+            initialRouteName={initialRoute}
             screenOptions={{
               headerShown: true,
             }}
           >
+            <Stack.Screen options={{ headerShown: false }} name="LoginCodePage" component={LoginCodePage} />
             <Stack.Screen options={{ headerShown: false }} name="LoginPage" component={LoginPage} />
             <Stack.Screen
               name="MainPage"

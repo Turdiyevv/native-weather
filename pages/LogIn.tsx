@@ -6,7 +6,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView, BackHandler
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
@@ -17,6 +17,7 @@ import {maskPassword} from "../utills/utill";
 export default function LoginPage({ navigation }: any) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordCode, setPasswordCode] = useState("");
   const [userCount, setUserCount] = useState(0);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [pass, setPass] = useState("");
@@ -29,8 +30,23 @@ export default function LoginPage({ navigation }: any) {
     loadCount();
   }, []);
 
+  useEffect(() => {
+    const onBackPress = () => {
+      navigation.replace("LoginCodePage");
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress
+    );
+    return () => backHandler.remove();
+  }, []);
+
   const handleLogin = async () => {
     if (!username.trim() || !password.trim()) {
+      return;
+    }
+    if (username.trim().length < 6 || password.trim().length < 6) {
       return;
     }
     try {
@@ -59,7 +75,6 @@ export default function LoginPage({ navigation }: any) {
         });
         return;
       }
-
       const userToSet = existingUser || null;
       if (userToSet) {
         await AsyncStorage.setItem("activeUser", JSON.stringify(userToSet));
@@ -88,7 +103,7 @@ export default function LoginPage({ navigation }: any) {
         <View style={styles.container}>
           <Text style={styles.title}>Xush kelibsiz!</Text>
           <View style={styles.countBox}>
-            <Text style={styles.count}>Ro‘yxat: {userCount} / 3</Text>
+            <Text style={styles.count}>Hisoblar: {userCount} / 3</Text>
             <Text style={styles.pass}> {pass}</Text>
           </View>
           <TextField
@@ -96,6 +111,7 @@ export default function LoginPage({ navigation }: any) {
             value={username}
             onChangeText={setUsername}
             required
+            minLength={6}
           />
           <TextField
             label={"password"}
@@ -103,6 +119,7 @@ export default function LoginPage({ navigation }: any) {
             secureTextEntry
             onChangeText={setPassword}
             required
+            minLength={6}
           />
           <TouchableOpacity style={styles.btn} onPress={handleLogin}>
             <Text style={styles.btnText}>Kirish</Text>
@@ -119,6 +136,7 @@ export default function LoginPage({ navigation }: any) {
             const newUser = {
               username,
               password,
+              passwordCode,
               userinfo: {
                 firstName: "",
                 lastName: "",

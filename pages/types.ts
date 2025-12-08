@@ -7,4 +7,5 @@ export type RootStackParamList = {
   Chat: undefined;
   Support: undefined;
   Bussiness: undefined;
+  LoginCodePage: undefined;
 };

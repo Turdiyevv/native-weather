@@ -209,7 +209,7 @@ export default function MainPage({ navigation }) {
             )}
           </TouchableOpacity>
         </View>
-        <SectionList
+        <SectionList style={{marginBottom: 65}}
           sections={groupedTasks}
           keyExtractor={(item) => item.id}
           renderSectionHeader={({ section }) => (

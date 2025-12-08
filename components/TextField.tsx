@@ -8,6 +8,7 @@ interface TextFieldProps extends TextInputProps {
   placeholder?: string;
   required?: boolean;
   errorMessage?: string;
+  minLength?: number;
 }
 
 export default function TextField({
@@ -17,11 +18,13 @@ export default function TextField({
   placeholder,
   required = false,
   errorMessage = "Bu maydon to‘ldirilishi shart!",
+  minLength = 6,
   ...rest
 }: TextFieldProps) {
   const [touched, setTouched] = useState(false);
 
   const showError = required && touched && value.trim().length === 0;
+  const showMinLengthError = touched && value.length > 0 && value.length < minLength;
 
   return (
     <View style={{ width: "100%", marginBottom: 10 }}>
@@ -33,7 +36,7 @@ export default function TextField({
         style={[
           styles.input,
             { color: "#121" },
-          showError && styles.errorBorder
+          (showError || showMinLengthError) && styles.errorBorder
         ]}
         cursorColor="#000"
         selectionColor="#000"
@@ -49,6 +52,11 @@ export default function TextField({
 
       {showError && (
         <Text style={styles.errorText}>{errorMessage}</Text>
+      )}
+      {showMinLengthError && (
+        <Text style={styles.errorText}>
+          {label} kamida {minLength} ta belgi bo'lishi kerak
+        </Text>
       )}
     </View>
   );
