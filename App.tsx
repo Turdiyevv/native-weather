@@ -12,8 +12,7 @@ import Bussiness from "./pages/Bussiness";
 import LoginPage from "./pages/LogIn";
 import { RootStackParamList } from "./pages/types";
 import FlashMessage from "react-native-flash-message";
-import CustomHeader from "./components/CustomHeader";
-import {Platform, StatusBar, View, StyleSheet} from "react-native";
+import {Platform, StatusBar, View, StyleSheet, AppState} from "react-native";
 import LoginCodePage from "./pages/LoginCodePage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DeletedTasks from "./pages/DeletedTasks";
@@ -24,84 +23,99 @@ enableScreens();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App: React.FC = () => {
+    const navigationRef = React.useRef<any>(null);
     const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList | null>(null);
+    const lastTimeRef = React.useRef<number>(Date.now());
+
+    // 🔥 To'g'irlangan AppState lock/unlock detektori
+    useEffect(() => {
+        let lastState = AppState.currentState;
+
+        const sub = AppState.addEventListener("change", (nextState) => {
+            if (nextState === "background" || nextState === "inactive") {
+                lastTimeRef.current = Date.now();
+            }
+
+            if (lastState !== "active" && nextState === "active") {
+                const now = Date.now();
+                const diff = now - lastTimeRef.current;
+
+                if (diff > 2000) {
+                    navigationRef.current?.navigate("LoginCodePage");
+                }
+            }
+
+            lastState = nextState;
+        });
+
+        return () => sub.remove();
+    }, []);
+
     const checkUsers = async () => {
-      const usersStr = await AsyncStorage.getItem("users");
-      const users = usersStr ? JSON.parse(usersStr) : [];
-      if (users.length > 0) {
-        setInitialRoute("LoginCodePage");
-      } else {
-        setInitialRoute("LoginPage");
-      }
+        const usersStr = await AsyncStorage.getItem("users");
+        const users = usersStr ? JSON.parse(usersStr) : [];
+        if (users.length > 0) {
+            setInitialRoute("LoginCodePage");
+        } else {
+            setInitialRoute("LoginPage");
+        }
     };
+
     useEffect(() => {
         checkUsers();
     }, []);
-  if (!initialRoute) return null;
-  return (
-      <>
-        <StatusBar
-            barStyle={Platform.OS === "ios" ? "light-content" : "dark-content"}
-            backgroundColor="#121"
-        />
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName={initialRoute}
-            screenOptions={{
-              headerShown: true,
-            }}
-          >
-            <Stack.Screen options={{ headerShown: false }} name="LoginCodePage" component={LoginCodePage} />
-            <Stack.Screen options={{ headerShown: false }} name="LoginPage" component={LoginPage} />
-            <Stack.Screen
-              name="MainPage"
-              component={MainPage}
-              options={{ headerShown: false }}
-              // options={{
-              //   header: () => (
-              //     <CustomHeader
-              //       title="Vega Chat"
-              //       rightIconName="user"
-              //       onRightPress={() => console.log("Profile")}
-              //     />
-              //   ),
-              // }}
+
+    if (!initialRoute) return null;
+
+    return (
+        <>
+            <StatusBar
+                barStyle={Platform.OS === "ios" ? "light-content" : "dark-content"}
+                backgroundColor="#121"
             />
+            <NavigationContainer ref={navigationRef}>
+                <Stack.Navigator
+                    initialRouteName={initialRoute}
+                    screenOptions={{
+                        headerShown: true,
+                    }}
+                >
+                    <Stack.Screen options={{ headerShown: false }} name="LoginCodePage" component={LoginCodePage} />
+                    <Stack.Screen options={{ headerShown: false }} name="LoginPage" component={LoginPage} />
+                    <Stack.Screen name="MainPage" component={MainPage} options={{ headerShown: false }} />
+                    {/* Pages */}
+                    <Stack.Screen name="AddPage" options={{ headerShown: false }} component={AddPage} />
+                    <Stack.Screen name="ProfileView" options={{ headerShown: false }} component={ProfileViewPage} />
+                    <Stack.Screen name="ProfileEdit" options={{ headerShown: false }} component={ProfilePage} />
+                    <Stack.Screen name="Chat" options={{ headerShown: false }} component={ChatPage} />
+                    <Stack.Screen name="Support" options={{ headerShown: false }} component={SupportPage} />
+                    <Stack.Screen name="Bussiness" options={{ headerShown: false }} component={Bussiness} />
+                    <Stack.Screen name="DeletedTasks" options={{ headerShown: false }} component={DeletedTasks} />
+                    <Stack.Screen name="DoneTasks" options={{ headerShown: false }} component={DoneTasks} />
+                </Stack.Navigator>
 
-            {/* Other Pages */}
-            <Stack.Screen name="AddPage" options={{ headerShown: false }} component={AddPage} />
-            <Stack.Screen name="ProfileView" options={{ headerShown: false }} component={ProfileViewPage} />
-            <Stack.Screen name="ProfileEdit" options={{ headerShown: false }} component={ProfilePage} />
-            <Stack.Screen name="Chat" options={{ headerShown: false }} component={ChatPage} />
-            <Stack.Screen name="Support" options={{ headerShown: false }} component={SupportPage} />
-            <Stack.Screen name="Bussiness" options={{ headerShown: false }} component={Bussiness} />
-            <Stack.Screen name="DeletedTasks" options={{ headerShown: false }} component={DeletedTasks} />
-            <Stack.Screen name="DoneTasks" options={{ headerShown: false }} component={DoneTasks} />
-          </Stack.Navigator>
-
-          <View style={styles.flashWrapper}>
-              <FlashMessage
-                position="top"
-                style={styles.flashBox}
-              />
-          </View>
-        </NavigationContainer>
-      </>
-  );
+                <View style={styles.flashWrapper}>
+                    <FlashMessage position="top" style={styles.flashBox} />
+                </View>
+            </NavigationContainer>
+        </>
+    );
 };
+
 const styles = StyleSheet.create({
     flashWrapper: {
-      position: "absolute",
-      top: 37,
-      width: "100%",
-      zIndex: 9999,
+        position: "absolute",
+        top: 37,
+        width: "100%",
+        zIndex: 9999,
     },
     flashBox: {
-        marginHorizontal:20,
+        marginHorizontal: 20,
         flex: 1,
-        paddingVertical:10,
+        paddingVertical: 10,
         borderRadius: 16,
         opacity: 0.95,
     },
-})
+});
+
 export default App;

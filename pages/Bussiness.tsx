@@ -1,50 +1,84 @@
-import React from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import React, {useEffect} from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    ImageBackground,
+    Image,
+    BackHandler,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform
+} from 'react-native';
+import AdminIcon from "../assets/admin_icon.png";
+import {RootStackParamList} from "./types";
+import {useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
+type SupportNav = NativeStackNavigationProp<RootStackParamList, "Bussiness">;
 export default function BackdropFilterExample() {
+  const navigation = useNavigation<SupportNav>();
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate("ProfileView");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+
   return (
-    <ImageBackground
-      source={{ uri: 'picsum.photos' }}
+    <KeyboardAvoidingView
       style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
-      <View style={styles.content}>
-        <View style={styles.blurContainer}>
-          <Text style={styles.text}>Bizness</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <Image source={AdminIcon} style={styles.icon} />
+          <Text style={styles.description}>
+            Bu yerda biznesingiz bo'yicha qulay hisobotlar yig'ishingiz mumkin.
+          </Text>
         </View>
-      </View>
-    </ImageBackground>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#f5f5f5",
   },
-  content: {
-    // Bu View xiralashtirish konteynerining fon ustida joylashishini ta'minlaydi
-    justifyContent: 'center',
-    alignItems: 'center',
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 30,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  icon: {
     width: 200,
-    height: 150,
-    borderRadius: 10,
-    overflow: 'hidden', // Xiralashish effekti chegara radiusiga moslashishi uchun zarur
+    height: 200,
+    resizeMode: "contain",
   },
-  blurContainer: {
-    flex: 1,
-    // "Glassmorphism" ko'rinishi uchun yarim shaffof fon rangi qo'shing
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10
-  },
+  description: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 15,
+    color: "#555",
+  }
 });

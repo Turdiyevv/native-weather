@@ -2,20 +2,29 @@ import React, {useEffect, useState} from "react";
 import {View, Text, TouchableOpacity, StyleSheet, Vibration} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 
-export default function PasswordCodeInput({ onComplete, title, color, status }: any) {
+export default function PasswordCodeInput({ onComplete, title, color, status, autoSubmit = false, borderStyle={} }: any) {
   const [code, setCode] = useState<string>("");
+
   useEffect(() => {
     if (status === true) {
       setCode("");
     }
   }, [status]);
+
   const handlePress = (digit: string) => {
     if (code.length >= 4) return;
+
     const newCode = code + digit;
     setCode(newCode);
     Vibration.vibrate(30);
-
+    if (newCode.length === 4 && autoSubmit) {
+      setTimeout(() => {
+        onComplete(newCode);
+      }, 150);
+      Vibration.vibrate(40);
+    }
   };
+
   const getCode = () => {
     if (code.length === 4) {
       setTimeout(() => {
@@ -23,7 +32,8 @@ export default function PasswordCodeInput({ onComplete, title, color, status }: 
       }, 150);
       Vibration.vibrate(40);
     }
-  }
+  };
+
   const handleDelete = () => {
     setCode(code.slice(0, -1));
     Vibration.vibrate(40);
@@ -34,34 +44,35 @@ export default function PasswordCodeInput({ onComplete, title, color, status }: 
       {/* 4 ta katak */}
       <View style={styles.codeRow}>
         {[0, 1, 2, 3].map((i) => (
-          <View key={i} style={styles.codeBox}>
+          <View key={i} style={[styles.codeBox, borderStyle]}>
             <Text style={styles.codeText}>{code[i] || ""}</Text>
           </View>
         ))}
       </View>
-        {title ? (
-            <Text style={[styles.title, {color: color}]}>{title}</Text>
-        ) :
-        <Text style={styles.title}>Tezkor kod</Text>}
+
+      {title ? (
+        <Text style={[styles.title, {color: color}]}>{title}</Text>
+      ) : (
+        <Text style={styles.title}>Tezkor kod</Text>
+      )}
+
       <View style={styles.keyboard}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-          <TouchableOpacity
-            key={n}
-            style={styles.key}
-            onPress={() => handlePress(String(n))}
-          >
+          <TouchableOpacity key={n} style={styles.key} onPress={() => handlePress(String(n))}>
             <Text style={styles.keyText}>{n}</Text>
           </TouchableOpacity>
         ))}
 
-        <TouchableOpacity style={styles.key} onPress={() => getCode()}>
-            <Ionicons style={styles.keyText} name="checkbox-outline" color="green"/>
+        <TouchableOpacity style={styles.key} onPress={getCode}>
+          <Ionicons style={styles.keyText} name="checkbox-outline" color="green" />
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.key} onPress={() => handlePress("0")}>
           <Text style={styles.keyText}>0</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.key} onPress={handleDelete}>
-            <Ionicons style={styles.keyText} name="backspace-outline"/>
+          <Ionicons style={styles.keyText} name="backspace-outline" />
         </TouchableOpacity>
       </View>
     </View>
@@ -76,9 +87,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 10,
   },
-  title:{
-      marginBottom:10,
+
+  title: {
+    marginBottom: 10,
   },
+
   codeBox: {
     width: 50,
     height: 50,
@@ -89,6 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   codeText: {
     fontSize: 28,
     fontWeight: "500",
@@ -101,21 +115,19 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "center",
   },
+
   key: {
     width: "30%",
     paddingVertical: 15,
     margin: "1.5%",
-    backgroundColor: "#eee",
+    backgroundColor: "#eae9e9",
     borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
   },
+
   keyText: {
     fontSize: 26,
     fontWeight: "600",
-  },
-  keyEmpty: {
-    width: "30%",
-    margin: "1.5%",
   },
 });

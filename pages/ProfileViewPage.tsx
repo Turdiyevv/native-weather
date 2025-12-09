@@ -34,6 +34,7 @@ export function ProfileViewPage() {
   const [statusTitle, setStatusTitle] = useState("");
   const [statusColor, setStatusColor] = useState("");
   const [passwordBoxVisible, setPasswordBoxVisible] = useState(false);
+  const [borderStyle, setBorderStyle] = useState({});
 
   const loadActiveUser = async () => {
     try {
@@ -191,12 +192,15 @@ export function ProfileViewPage() {
         <TouchableOpacity onPress={() => navigation.navigate("Support")}>
           <Text style={styles.loginCode}>Biz haqimizda.</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+          <Text style={styles.loginCode}>Chat bo'limi</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Bussiness")}>
+          <Text style={styles.loginCode}>Beznis bo'limi</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={deleteAccount}>
           <Text style={styles.deleteText}>Hisobni butunlay o'chirish</Text>
         </TouchableOpacity>
-        {/*<TouchableOpacity onPress={() => navigation.navigate("Bussiness")}>*/}
-        {/*  <Text style={styles.deleteText}>Blur</Text>*/}
-        {/*</TouchableOpacity>*/}
       </View>
 
 
@@ -220,11 +224,13 @@ export function ProfileViewPage() {
 
               if (isCodeTaken) {
                 setStatusTitle("⚠ Allaqachon egallangan");
+                setBorderStyle({borderColor: "orange"});
                 setStatusColor("orange");
                 setTimeout(() => {
+                  setBorderStyle({});
                   setStatusTitle("");
                   setStatusColor("");
-                }, 2000);
+                }, 1000);
                 return;
               }
 
@@ -238,15 +244,19 @@ export function ProfileViewPage() {
               await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
 
               setStatusTitle("✔ Tasdiqlandi");
+              setBorderStyle({borderColor: "green"});
               setStatusColor("green");
               setTimeout(() => {
+                setBorderStyle({});
                 setStatusTitle("");
                 setStatusColor("");
                 openPasswordBox();
-              }, 2000);
+              }, 1000);
             }}
             title={statusTitle}
             color={statusColor}
+            autoSubmit={false}
+            borderStyle={borderStyle}
           />
           <TouchableOpacity onPress={openPasswordBox}>
             <Text style={styles.closeBox}>Yopish</Text>

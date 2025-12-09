@@ -1,19 +1,38 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView, Linking,
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView, Linking, BackHandler,
 } from "react-native";
 import AdminIcon from "../assets/admin_icon.png";
+import {useNavigation} from "@react-navigation/native";
+import {RootStackParamList} from "./types";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
+type SupportNav = NativeStackNavigationProp<RootStackParamList, "Chat">;
 const ChatPage: React.FC = () => {
   const [message, setMessage] = useState("");
+  const navigation = useNavigation<SupportNav>();
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate("ProfileView");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -63,40 +82,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 15,
     color: "#555",
-  },
-  link: {
-    fontSize: 18,
-    textAlign: "center",
-    marginTop: 15,
-    color: "orange",
-  },
-  form: {
-    width: "100%",
-    alignItems: "center",
-  },
-  textArea: {
-    width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    textAlignVertical: "top",
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  sendButton: {
-    width: "100%",
-    backgroundColor: "#121",
-    paddingVertical: 15,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  sendButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
+  }
+})

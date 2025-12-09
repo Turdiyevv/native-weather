@@ -4,7 +4,7 @@
     "slug": "VegaChat",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/admin_icon.png",
+    "icon": "./assets/vega.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/vega.png",
