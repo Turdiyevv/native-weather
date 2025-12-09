@@ -210,9 +210,12 @@ export default function AddPage({ navigation, route }: any) {
               />
             )}
 
-            <View>
-              <Toggle value={isActive} onChange={setIsActive} />
-            </View>
+            {taskToEdit && (
+                <View style={[styles.row, {marginBottom:10}]}>
+                  <Toggle value={isActive} onChange={setIsActive} />
+                  <Text style={{marginLeft: 10, color: "red"}}>O'chirish</Text>
+                </View>
+            )}
 
             <TouchableOpacity style={styles.addButton} onPress={saveTask}>
               <Text style={styles.addText}>{taskToEdit ? "Saqlash" : "Qo‘shish"}</Text>

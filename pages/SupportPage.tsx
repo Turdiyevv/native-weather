@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -8,12 +7,34 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  ScrollView, Linking,
+  ScrollView,
+  Linking,
+  BackHandler,
 } from "react-native";
 import AdminIcon from "../assets/admin_icon.png";
 
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {RootStackParamList} from "./types";
+
+type SupportNav = NativeStackNavigationProp<RootStackParamList, "Support">;
+
 const SupportPage: React.FC = () => {
-  const [message, setMessage] = useState("");
+  const navigation = useNavigation<SupportNav>();
+
+  useEffect(() => {
+    const backAction = () => {
+      navigation.navigate("ProfileView");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -21,24 +42,18 @@ const SupportPage: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image source={AdminIcon} style={styles.icon} />
           <Text style={styles.description}>
             Bu ilova sizning kundalik vazifalaringizni boshqarish va eslatmalarni kuzatishda yordam beradi.
           </Text>
-          <Text style={styles.description}>
-            Bog'lanmoqchi bo'lsangiz xabar qoldiring!
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL("https://t.me/Anonim_life_msgbot");
-            }}
-          >
-            <Text style={[styles.link, { textDecorationLine: "underline" }]}>Telegram orqali</Text>
+          <Text style={styles.description}>Bog'lanmoqchi bo'lsangiz xabar qoldiring!</Text>
+
+          <TouchableOpacity onPress={() => Linking.openURL("https://t.me/Anonim_life_msgbot")}>
+            <Text style={[styles.link, { textDecorationLine: "underline" }]}>
+              Telegram orqali
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

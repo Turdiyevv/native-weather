@@ -188,6 +188,9 @@ export function ProfileViewPage() {
         <TouchableOpacity onPress={openPasswordBox}>
           <Text style={styles.loginCode}>Oson kirish kodi</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Support")}>
+          <Text style={styles.loginCode}>Biz haqimizda.</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={deleteAccount}>
           <Text style={styles.deleteText}>Hisobni butunlay o'chirish</Text>
         </TouchableOpacity>
@@ -326,7 +329,7 @@ const styles = StyleSheet.create({
   settings: { marginTop: 20 },
   settingsText: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginBottom: 8 },
   settingsTitle: { fontSize: 18, marginLeft: 3 },
-  loginCode: { color: "blue", fontSize: 17, textDecorationLine: "underline" },
+  loginCode: { color: "blue", fontSize: 17, textDecorationLine: "underline", marginTop: 10 },
   deleteText: { color: "red", fontSize: 17, textDecorationLine: "underline",marginTop:10 },
   closeBox: { color: "red", fontSize: 16, marginTop: 6, justifyContent: "center", marginHorizontal: "auto" },
 });

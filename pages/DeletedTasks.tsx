@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import {showMessage} from "react-native-flash-message";
 import ConfirmModal from "../components/ConfirmModal";
 import AdminIcon from "../assets/admin_icon.png";
+import LeftMenu from "../components/MenuBar";
 
 export default function DeletedTasks({ navigation }) {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -269,7 +270,10 @@ export default function DeletedTasks({ navigation }) {
                   <Text style={styles.taskTitle}>{displayTitle}</Text>
                   <Ionicons name="document-outline" size={20} color="gray" />
                 </View>
-                <TouchableOpacity style={styles.menuButton} onPress={() => markDone(task)}>
+                <TouchableOpacity style={[styles.menuButton, !!task?.isDeleted && { opacity: 0.4 }]}
+                                  onPress={() => markDone(task)}
+                                  disabled={!!task?.isDeleted}
+                >
                   <Text style={styles.menuText}>
                     {task.done ? "Qaytarish" : "Bajarildi"}
                   </Text>
@@ -279,16 +283,20 @@ export default function DeletedTasks({ navigation }) {
                     color={task.done ? "orange" : "green"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={task?.isDeleted ? styles.menuButtonDel : styles.menuButton} onPress={() => editTask(task)}>
+                <TouchableOpacity style={[styles.menuButton, !!task?.isDeleted && { opacity: 0.4 }]}
+                                  onPress={() => editTask(task)}
+                                  disabled={!!task?.isDeleted}
+                >
                   <Text style={styles.menuText}>Tahrirlash</Text>
                   <Ionicons name="create-outline" size={20} color="blue" />
                 </TouchableOpacity>
-                {!task?.isDeleted && (
-                  <TouchableOpacity style={styles.menuButtonDel} onPress={() => setModalVisible(true)}>
-                    <Text style={[styles.menuText, { color: "red" }]}>{task?.isDeleted}O'chirish</Text>
+                <TouchableOpacity style={[styles.menuButtonDel, !!task?.isDeleted && { opacity: 0.4 }]}
+                                  onPress={() => setModalVisible(true)}
+                                  disabled={!!task?.isDeleted}
+                >
+                    <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
                     <Ionicons name="trash-outline" size={20} color="red" />
-                  </TouchableOpacity>
-                )}
+                </TouchableOpacity>
               </Animated.View>
 
               <ConfirmModal
@@ -305,41 +313,18 @@ export default function DeletedTasks({ navigation }) {
             </TouchableOpacity>
           );
         })()}
-        <View style={styles.leftButtons}>
-          <View style={styles.buttonBox}>
-            <TouchableOpacity style={styles.sideButton} onPress={() => navigation.navigate("MainPage")}>
-              <Ionicons name="home-outline" size={32} color="#121" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <LeftMenu
+          buttons={[
+            { icon: "home-outline", onPress: () => navigation.navigate("MainPage"),size: 26 },
+            { icon: "checkbox-outline", onPress: () => navigation.navigate("DoneTasks"),size: 24 },
+          ]}
+        />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  leftButtons: {
-    height: 100, borderTopLeftRadius: 35, borderTopEndRadius: 35,
-    marginHorizontal: 10, backgroundColor: "rgba(18, 18, 18, 0)", position: "absolute",
-    bottom: 0, flexDirection: "row", alignItems: "flex-start"
-  },
-  buttonBox: {
-    borderRadius:40, padding:10,
-    backgroundColor: "rgba(195,194,194,0.3)",
-    flexDirection: "row", gap: 15
-  },
-  sideButton: {
-    backgroundColor: "#fff",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-  },
   container: { flex: 1, backgroundColor: "#f5f5f5" },
   containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
   bar:{height: 35, width: "100%"},
@@ -371,7 +356,8 @@ const styles = StyleSheet.create({
     color:"#007AFF",
   },
   menuButtonTitle: {
-    paddingBottom: 5,
+    paddingTop: 3,
+    paddingBottom: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",

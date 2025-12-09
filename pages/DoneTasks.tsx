@@ -17,7 +17,7 @@ import ConfirmModal from "../components/ConfirmModal";
 import AdminIcon from "../assets/admin_icon.png";
 import LeftMenu from "../components/MenuBar";
 
-export default function MainPage({ navigation }) {
+export default function DoneTasks({ navigation }) {
   const [tasks, setTasks] = useState<any[]>([]);
   const [firstName, setFirstName] = useState("");
   const [username, setUsername] = useState("");
@@ -153,7 +153,6 @@ export default function MainPage({ navigation }) {
     }
   };
 
-
   const openMenu = (itemId, y) => {
     setSelectedTaskId(itemId);
     const screenHeight = globalThis.window?.innerHeight || 800;
@@ -183,8 +182,7 @@ export default function MainPage({ navigation }) {
   };
 
   const groupedTasks = tasks
-    .filter(t => !t?.isDeleted)
-    .filter(t => !t?.done)
+    .filter(t => t?.done)
     .slice()
     .reverse()
     .reduce((acc, task) => {
@@ -239,7 +237,7 @@ export default function MainPage({ navigation }) {
             <View style={{ padding: 20, alignItems: "center" }}>
               <Image source={AdminIcon} style={styles.icon} />
               <Text style={{ fontSize: 16, color: "#555" }}>
-                Vazifalaringiz ro'yxati chiqadi
+                O'chirilgan vazifalaringiz ro'yxati chiqadi.
               </Text>
             </View>
           )}
@@ -271,7 +269,10 @@ export default function MainPage({ navigation }) {
                   <Text style={styles.taskTitle}>{displayTitle}</Text>
                   <Ionicons name="document-outline" size={20} color="gray" />
                 </View>
-                <TouchableOpacity style={styles.menuButton} onPress={() => markDone(task)}>
+                <TouchableOpacity style={[styles.menuButton, !!task?.isDeleted && { opacity: 0.4 }]}
+                                  onPress={() => markDone(task)}
+                                  disabled={!!task?.isDeleted}
+                >
                   <Text style={styles.menuText}>
                     {task.done ? "Qaytarish" : "Bajarildi"}
                   </Text>
@@ -281,13 +282,22 @@ export default function MainPage({ navigation }) {
                     color={task.done ? "orange" : "green"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton} onPress={() => editTask(task)}>
+                <TouchableOpacity style={[
+                    styles.menuButton,
+                    (!!task?.isDeleted|| !!task?.done) ? { opacity: 0.4 }:{}
+                ]}
+                                  onPress={() => editTask(task)}
+                                  disabled={!!task?.isDeleted || !!task?.done}
+                >
                   <Text style={styles.menuText}>Tahrirlash</Text>
                   <Ionicons name="create-outline" size={20} color="blue" />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButtonDel} onPress={() => setModalVisible(true)}>
-                  <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
-                  <Ionicons name="trash-outline" size={20} color="red" />
+                <TouchableOpacity style={[styles.menuButtonDel, !!task?.isDeleted && { opacity: 0.4 }]}
+                                  onPress={() => setModalVisible(true)}
+                                  disabled={!!task?.isDeleted}
+                >
+                    <Text style={[styles.menuText, { color: "red" }]}>{!!task?.isDeleted}O'chirish</Text>
+                    <Ionicons name="trash-outline" size={20} color="red" />
                 </TouchableOpacity>
               </Animated.View>
 
@@ -305,15 +315,11 @@ export default function MainPage({ navigation }) {
             </TouchableOpacity>
           );
         })()}
-
         <LeftMenu
           buttons={[
-            { icon: "person-circle-outline", onPress: () => navigation.navigate("ProfileView") },
-            { icon: "checkbox-outline", onPress: () => navigation.navigate("DoneTasks"), size: 26 },
-            { icon: "trash-outline", onPress: () => navigation.navigate("DeletedTasks"), size: 24 },
-            { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto"},
+            { icon: "home-outline", onPress: () => navigation.navigate("MainPage"),size: 26 },
+            { icon: "trash-outline", onPress: () => navigation.navigate("DeletedTasks"), size: 24  },
           ]}
-          containerStyle={{ width: "100%" }}
         />
       </View>
     </View>
@@ -332,42 +338,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     resizeMode: "contain",
-  },
-  addButton: {
-    backgroundColor: "#121",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    marginLeft: "auto"
-  },
-  addText: { color: "white", fontSize: 32 },
-  leftButtons: {
-    height: 100, borderTopLeftRadius: 35, borderTopEndRadius: 35,
-    width: "100%", marginHorizontal: 10, backgroundColor: "rgba(18, 18, 18, 0.01)", position: "absolute",
-    bottom: 0, flexDirection: "row", alignItems: "flex-start"
-  },
-  buttonBox: {
-    borderRadius:40, padding:10,
-    width: "100%", backgroundColor: "rgba(195,194,194,0.3)",
-    flexDirection: "row", gap: 15
-  },
-  sideButton: {
-    backgroundColor: "#fff",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
   },
   sectionHeader: {
     fontSize: 11,

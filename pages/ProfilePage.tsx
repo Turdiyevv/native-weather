@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    TouchableOpacity,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView, BackHandler,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
@@ -31,6 +31,19 @@ export default function ProfilePage() {
   const placeholderImage = "https://via.placeholder.com/150";
 
   useEffect(() => {
+    const backAction = () => {
+      navigation.navigate("ProfileView");
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+  useEffect(() => {
     const loadProfile = async () => {
       try {
         const activeUserStr = await AsyncStorage.getItem("activeUser");
@@ -53,7 +66,6 @@ export default function ProfilePage() {
     };
     loadProfile();
   }, []);
-
   const chooseAvatar = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {

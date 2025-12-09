@@ -9,4 +9,5 @@ export type RootStackParamList = {
   Bussiness: undefined;
   LoginCodePage: undefined;
   DeletedTasks: undefined;
+  DoneTasks: undefined;
 };
