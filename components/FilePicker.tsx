@@ -6,19 +6,23 @@ export default function FilePickerComponent({ onChange, initialFiles = [] }: any
   const [files, setFiles] = useState<any[]>(initialFiles);
 
   const pickDocuments = async () => {
-    const result = await DocumentPicker.getDocumentAsync({ multiple: true });
+      try {
+        global.filePickerOpen = true;
+        const result = await DocumentPicker.getDocumentAsync({ multiple: true });
+        if (result.assets) {
+          const selected = result.assets.map((file) => ({
+            uri: file.uri,
+            name: file.name,
+            type: file.mimeType,
+          }));
 
-    if (result.assets) {
-      const selected = result.assets.map((file) => ({
-        uri: file.uri,
-        name: file.name,
-        type: file.mimeType,
-      }));
-
-      const newFiles = [...files, ...selected];
-      setFiles(newFiles);
-      onChange(newFiles);
-    }
+          const newFiles = [...files, ...selected];
+          setFiles(newFiles);
+          onChange(newFiles);
+        }
+      } finally {
+        global.filePickerOpen = false;
+      }
   };
 
   const removeFile = (uri: string) => {

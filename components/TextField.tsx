@@ -19,7 +19,7 @@ export default function TextField({
   placeholder,
   required = false,
   errorMessage = "Bu maydon to‘ldirilishi shart!",
-  minLength = 6,
+  minLength = 4,
   minHeight,
   ...rest
 }: TextFieldProps) {

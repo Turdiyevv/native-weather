@@ -32,6 +32,10 @@ const App: React.FC = () => {
         let lastState = AppState.currentState;
 
         const sub = AppState.addEventListener("change", (nextState) => {
+            if (global.filePickerOpen) {
+                lastState = nextState;
+                return;
+            }
             if (nextState === "background" || nextState === "inactive") {
                 lastTimeRef.current = Date.now();
             }

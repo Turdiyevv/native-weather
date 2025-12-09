@@ -66,19 +66,25 @@ export default function ProfilePage() {
     };
     loadProfile();
   }, []);
+
   const chooseAvatar = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       alert("Rasm galereyasiga ruxsat berish kerak");
       return;
     }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.7,
-    });
-    if (!result.canceled) {
-      setAvatar(result.assets[0].uri);
+    try {
+       global.filePickerOpen = true;
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          quality: 0.7,
+        });
+        if (!result.canceled) {
+          setAvatar(result.assets[0].uri);
+        }
+    } finally {
+        global.filePickerOpen = false;
     }
   };
 
