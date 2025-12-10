@@ -116,6 +116,7 @@ export default function LoginPage({ navigation }: any) {
 
           <TextField
             label="Username"
+            placeholder="Bo'sh joylarsiz kiriting !"
             value={username}
             onChangeText={setUsername}
             minLength={6}
@@ -123,6 +124,7 @@ export default function LoginPage({ navigation }: any) {
           />
 
           <TextField
+            placeholder="Bo'sh joylarsiz kiriting !"
             label="Password"
             value={password}
             onChangeText={setPassword}

@@ -50,6 +50,7 @@ export default function TextField({
         }}
         onBlur={() => setTouched(true)}
         placeholder={placeholder}
+        placeholderTextColor="#C0C8DB"
         {...rest}
       />
 
