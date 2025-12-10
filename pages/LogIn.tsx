@@ -6,68 +6,77 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ScrollView, BackHandler
+  ScrollView,
+  BackHandler
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 import TextField from "../components/TextField";
 import ConfirmModal from "../components/ConfirmModal";
-import {maskPassword} from "../utills/utill";
+import { maskPassword } from "../utills/utill";
 
 export default function LoginPage({ navigation }: any) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCode, setPasswordCode] = useState("");
   const [userCount, setUserCount] = useState(0);
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [pass, setPass] = useState("");
 
+  // 🔹 Userlar sonini yuklash
   useEffect(() => {
     const loadCount = async () => {
-      const storedUsers = await AsyncStorage.getItem("users");
-      setUserCount(storedUsers ? JSON.parse(storedUsers).length : 0);
+      const users = await AsyncStorage.getItem("users");
+      setUserCount(users ? JSON.parse(users).length : 0);
     };
     loadCount();
   }, []);
 
+  // 🔹 Back handler
   useEffect(() => {
     const onBackPress = () => {
       navigation.replace("LoginCodePage");
       return true;
     };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      onBackPress
-    );
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return () => backHandler.remove();
   }, []);
 
   const handleLogin = async () => {
-    if (!username.trim() || !password.trim()) {
-      return;
-    }
-    if (username.trim().length < 6 || password.trim().length < 6) {
-      return;
-    }
+    const cleanUsername = username.trim().replace(/\s+/g, "");
+    const cleanPassword = password.trim().replace(/\s+/g, "");
+
+    if (!cleanUsername || !cleanPassword) return;
+    if (cleanUsername.length < 6 || cleanPassword.length < 6) return;
+
     try {
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
-      const existingUser = users.find((u: any) => u.username === username);
+
+      // 🔹 MUHIM TUZATISH: cleanUsername bilan izlash
+      const existingUser = users.find((u: any) => u.username === cleanUsername);
+
+      // 🔹 Topilmasa va limit to‘la
       if (!existingUser && users.length >= 3) {
         showMessage({
-          message: "User topilmadi. Yangi user yaratish imkoni ham yo'q!",
+          message: "User topilmadi. Yangi user yaratish imkoni yo'q!",
           type: "warning",
           icon: "warning",
         });
         return;
       }
+
+      // 🔹 Topilmasa lekin yaratish mumkin
       if (!existingUser && users.length < 3) {
         setModalVisible(true);
         return;
       }
-      if (existingUser && existingUser.password !== password) {
+
+      // 🔹 Parol noto‘g‘ri
+      if (existingUser.password !== cleanPassword) {
         setPass(maskPassword(existingUser.password));
-        setTimeout(() => {setPass("")}, 3000);
+        setTimeout(() => setPass(""), 3000);
+
         showMessage({
           message: "Password noto‘g‘ri!",
           type: "danger",
@@ -75,22 +84,19 @@ export default function LoginPage({ navigation }: any) {
         });
         return;
       }
-      const userToSet = existingUser || null;
-      if (userToSet) {
-        await AsyncStorage.setItem("activeUser", JSON.stringify(userToSet));
-        navigation.replace("MainPage");
-        showMessage({
-          message: "Muvaffaqiyatli kirish!",
-          type: "success",
-          icon: "success",
-        });
-      }
-    } catch (error) {
+
+      // 🔹 Muvaffaqiyatli kirish
+      await AsyncStorage.setItem("activeUser", JSON.stringify(existingUser));
+      navigation.replace("MainPage");
+
       showMessage({
-        message: String(error),
-        type: "danger",
-        icon: "danger",
+        message: "Muvaffaqiyatli kirish!",
+        type: "success",
+        icon: "success",
       });
+
+    } catch (e) {
+      showMessage({ message: String(e), type: "danger", icon: "danger" });
     }
   };
 
@@ -102,43 +108,54 @@ export default function LoginPage({ navigation }: any) {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
           <Text style={styles.title}>Xush kelibsiz!</Text>
+
           <View style={styles.countBox}>
             <Text style={styles.count}>Hisoblar: {userCount} / 3</Text>
-            <Text style={styles.pass}> {pass}</Text>
+            <Text style={styles.pass}>{pass}</Text>
           </View>
+
           <TextField
-            label="username"
+            label="Username"
             value={username}
             onChangeText={setUsername}
-            required
             minLength={6}
+            required
           />
+
           <TextField
-            label={"password"}
+            label="Password"
             value={password}
-            secureTextEntry
             onChangeText={setPassword}
-            required
+            secureTextEntry
             minLength={6}
+            required
           />
+
           <TouchableOpacity style={styles.btn} onPress={handleLogin}>
             <Text style={styles.btnText}>Kirish</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.closeBox} onPress={() => navigation.replace("LoginCodePage")}>
+
+          <TouchableOpacity
+            style={styles.closeBox}
+            onPress={() => navigation.replace("LoginCodePage")}
+          >
             <Text style={styles.closeBoxText}>Parol orqali kirish</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Yangi user yaratish MODAL */}
         <ConfirmModal
           visible={modalVisible}
           message="Yangi hisob yaratilsinmi?"
           onConfirm={async () => {
             setModalVisible(false);
+
             const storedUsers = await AsyncStorage.getItem("users");
             let users = storedUsers ? JSON.parse(storedUsers) : [];
 
             const newUser = {
-              username,
-              password,
+              username: username.trim(),
+              password: password.trim(),
               passwordCode,
               userinfo: {
                 firstName: "",
@@ -150,11 +167,16 @@ export default function LoginPage({ navigation }: any) {
               },
               usertasks: [],
             };
+
             users.push(newUser);
             await AsyncStorage.setItem("users", JSON.stringify(users));
             await AsyncStorage.setItem("activeUser", JSON.stringify(newUser));
+
+            // 🔹 count-ni yangilash
             setUserCount(users.length);
+
             navigation.replace("MainPage");
+
             showMessage({
               message: "Yangi user yaratildi!",
               type: "success",
@@ -170,27 +192,32 @@ export default function LoginPage({ navigation }: any) {
 
 const styles = StyleSheet.create({
   closeBox: {
-      borderWidth: 1,
-      paddingVertical: 3,
-      paddingHorizontal: 6,
-      borderRadius: 7,
+    borderWidth: 1,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    borderRadius: 7,
     borderColor: "orange",
-    fontSize: 17,
     marginTop: 16,
-    justifyContent: "center",
-    marginHorizontal: "auto",
   },
   closeBoxText: {
     color: "orange",
     fontSize: 17,
-    justifyContent: "center",
-    marginHorizontal: "auto",
   },
   container: { flex: 1, justifyContent: "center", paddingHorizontal: 30 },
   title: { fontSize: 32, fontWeight: "700", marginBottom: 10, textAlign: "center" },
-  countBox: { flexDirection: "row", alignItems:"center", justifyContent: "center", marginBottom: 20 },
-  pass:{color: "orange", fontSize: 11, marginLeft: 2},
+  countBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  pass: { color: "orange", fontSize: 11, marginLeft: 2 },
   count: { color: "#555", fontSize: 16 },
-  btn: { backgroundColor: "#121", paddingVertical: 12, borderRadius: 10, marginTop: 20 },
+  btn: {
+    backgroundColor: "#121",
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginTop: 20,
+  },
   btnText: { color: "#fff", textAlign: "center", fontSize: 18, fontWeight: "600" },
 });
