@@ -34,13 +34,28 @@ export default function MainPage({ navigation }) {
   useEffect(() => {
     const loadProfile = async () => {
       try {
+          const storedUsers = await AsyncStorage.getItem("users");
+          const users = storedUsers ? JSON.parse(storedUsers) : [];
+          if (!users || users.length === 0) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "LoginCodePage" }]
+            });
+            return;
+          }
+
         const activeUserStr = await AsyncStorage.getItem("activeUser");
-        if (activeUserStr) {
+          if (!activeUserStr) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "LoginCodePage" }]
+            });
+            return;
+          }
           const user = JSON.parse(activeUserStr);
           setFirstName(user.userinfo?.firstName || "");
           setAvatar(user.userinfo?.avatar || "");
           setUsername(user.username || "@");
-        }
       } catch (e) {
         showMessage({
           message: e,

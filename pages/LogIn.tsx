@@ -124,6 +124,9 @@ export default function LoginPage({ navigation }: any) {
           <TouchableOpacity style={styles.btn} onPress={handleLogin}>
             <Text style={styles.btnText}>Kirish</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.closeBox} onPress={() => navigation.replace("LoginCodePage")}>
+            <Text style={styles.closeBoxText}>Parol orqali kirish</Text>
+          </TouchableOpacity>
         </View>
         <ConfirmModal
           visible={modalVisible}
@@ -166,6 +169,23 @@ export default function LoginPage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  closeBox: {
+      borderWidth: 1,
+      paddingVertical: 3,
+      paddingHorizontal: 6,
+      borderRadius: 7,
+    borderColor: "orange",
+    fontSize: 17,
+    marginTop: 16,
+    justifyContent: "center",
+    marginHorizontal: "auto",
+  },
+  closeBoxText: {
+    color: "orange",
+    fontSize: 17,
+    justifyContent: "center",
+    marginHorizontal: "auto",
+  },
   container: { flex: 1, justifyContent: "center", paddingHorizontal: 30 },
   title: { fontSize: 32, fontWeight: "700", marginBottom: 10, textAlign: "center" },
   countBox: { flexDirection: "row", alignItems:"center", justifyContent: "center", marginBottom: 20 },
