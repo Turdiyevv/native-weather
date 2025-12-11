@@ -161,14 +161,14 @@ export function ProfileViewPage() {
             onPress={() => navigation.navigate("ProfileEdit")}
           >
             <Text style={styles.editText}>Tahrirlash</Text>
-            <Ionicons name="pencil" size={14} color="#121" />
+            <Ionicons name="pencil" size={16} color="#121" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.outButton}
             onPress={() => setModalVisible(true)}
           >
             <Text style={styles.outText}>Chiqish</Text>
-            <Ionicons name="log-out" size={14} color="red" />
+            <Ionicons name="log-out" size={20} color="red" />
           </TouchableOpacity>
         </View>
         <Text style={styles.label}>Telefon:</Text>

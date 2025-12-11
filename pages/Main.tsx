@@ -237,26 +237,22 @@ export default function MainPage({ navigation }) {
             )}
           </TouchableOpacity>
         </View>
-        <SectionList style={{marginBottom: 65}}
+        <SectionList
+          style={{ marginBottom: 65 }}
           sections={groupedTasks}
           keyExtractor={(item) => item.id}
           renderSectionHeader={({ section }) => (
             <Text style={styles.sectionHeader}>{section.title}</Text>
           )}
-          renderItem={({ item }) => (
+          renderItem={({ item, index, section }) => (
             <TodoItem
               item={item}
+              index={index}
+              isFirst={index === 0}
+              isLast={index === section.data.length - 1}
               onToggle={() => {}}
               onLongPress={(y) => openMenu(item.id, y)}
             />
-          )}
-          ListEmptyComponent={() => (
-            <View style={{ padding: 20, alignItems: "center" }}>
-              <Image source={AdminIcon} style={styles.icon} />
-              <Text style={{ fontSize: 16, color: "#555" }}>
-                Vazifalaringiz ro'yxati chiqadi
-              </Text>
-            </View>
           )}
         />
         {selectedTaskId && (() => {

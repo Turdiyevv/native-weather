@@ -227,9 +227,12 @@ export default function DeletedTasks({ navigation }) {
           renderSectionHeader={({ section }) => (
             <Text style={styles.sectionHeader}>{section.title}</Text>
           )}
-          renderItem={({ item }) => (
+          renderItem={({ item, index, section }) => (
             <TodoItem
               item={item}
+              index={index}
+              isFirst={index === 0}
+              isLast={index === section.data.length - 1}
               onToggle={() => {}}
               onLongPress={(y) => openMenu(item.id, y)}
             />

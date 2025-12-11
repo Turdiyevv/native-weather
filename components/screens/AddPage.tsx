@@ -44,7 +44,7 @@ export default function AddPage({ navigation, route }: any) {
   const options = [
     {id: 1, text: "Yengil", color: 'green'},
     {id: 2, text: "O'rtacha", color: 'orange'},
-    {id: 3, text: "Og'ir", color: 'red'},
+    {id: 3, text: "Og'ir", color: '#fb5151'},
   ];
 
   const saveTask = async () => {
@@ -213,7 +213,7 @@ export default function AddPage({ navigation, route }: any) {
             {taskToEdit && (
                 <View style={[styles.row, {marginBottom:10}]}>
                   <Toggle value={isActive} onChange={setIsActive} />
-                  <Text style={{marginLeft: 10, color: "red"}}>O'chirish</Text>
+                  <Text style={{marginLeft: 10, color: "#fb5151"}}>O'chirish</Text>
                 </View>
             )}
 
