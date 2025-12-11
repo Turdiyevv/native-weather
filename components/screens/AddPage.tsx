@@ -43,7 +43,6 @@ export default function AddPage({ navigation, route }: any) {
   const [isActive, setIsActive] = useState<boolean>(taskToEdit ? taskToEdit.isDeleted : false);
   const [attachments, setAttachments] = useState<string[]>(taskToEdit ? taskToEdit.files : []);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  console.log("ROUTE PARAMS:", route.params);
   const options = [
     {id: 1, text: "Yengil", color: 'green'},
     {id: 2, text: "O'rtacha", color: 'orange'},
