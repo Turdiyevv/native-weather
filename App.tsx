@@ -27,29 +27,30 @@ const App: React.FC = () => {
     const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList | null>(null);
     const lastTimeRef = React.useRef<number>(Date.now());
 
-    // 🔥 To'g'irlangan AppState lock/unlock detektori
     useEffect(() => {
         let lastState = AppState.currentState;
 
         const sub = AppState.addEventListener("change", (nextState) => {
-            if (global.filePickerOpen) {
-                lastState = nextState;
-                return;
-            }
-            if (nextState === "background" || nextState === "inactive") {
-                lastTimeRef.current = Date.now();
-            }
+        console.log("filePickerOpen:", global.filePickerOpen);
+        console.log("next:", nextState, "last:", lastState);
+        if (global.filePickerOpen) {
+            return;
+        }
 
-            if (lastState !== "active" && nextState === "active") {
-                const now = Date.now();
-                const diff = now - lastTimeRef.current;
+        if (nextState === "background" || nextState === "inactive") {
+            lastTimeRef.current = Date.now();
+        }
 
-                if (diff > 2000) {
-                    navigationRef.current?.navigate("LoginCodePage");
-                }
+        if (lastState !== "active" && nextState === "active") {
+            const now = Date.now();
+            const diff = now - lastTimeRef.current;
+
+            if (diff > 2000) {
+                console.log("diff:", diff);
+                navigationRef.current?.navigate("LoginCodePage");
             }
-
-            lastState = nextState;
+        }
+        lastState = nextState;
         });
 
         return () => sub.remove();
