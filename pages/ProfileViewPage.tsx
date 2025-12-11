@@ -55,7 +55,6 @@ export function ProfileViewPage() {
       showMessage({
         message: e,
         type: "danger",
-        icon: "danger",
       });
     }
   };
@@ -104,7 +103,6 @@ export function ProfileViewPage() {
     showMessage({
       message: "Hisob muvaffaqiyatli o‘chirildi!",
       type: "success",
-      icon: "success",
     });
     navigation.replace("LoginPage");
   };

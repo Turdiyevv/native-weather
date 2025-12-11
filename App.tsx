@@ -43,7 +43,7 @@ const App: React.FC = () => {
             const now = Date.now();
             const diff = now - lastTimeRef.current;
 
-            if (diff > 2000) {
+            if (diff > 10000) {
                 navigationRef.current?.navigate("LoginCodePage");
             }
         }

@@ -60,7 +60,6 @@ export default function MainPage({ navigation }) {
         showMessage({
           message: e,
           type: "danger",
-          icon: "danger",
         });
       }
     };
@@ -88,7 +87,6 @@ export default function MainPage({ navigation }) {
       showMessage({
         message: e,
         type: "danger",
-        icon: "danger",
       });
     }
   };
@@ -116,19 +114,17 @@ export default function MainPage({ navigation }) {
       showMessage({
         message: "Vazifa almashtirildi!",
         type: "success",
-        icon: "success",
       });
       closeMenu();
     } catch (e) {
       showMessage({
         message: e,
         type: "danger",
-        icon: "danger",
       });
     }
   };
-  const editTask = (item: object, view: boolean) => {
-    navigation.navigate("AddPage", { task: item, view: view });
+  const editTask = (item: object, initialView: boolean) => {
+    navigation.navigate("AddPage", { task: item, initialView: initialView });
     closeMenu();
   };
   const deleteTask = async (id: number) => {
@@ -151,7 +147,6 @@ export default function MainPage({ navigation }) {
       showMessage({
         message: "Vazifa o'chirildi! (soft-delete)",
         type: "success",
-        icon: "success",
       });
 
       closeMenu();
@@ -159,11 +154,9 @@ export default function MainPage({ navigation }) {
       showMessage({
         message: String(e),
         type: "danger",
-        icon: "danger",
       });
     }
   };
-
 
   const openMenu = (itemId, y) => {
     setSelectedTaskId(itemId);

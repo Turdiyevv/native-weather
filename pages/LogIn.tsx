@@ -61,7 +61,6 @@ export default function LoginPage({ navigation }: any) {
         showMessage({
           message: "User topilmadi. Yangi user yaratish imkoni yo'q!",
           type: "warning",
-          icon: "warning",
         });
         return;
       }
@@ -80,7 +79,6 @@ export default function LoginPage({ navigation }: any) {
         showMessage({
           message: "Password noto‘g‘ri!",
           type: "danger",
-          icon: "danger",
         });
         return;
       }
@@ -92,7 +90,6 @@ export default function LoginPage({ navigation }: any) {
       showMessage({
         message: "Muvaffaqiyatli kirish!",
         type: "success",
-        icon: "success",
       });
 
     } catch (e) {
@@ -182,7 +179,6 @@ export default function LoginPage({ navigation }: any) {
             showMessage({
               message: "Yangi user yaratildi!",
               type: "success",
-              icon: "success",
             });
           }}
           onCancel={() => setModalVisible(false)}

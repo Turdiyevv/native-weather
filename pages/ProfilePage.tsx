@@ -60,7 +60,6 @@ export default function ProfilePage() {
         showMessage({
           message: e,
           type: "danger",
-          icon: "danger",
         });
       }
     };
@@ -93,7 +92,6 @@ export default function ProfilePage() {
     showMessage({
       message: "Rasm o'chirildi",
       type: "info",
-      icon: "info",
     });
   };
   const saveProfile = async () => {
@@ -112,7 +110,6 @@ export default function ProfilePage() {
       showMessage({
         message: "Ma'lumot to'ldirildi!",
         type: "success",
-        icon: "success",
       });
       navigation.dispatch(
         CommonActions.reset({
@@ -124,7 +121,6 @@ export default function ProfilePage() {
       showMessage({
         message: e,
         type: "danger",
-        icon: "danger",
       });
     }
   };

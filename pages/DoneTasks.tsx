@@ -45,7 +45,6 @@ export default function DoneTasks({ navigation }) {
         showMessage({
           message: e,
           type: "danger",
-          icon: "danger",
         });
       }
     };
@@ -73,7 +72,6 @@ export default function DoneTasks({ navigation }) {
       showMessage({
         message: e,
         type: "danger",
-        icon: "danger",
       });
     }
   };
@@ -101,19 +99,17 @@ export default function DoneTasks({ navigation }) {
       showMessage({
         message: "Vazifa almashtirildi!",
         type: "success",
-        icon: "success",
       });
       closeMenu();
     } catch (e) {
       showMessage({
         message: e,
         type: "danger",
-        icon: "danger",
       });
     }
   };
-  const editTask = (item) => {
-    navigation.navigate("AddPage", { task: item });
+  const editTask = (item: object, initialView: boolean) => {
+    navigation.navigate("AddPage", { task: item, initialView: initialView });
     closeMenu();
   };
   const deleteTask = async (id) => {
@@ -140,7 +136,6 @@ export default function DoneTasks({ navigation }) {
       showMessage({
         message: "Vazifa o'chirildi! (soft-delete)",
         type: "success",
-        icon: "success",
       });
 
       closeMenu();
@@ -148,7 +143,6 @@ export default function DoneTasks({ navigation }) {
       showMessage({
         message: String(e),
         type: "danger",
-        icon: "danger",
       });
     }
   };
@@ -232,7 +226,7 @@ export default function DoneTasks({ navigation }) {
               index={index}
               isFirst={index === 0}
               isLast={index === section.data.length - 1}
-              onToggle={() => {editTask(item)}}
+              onToggle={() => {editTask(item, true)}}
               onLongPress={(y) => openMenu(item.id, y)}
             />
           )}
@@ -289,7 +283,7 @@ export default function DoneTasks({ navigation }) {
                     styles.menuButton,
                     (!!task?.isDeleted|| !!task?.done) ? { opacity: 0.4 }:{}
                 ]}
-                                  onPress={() => editTask(task)}
+                                  onPress={() => editTask(task, false)}
                                   disabled={!!task?.isDeleted || !!task?.done}
                 >
                   <Text style={styles.menuText}>Tahrirlash</Text>

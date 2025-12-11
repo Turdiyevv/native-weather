@@ -16,6 +16,7 @@ import Toggle from "../Toggle";
 import SingleCheckBox from "../CheckBox";
 import FilePickerComponent from "../FilePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import ConfirmModal from "../ConfirmModal";
 
 interface Task {
   id: string;
@@ -31,7 +32,7 @@ interface Task {
 
 export default function AddPage({ navigation, route }: any) {
   const { task: taskToEdit, initialView } = route.params || {};
-  const [view, setView] = useState<boolean>(initialView || true);
+  const [view, setView] = useState<boolean>(initialView || false);
   const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
   const [description, setDescription] = useState(taskToEdit ? taskToEdit.description || "" : "");
   const [deadline, setDeadline] = useState<Date | null>(
@@ -41,7 +42,8 @@ export default function AddPage({ navigation, route }: any) {
   const [selected, setSelected] = useState<number | null>(taskToEdit ? taskToEdit.status : 1);
   const [isActive, setIsActive] = useState<boolean>(taskToEdit ? taskToEdit.isDeleted : false);
   const [attachments, setAttachments] = useState<string[]>(taskToEdit ? taskToEdit.files : []);
-
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  console.log("ROUTE PARAMS:", route.params);
   const options = [
     {id: 1, text: "Yengil", color: 'green'},
     {id: 2, text: "O'rtacha", color: 'orange'},
@@ -57,7 +59,13 @@ export default function AddPage({ navigation, route }: any) {
       return;
     }
     if (view) {
-        if (taskToEdit.isDeleted) return;
+        if (taskToEdit.isDeleted) {
+          showMessage({
+            message: "Vazifa allaqachon tugatilgan !",
+            type: "danger",
+          });
+          return
+        }
         setView(false);
         return;
     }
@@ -118,7 +126,6 @@ export default function AddPage({ navigation, route }: any) {
       showMessage({
         message: "Muvaffaqiyatli saqlandi!",
         type: "success",
-        icon: "success",
       });
 
       navigation.goBack();
@@ -126,11 +133,39 @@ export default function AddPage({ navigation, route }: any) {
       showMessage({
         message: String(e),
         type: "danger",
-        icon: "danger",
       });
     }
   };
-
+  const modalVisible=() => {setDeleteModalVisible(true)}
+  const handleDeleteConfirm = async (id: number) => {
+    try {
+      const activeUserStr = await AsyncStorage.getItem("activeUser");
+      if (!activeUserStr) return;
+      const activeUser = JSON.parse(activeUserStr);
+      const updatedTasks = activeUser.usertasks.map((t) =>
+        t.id === id ? { ...t, isDeleted: true } : t
+      );
+      activeUser.usertasks = updatedTasks;
+      const storedUsers = await AsyncStorage.getItem("users");
+      let users = storedUsers ? JSON.parse(storedUsers) : [];
+      users = users.map((u) =>
+        u.username === activeUser.username ? activeUser : u
+      );
+      await AsyncStorage.setItem("users", JSON.stringify(users));
+      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+      showMessage({
+        message: "Vazifa o'chirildi!",
+        type: "success",
+      });
+      setIsActive(true);
+      navigation.goBack();
+    } catch (e) {
+      showMessage({
+        message: String(e),
+        type: "danger",
+      });
+    }
+  }
   return (
       <View style={{flex: 1}}>
         <KeyboardAwareScrollView
@@ -219,7 +254,7 @@ export default function AddPage({ navigation, route }: any) {
 
             {taskToEdit && !taskToEdit.isDeleted &&(
                 <View style={[styles.row, {marginBottom:10}]}>
-                  <Toggle value={isActive} onChange={setIsActive} />
+                  <Toggle value={isActive} onChange={modalVisible} />
                   <Text style={{marginLeft: 10, color: "#fb5151"}}>O'chirish</Text>
                 </View>
             )}
@@ -228,6 +263,15 @@ export default function AddPage({ navigation, route }: any) {
               <Text style={styles.addText}>{taskToEdit ? view ? "Tahrirlash" : "Saqlash" : "Qo‘shish"}</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
+
+        <ConfirmModal
+          visible={deleteModalVisible}
+          message="Hisobni butunlay o‘chirmoqchimisiz?"
+          onConfirm={() => {
+            handleDeleteConfirm(taskToEdit.id);
+          }}
+          onCancel={() => setDeleteModalVisible(false)}
+        />
       </View>
   );
 }
