@@ -112,29 +112,25 @@ export default function DeletedTasks({ navigation }) {
       });
     }
   };
-  const editTask = (item) => {
+  const editTask = (item: object) => {
     navigation.navigate("AddPage", { task: item });
     closeMenu();
   };
-  const deleteTask = async (id) => {
+  const deleteTask = async (id: number) => {
     try {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
       if (!activeUserStr) return;
       const activeUser = JSON.parse(activeUserStr);
-      // 🔥 1. Taskni filter qilmasdan, ichidan topamiz
       const updatedTasks = activeUser.usertasks.map((t) =>
         t.id === id ? { ...t, isDeleted: true } : t
       );
-      // 🔥 2. Yangilangan tasklar massivini yozamiz
       activeUser.usertasks = updatedTasks;
       setTasks(updatedTasks);
-      // 🔥 3. Users massivini yangilaymiz
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
       users = users.map((u) =>
         u.username === activeUser.username ? activeUser : u
       );
-      // 🔥 4. Hammasini qayta saqlaymiz
       await AsyncStorage.setItem("users", JSON.stringify(users));
       await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
       showMessage({
@@ -233,7 +229,7 @@ export default function DeletedTasks({ navigation }) {
               index={index}
               isFirst={index === 0}
               isLast={index === section.data.length - 1}
-              onToggle={() => {}}
+              onToggle={() => {editTask(item)}}
               onLongPress={(y) => openMenu(item.id, y)}
             />
           )}

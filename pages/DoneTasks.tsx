@@ -232,7 +232,7 @@ export default function DoneTasks({ navigation }) {
               index={index}
               isFirst={index === 0}
               isLast={index === section.data.length - 1}
-              onToggle={() => {}}
+              onToggle={() => {editTask(item)}}
               onLongPress={(y) => openMenu(item.id, y)}
             />
           )}

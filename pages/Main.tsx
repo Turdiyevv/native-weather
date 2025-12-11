@@ -127,29 +127,25 @@ export default function MainPage({ navigation }) {
       });
     }
   };
-  const editTask = (item) => {
-    navigation.navigate("AddPage", { task: item });
+  const editTask = (item: object, view: boolean) => {
+    navigation.navigate("AddPage", { task: item, view: view });
     closeMenu();
   };
-  const deleteTask = async (id) => {
+  const deleteTask = async (id: number) => {
     try {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
       if (!activeUserStr) return;
       const activeUser = JSON.parse(activeUserStr);
-      // 🔥 1. Taskni filter qilmasdan, ichidan topamiz
       const updatedTasks = activeUser.usertasks.map((t) =>
         t.id === id ? { ...t, isDeleted: true } : t
       );
-      // 🔥 2. Yangilangan tasklar massivini yozamiz
       activeUser.usertasks = updatedTasks;
       setTasks(updatedTasks);
-      // 🔥 3. Users massivini yangilaymiz
       const storedUsers = await AsyncStorage.getItem("users");
       let users = storedUsers ? JSON.parse(storedUsers) : [];
       users = users.map((u) =>
         u.username === activeUser.username ? activeUser : u
       );
-      // 🔥 4. Hammasini qayta saqlaymiz
       await AsyncStorage.setItem("users", JSON.stringify(users));
       await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
       showMessage({
@@ -250,7 +246,7 @@ export default function MainPage({ navigation }) {
               index={index}
               isFirst={index === 0}
               isLast={index === section.data.length - 1}
-              onToggle={() => {}}
+              onToggle={() => {editTask(item, true)}}
               onLongPress={(y) => openMenu(item.id, y)}
             />
           )}
@@ -292,7 +288,7 @@ export default function MainPage({ navigation }) {
                     color={task.done ? "orange" : "green"}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuButton} onPress={() => editTask(task)}>
+                <TouchableOpacity style={styles.menuButton} onPress={() => editTask(task, false)}>
                   <Text style={styles.menuText}>Tahrirlash</Text>
                   <Ionicons name="create-outline" size={20} color="blue" />
                 </TouchableOpacity>

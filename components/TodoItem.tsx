@@ -18,7 +18,7 @@ interface TodoItemProps {
   index: number;
   isFirst: boolean;
   isLast: boolean;
-  onToggle: (id: string) => void;
+  onToggle: (item: object) => void;
   onLongPress?: (y: number) => void;
 }
 
@@ -63,7 +63,7 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
         isFirst && styles.firstBorder,
         isLast && styles.lastBorder,
       ]}
-      onPress={() => onToggle(item.id)}
+      onPress={() => onToggle(item)}
       onLongPress={(event: any) => {
         const y = event.nativeEvent.pageY;
         onLongPress && onLongPress(y);

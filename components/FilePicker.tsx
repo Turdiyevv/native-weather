@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 
-export default function FilePickerComponent({ onChange, initialFiles = [] }: any) {
+export default function FilePickerComponent({ onChange, initialFiles = [], disabled = false }: any) {
   const [files, setFiles] = useState<any[]>(initialFiles);
 
   const pickDocuments = async () => {
@@ -26,16 +26,17 @@ export default function FilePickerComponent({ onChange, initialFiles = [] }: any
   };
 
   const removeFile = (uri: string) => {
-    const newFiles = files.filter((file) => file.uri !== uri);
-    setFiles(newFiles);
-    onChange(newFiles);
+      if (disabled) return;
+      const newFiles = files.filter((file) => file.uri !== uri);
+      setFiles(newFiles);
+      onChange(newFiles);
   };
 
   return (
     <View>
       <Text style={styles.title}>Fayllar</Text>
       <View style={styles.btnRow}>
-        <TouchableOpacity style={styles.btn} onPress={pickDocuments}>
+        <TouchableOpacity style={styles.btn} onPress={pickDocuments} disabled={disabled}>
           <Text style={styles.btnText}>Fayl tanlash (PDF, DOCX...)</Text>
         </TouchableOpacity>
       </View>
@@ -49,9 +50,11 @@ export default function FilePickerComponent({ onChange, initialFiles = [] }: any
               <Text style={styles.fileName}>{file.name}</Text>
             )}
 
-            <TouchableOpacity style={styles.removeBtn} onPress={() => removeFile(file.uri)}>
-              <Text style={styles.removeText}>×</Text>
-            </TouchableOpacity>
+            {!disabled && (
+              <TouchableOpacity style={styles.removeBtn} onPress={() => removeFile(file.uri)}>
+                <Text style={styles.removeText}>×</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>

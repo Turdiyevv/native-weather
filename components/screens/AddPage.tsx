@@ -30,7 +30,8 @@ interface Task {
 }
 
 export default function AddPage({ navigation, route }: any) {
-  const taskToEdit: Task | undefined = route.params?.task;
+  const { task: taskToEdit, initialView } = route.params || {};
+  const [view, setView] = useState<boolean>(initialView || true);
   const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
   const [description, setDescription] = useState(taskToEdit ? taskToEdit.description || "" : "");
   const [deadline, setDeadline] = useState<Date | null>(
@@ -55,6 +56,11 @@ export default function AddPage({ navigation, route }: any) {
       });
       return;
     }
+    if (view) {
+        if (taskToEdit.isDeleted) return;
+        setView(false);
+        return;
+    }
 
     try {
       const activeUserStr = await AsyncStorage.getItem("activeUser");
@@ -70,7 +76,6 @@ export default function AddPage({ navigation, route }: any) {
       const chosenFiles = attachments.length > 0 ? attachments : (taskToEdit ? taskToEdit.files : []);
 
       if (taskToEdit) {
-        // Edit existing task
         activeUser.usertasks = activeUser.usertasks.map((t: Task) =>
           t.id === taskToEdit.id
             ? {
@@ -100,8 +105,6 @@ export default function AddPage({ navigation, route }: any) {
         };
         activeUser.usertasks.push(newTask);
       }
-
-      // Update users array
       const idx = users.findIndex((u: any) => u.username === activeUser.username);
       if (idx >= 0) {
         users[idx] = activeUser;
@@ -140,7 +143,7 @@ export default function AddPage({ navigation, route }: any) {
           keyboardShouldPersistTaps="handled"
         >
             <Text style={styles.title}>
-              {taskToEdit ? "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
+              {taskToEdit ? view ? "Vazifani ko'rish" : "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
             </Text>
 
             <View style={styles.containerInputs}>
@@ -149,6 +152,7 @@ export default function AddPage({ navigation, route }: any) {
                 value={task}
                 onChangeText={setTask}
                 placeholder="Vazifa nomi"
+                editable={!view}
               />
               <TextField
                 label="Batafsil izoh"
@@ -157,6 +161,7 @@ export default function AddPage({ navigation, route }: any) {
                 placeholder="Enter description..."
                 multiline={true}
                 minHeight={100}
+                editable={!view}
               />
               <View style={styles.selectsBox}>
                 {options.map((option) => (
@@ -164,7 +169,7 @@ export default function AddPage({ navigation, route }: any) {
                     key={option.id}
                     label={option.text}
                     value={selected === option.id}
-                    onChange={() => setSelected(option.id)}
+                    onChange={() => !view && setSelected(option.id)}
                     color={option.color}
                   />
                 ))}
@@ -175,13 +180,15 @@ export default function AddPage({ navigation, route }: any) {
               <FilePickerComponent
                   onChange={setAttachments}
                   initialFiles={taskToEdit ? taskToEdit.files : []}
+                  disabled={view}
               />
             </View>
 
             <View style={styles.deadlineContainer}>
               <TouchableOpacity
                 style={styles.dateButton}
-                onPress={() => setShowPicker(true)}
+                onPress={() => !view && setShowPicker(true)}
+                disabled={view}
               >
                 <Text style={styles.dateText}>
                   {deadline ? deadline.toLocaleDateString() : "Deadline belgilanmadi"}
@@ -191,7 +198,7 @@ export default function AddPage({ navigation, route }: any) {
               {deadline && (
                 <TouchableOpacity
                   style={styles.clearButton}
-                  onPress={() => setDeadline(null)}
+                  onPress={() => !view && setDeadline(null)}
                 >
                   <Text style={styles.clearText}>X</Text>
                 </TouchableOpacity>
@@ -210,7 +217,7 @@ export default function AddPage({ navigation, route }: any) {
               />
             )}
 
-            {taskToEdit && (
+            {taskToEdit && !taskToEdit.isDeleted &&(
                 <View style={[styles.row, {marginBottom:10}]}>
                   <Toggle value={isActive} onChange={setIsActive} />
                   <Text style={{marginLeft: 10, color: "#fb5151"}}>O'chirish</Text>
@@ -218,7 +225,7 @@ export default function AddPage({ navigation, route }: any) {
             )}
 
             <TouchableOpacity style={styles.addButton} onPress={saveTask}>
-              <Text style={styles.addText}>{taskToEdit ? "Saqlash" : "Qo‘shish"}</Text>
+              <Text style={styles.addText}>{taskToEdit ? view ? "Tahrirlash" : "Saqlash" : "Qo‘shish"}</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
       </View>

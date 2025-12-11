@@ -31,8 +31,6 @@ const App: React.FC = () => {
         let lastState = AppState.currentState;
 
         const sub = AppState.addEventListener("change", (nextState) => {
-        console.log("filePickerOpen:", global.filePickerOpen);
-        console.log("next:", nextState, "last:", lastState);
         if (global.filePickerOpen) {
             return;
         }
@@ -46,7 +44,6 @@ const App: React.FC = () => {
             const diff = now - lastTimeRef.current;
 
             if (diff > 2000) {
-                console.log("diff:", diff);
                 navigationRef.current?.navigate("LoginCodePage");
             }
         }
