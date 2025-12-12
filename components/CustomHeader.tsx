@@ -66,7 +66,7 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
 
 const styles = StyleSheet.create({
   header: {
-    borderColor: "#121",
+    borderColor: "#c8cbd2",
     borderBottomWidth: 1,
     borderRightWidth: 1,
     borderBottomEndRadius: 30,
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 4,
     height: 60,
-    backgroundColor: "#f5f5f5",
+    // backgroundColor: "#f5f5f5",
   },
   username: { fontSize: 22, fontWeight: "bold" },
   keyUsername: { fontSize: 12, color: "gray" },

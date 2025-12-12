@@ -78,22 +78,20 @@ const App: React.FC = () => {
             <NavigationContainer ref={navigationRef}>
                 <Stack.Navigator
                     initialRouteName={initialRoute}
-                    screenOptions={{
-                        headerShown: true,
-                    }}
+                    screenOptions={{headerShown: false}}
                 >
                     <Stack.Screen options={{ headerShown: false }} name="LoginCodePage" component={LoginCodePage} />
                     <Stack.Screen options={{ headerShown: false }} name="LoginPage" component={LoginPage} />
-                    <Stack.Screen name="MainPage" component={MainPage} options={{ headerShown: false }} />
                     {/* Pages */}
-                    <Stack.Screen name="AddPage" options={{ headerShown: false }} component={AddPage} />
+                    <Stack.Screen name="MainPage" options={{ headerShown: false }} component={MainPage}/>
+                    <Stack.Screen name="DoneTasks" options={{ headerShown: false }} component={DoneTasks} />
+                    <Stack.Screen name="DeletedTasks" options={{ headerShown: false }} component={DeletedTasks} />
                     <Stack.Screen name="ProfileView" options={{ headerShown: false }} component={ProfileViewPage} />
                     <Stack.Screen name="ProfileEdit" options={{ headerShown: false }} component={ProfilePage} />
                     <Stack.Screen name="Chat" options={{ headerShown: false }} component={ChatPage} />
                     <Stack.Screen name="Support" options={{ headerShown: false }} component={SupportPage} />
                     <Stack.Screen name="Bussiness" options={{ headerShown: false }} component={Bussiness} />
-                    <Stack.Screen name="DeletedTasks" options={{ headerShown: false }} component={DeletedTasks} />
-                    <Stack.Screen name="DoneTasks" options={{ headerShown: false }} component={DoneTasks} />
+                    <Stack.Screen name="AddPage" options={{ headerShown: false }} component={AddPage} />
                 </Stack.Navigator>
 
                 <View style={styles.flashWrapper}>

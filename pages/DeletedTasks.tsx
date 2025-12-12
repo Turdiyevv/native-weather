@@ -129,7 +129,6 @@ export default function MainPage({ navigation }: any) {
       <View style={styles.bar} />
       <View style={styles.containerLittle}>
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
-
         <SectionList
           style={{ marginBottom: 0 }}
           sections={groupedTasks}
@@ -211,9 +210,9 @@ export default function MainPage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+    bar: { height: 35, width: "100%" },
   container: { flex: 1, backgroundColor: "#f5f5f5" },
   containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
-  bar: { height: 35, width: "100%" },
   sectionHeader: { fontSize: 11, fontWeight: "bold", color: "#b3b3b3", marginVertical: 5 },
   menuOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.2)" },
   taskTitle: { fontSize: 16, color: "#007AFF" },

@@ -129,7 +129,6 @@ export default function MainPage({ navigation }: any) {
       <View style={styles.bar} />
       <View style={styles.containerLittle}>
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
-
         <SectionList
           style={{ marginBottom: 0 }}
           sections={groupedTasks}
