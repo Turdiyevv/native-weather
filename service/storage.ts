@@ -10,7 +10,6 @@ export const loadUsers = async (): Promise<User[]> => {
     return [];
   }
 };
-
 export const saveUsers = async (users: User[]) => {
   try {
     await AsyncStorage.setItem("users", JSON.stringify(users));
@@ -77,7 +76,6 @@ export const updateTask = async (username: string, taskId: string, updated: Part
   const users = await loadUsers();
   const idx = users.findIndex((u) => u.username === username);
   if (idx === -1) return;
-
   users[idx].usertasks = users[idx].usertasks.map((t) =>
     t.id === taskId ? { ...t, ...updated } : t
   );

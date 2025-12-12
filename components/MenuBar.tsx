@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     borderTopEndRadius: 35,
     marginHorizontal: 10,
-    backgroundColor: "rgba(18, 18, 18, 0.01)",
+    backgroundColor: "rgba(18, 18, 18, 0.001)",
     position: "absolute",
     bottom: 0,
     flexDirection: "row",
