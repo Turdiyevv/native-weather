@@ -9,25 +9,30 @@ import {
   ScrollView,
   BackHandler
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { showMessage } from "react-native-flash-message";
 import TextField from "../components/TextField";
 import ConfirmModal from "../components/ConfirmModal";
-import { maskPassword } from "../utills/utill";
+import { User, UserInfo } from "./types/userTypes";
+import {
+  loadUsers,
+  saveUsers,
+  setActiveUser,
+  addUser,
+  getActiveUser
+} from "../service/storage";
 
 export default function LoginPage({ navigation }: any) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordCode, setPasswordCode] = useState("");
-  const [userCount, setUserCount] = useState(0);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [pass, setPass] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [userCount, setUserCount] = useState<number>(0);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [pass, setPass] = useState<string>("");
 
-  // 🔹 Userlar sonini yuklash
+  // 🔹 Load users count
   useEffect(() => {
     const loadCount = async () => {
-      const users = await AsyncStorage.getItem("users");
-      setUserCount(users ? JSON.parse(users).length : 0);
+      const users = await loadUsers();
+      setUserCount(users.length);
     };
     loadCount();
   }, []);
@@ -46,55 +51,53 @@ export default function LoginPage({ navigation }: any) {
     const cleanUsername = username.trim().replace(/\s+/g, "");
     const cleanPassword = password.trim().replace(/\s+/g, "");
 
-    if (!cleanUsername || !cleanPassword) return;
-    if (cleanUsername.length < 6 || cleanPassword.length < 6) return;
+    if (!cleanUsername || !cleanPassword) {
+      showMessage({ message: "Username va Password kiriting!", type: "warning" });
+      return;
+    }
+    if (cleanUsername.length < 6 || cleanPassword.length < 6) {
+      showMessage({ message: "Minimum 6 ta belgi bo'lishi kerak!", type: "warning" });
+      return;
+    }
 
-    try {
-      const storedUsers = await AsyncStorage.getItem("users");
-      let users = storedUsers ? JSON.parse(storedUsers) : [];
+    const users = await loadUsers();
+    const existingUser = users.find((u) => u.username === cleanUsername);
 
-      // 🔹 MUHIM TUZATISH: cleanUsername bilan izlash
-      const existingUser = users.find((u: any) => u.username === cleanUsername);
+    // 🔹 Topilmasa va limit to'la
+    if (!existingUser && users.length >= 3) {
+      showMessage({
+        message: "User topilmadi. Yangi user yaratish imkoni yo'q!",
+        type: "warning",
+      });
+      return;
+    }
 
-      // 🔹 Topilmasa va limit to‘la
-      if (!existingUser && users.length >= 3) {
-        showMessage({
-          message: "User topilmadi. Yangi user yaratish imkoni yo'q!",
-          type: "warning",
-        });
-        return;
-      }
+    // 🔹 Topilmasa lekin yaratish mumkin
+    if (!existingUser && users.length < 3) {
+      setModalVisible(true);
+      return;
+    }
 
-      // 🔹 Topilmasa lekin yaratish mumkin
-      if (!existingUser && users.length < 3) {
-        setModalVisible(true);
-        return;
-      }
-
-      // 🔹 Parol noto‘g‘ri
-      if (existingUser.password !== cleanPassword) {
-        setPass(maskPassword(existingUser.password));
-        setTimeout(() => setPass(""), 3000);
-
-        showMessage({
-          message: "Password noto‘g‘ri!",
-          type: "danger",
-        });
-        return;
-      }
-
-      // 🔹 Muvaffaqiyatli kirish
-      await AsyncStorage.setItem("activeUser", JSON.stringify(existingUser));
-      navigation.replace("MainPage");
+    // 🔹 Parol noto‘g‘ri
+    if (existingUser!.password !== cleanPassword) {
+      setPass(existingUser!.password.replace(/./g, "•"));
+      setTimeout(() => setPass(""), 3000);
 
       showMessage({
-        message: "Muvaffaqiyatli kirish!",
-        type: "success",
+        message: "Password noto‘g‘ri!",
+        type: "danger",
       });
-
-    } catch (e) {
-      showMessage({ message: String(e), type: "danger", icon: "danger" });
+      return;
     }
+
+    // 🔹 Muvaffaqiyatli kirish
+    await setActiveUser(existingUser!.username);
+    navigation.replace("MainPage");
+
+    showMessage({
+      message: "Muvaffaqiyatli kirish!",
+      type: "success",
+    });
   };
 
   return (
@@ -125,7 +128,7 @@ export default function LoginPage({ navigation }: any) {
             label="Password"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            secureTextEntry={true}
             minLength={6}
             required
           />
@@ -149,13 +152,12 @@ export default function LoginPage({ navigation }: any) {
           onConfirm={async () => {
             setModalVisible(false);
 
-            const storedUsers = await AsyncStorage.getItem("users");
-            let users = storedUsers ? JSON.parse(storedUsers) : [];
+            const users = await loadUsers();
 
-            const newUser = {
+            const newUser: User = {
               username: username.trim(),
               password: password.trim(),
-              passwordCode,
+              passwordCode: "",
               userinfo: {
                 firstName: "",
                 lastName: "",
@@ -167,12 +169,10 @@ export default function LoginPage({ navigation }: any) {
               usertasks: [],
             };
 
-            users.push(newUser);
-            await AsyncStorage.setItem("users", JSON.stringify(users));
-            await AsyncStorage.setItem("activeUser", JSON.stringify(newUser));
+            await addUser(newUser);
+            await setActiveUser(newUser.username);
 
-            // 🔹 count-ni yangilash
-            setUserCount(users.length);
+            setUserCount(users.length + 1);
 
             navigation.replace("MainPage");
 

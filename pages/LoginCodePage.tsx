@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, BackHandler, Alert } from "react-native";
+import React, { useState, useCallback } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from "react-native";
 import PasswordCodeInput from "../components/PasswordCodeInput";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "../components/ConfirmModal";
+import { loadUsers, setActiveUser } from "../service/storage";
+import { User } from "./types/userTypes";
 
 export default function LoginCodePage({ navigation }: any) {
   const [statusTitle, setStatusTitle] = useState("");
@@ -15,42 +16,56 @@ export default function LoginCodePage({ navigation }: any) {
   // === BACK BUTTON HANDLER WITH EXIT DIALOG ===
   useFocusEffect(
     useCallback(() => {
-    const backAction = () => {
-      setModalVisible(true);
-      return true;
-    };
+      const backAction = () => {
+        setModalVisible(true);
+        return true;
+      };
       const handler = BackHandler.addEventListener("hardwareBackPress", backAction);
       return () => handler.remove();
     }, [])
   );
+
   // === CODE CHECK ===
   const handleCode = async (code: string) => {
+    try {
+      const users: User[] = await loadUsers();
+      const matchedUser = users.find((u) => u.passwordCode === code);
 
-    const usersStr = await AsyncStorage.getItem("users");
-    const users = usersStr ? JSON.parse(usersStr) : [];
+      if (matchedUser) {
+        // activeUser ni storage ga qo'yish
+        await setActiveUser(matchedUser.username);
 
-    const matchedUser = users.find((u: any) => u.passwordCode === code);
+        setStatusTitle("✔ Tasdiqlandi");
+        setStatusColor("green");
+        setBorderStyle({ borderColor: "green" });
+        setResetCode(false);
 
-    if (matchedUser) {
-      await AsyncStorage.setItem("activeUser", JSON.stringify(matchedUser));
-      setStatusTitle("✔ Tasdiqlandi");
-      setStatusColor("green");
-      setBorderStyle({ borderColor: "green" });
+        setTimeout(() => {
+          setBorderStyle({});
+          setResetCode(true);
+          setStatusTitle("");
+          setStatusColor("");
+          navigation.replace("MainPage");
+        }, 600);
+      } else {
+        setStatusTitle("✖ Tasdiqlanmadi");
+        setBorderStyle({ borderColor: "#ff5353" });
+        setStatusColor("#ff5353");
+        setResetCode(false);
+
+        setTimeout(() => {
+          setBorderStyle({});
+          setResetCode(true);
+          setStatusTitle("");
+          setStatusColor("");
+        }, 600);
+      }
+    } catch (err) {
+      console.log("handleCode error:", err);
+      setStatusTitle("Xatolik yuz berdi");
+      setStatusColor("red");
+      setBorderStyle({ borderColor: "red" });
       setResetCode(false);
-
-      setTimeout(() => {
-        setBorderStyle({});
-        setResetCode(true);
-        setStatusTitle("");
-        setStatusColor("");
-        navigation.replace("MainPage");
-      }, 600);
-    } else {
-      setStatusTitle("✖ Tasdiqlanmadi");
-      setBorderStyle({ borderColor: "#ff5353" });
-      setStatusColor("#ff5353");
-      setResetCode(false);
-
       setTimeout(() => {
         setBorderStyle({});
         setResetCode(true);
@@ -69,6 +84,7 @@ export default function LoginCodePage({ navigation }: any) {
         status={resetCode}
         autoSubmit={true}
         borderStyle={borderStyle}
+        secureTextEntry={true}
       />
 
       <TouchableOpacity
@@ -77,15 +93,16 @@ export default function LoginCodePage({ navigation }: any) {
       >
         <Text style={styles.closeBoxText}>Username orqali kirish (Registratsiya)</Text>
       </TouchableOpacity>
-        <ConfirmModal
-          visible={modalVisible}
-          message="Ilovadan chiqmoqchimisiz?"
-          onConfirm={() => {
-            setModalVisible(false);
-            BackHandler.exitApp();
-          }}
-          onCancel={() => setModalVisible(false)}
-        />
+
+      <ConfirmModal
+        visible={modalVisible}
+        message="Ilovadan chiqmoqchimisiz?"
+        onConfirm={() => {
+          setModalVisible(false);
+          BackHandler.exitApp();
+        }}
+        onCancel={() => setModalVisible(false)}
+      />
     </View>
   );
 }

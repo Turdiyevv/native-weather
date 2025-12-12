@@ -1,3 +1,5 @@
+import {KeyboardTypeOptions} from "react-native";
+
 export type RootStackParamList = {
   LoginPage: undefined;
   MainPage: undefined;
@@ -24,8 +26,12 @@ export interface TextFieldProps {
   placeholder?: string;
   required?: boolean;
   errorMessage?: string;
+  secureTextEntry?: boolean;
   minLength?: number;
   minHeight?: number;
+  editable?: boolean;
+  multiline?: number | any;
+  keyboardType?: KeyboardTypeOptions;
 }
 export interface ConfirmModalProps {
   visible: boolean;
@@ -38,7 +44,7 @@ export interface TodoItemProps {
     id: string;
     title: string;
     description: string;
-    done: boolean;
+    done?: boolean;
     deadline?: string | Date;
     time: string | Date;
     isReturning?: number;

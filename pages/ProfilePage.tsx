@@ -7,20 +7,25 @@ import {
     TouchableOpacity,
     KeyboardAvoidingView,
     Platform,
-    ScrollView, BackHandler,
+    ScrollView,
+    BackHandler,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import TextField from "../components/TextField";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types/types";
-import {showMessage} from "react-native-flash-message";
-import {Ionicons} from "@expo/vector-icons";
+import { showMessage } from "react-native-flash-message";
+import { Ionicons } from "@expo/vector-icons";
+
+// ⚡ Storage services
+import { getActiveUser, loadUsers, saveUsers } from "../service/storage";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
+
 export default function ProfilePage() {
   const navigation = useNavigation<NavProp>();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -30,6 +35,7 @@ export default function ProfilePage() {
 
   const placeholderImage = "https://via.placeholder.com/150";
 
+  // 🔙 Telefon ortga tugmasi
   useEffect(() => {
     const backAction = () => {
       navigation.navigate("ProfileView");
@@ -43,26 +49,30 @@ export default function ProfilePage() {
 
     return () => backHandler.remove();
   }, []);
+
+  // 📌 Profilni yuklash — **storage.ts** orqali
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const activeUserStr = await AsyncStorage.getItem("activeUser");
-        if (activeUserStr) {
-          const user = JSON.parse(activeUserStr);
-          setFirstName(user.userinfo?.firstName || "");
-          setLastName(user.userinfo?.lastName || "");
-          setPhone(user.userinfo?.phone || "");
-          setJob(user.userinfo?.job || "");
-          setDescription(user.userinfo?.description || "");
-          setAvatar(user.userinfo?.avatar || "");
-        }
+        const active = await getActiveUser();
+        if (!active) return;
+
+        const info = active.userinfo || {};
+
+        setFirstName(info.firstName || "");
+        setLastName(info.lastName || "");
+        setPhone(info.phone || "");
+        setJob(info.job || "");
+        setDescription(info.description || "");
+        setAvatar(info.avatar || "");
       } catch (e) {
         showMessage({
-          message: e,
+          message: "Profilni yuklab bo‘lmadi",
           type: "danger",
         });
       }
     };
+
     loadProfile();
   }, []);
 
@@ -73,44 +83,62 @@ export default function ProfilePage() {
       return;
     }
     try {
-       global.filePickerOpen = true;
-        const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          quality: 0.7,
-        });
-        if (!result.canceled) {
-          setAvatar(result.assets[0].uri);
-        }
+      global.filePickerOpen = true;
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        setAvatar(result.assets[0].uri);
+      }
     } finally {
-        global.filePickerOpen = false;
+      global.filePickerOpen = false;
     }
   };
 
   const deleteAvatar = () => {
     setAvatar("");
     showMessage({
-      message: "Rasm o'chirildi",
+      message: "Rasm o‘chirildi",
       type: "info",
     });
   };
+
+  // 💾 Profilni saqlash — faqat storage xizmatlari orqali
   const saveProfile = async () => {
     try {
-      const activeUserStr = await AsyncStorage.getItem("activeUser");
-      if (!activeUserStr) return;
-      const activeUser = JSON.parse(activeUserStr);
-      activeUser.userinfo = { firstName, lastName, avatar, phone, job, description };
-      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
-      const usersStr = await AsyncStorage.getItem("users");
-      let users = usersStr ? JSON.parse(usersStr) : [];
-      const updatedUsers = users.map((u: any) =>
-        u.username === activeUser.username ? activeUser : u
+      const active = await getActiveUser();
+      if (!active) return;
+
+      const users = await loadUsers();
+
+      // yangi userinfo
+      const updatedUser = {
+        ...active,
+        userinfo: {
+          firstName,
+          lastName,
+          avatar,
+          phone,
+          job,
+          description,
+        },
+      };
+
+      const updatedUsers = users.map((u) =>
+        u.username === active.username ? updatedUser : u
       );
-      await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
+
+      await saveUsers(updatedUsers);
+
       showMessage({
-        message: "Ma'lumot to'ldirildi!",
+        message: "Ma'lumot saqlandi!",
         type: "success",
       });
+
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -119,11 +147,12 @@ export default function ProfilePage() {
       );
     } catch (e) {
       showMessage({
-        message: e,
+        message: "Saqlashda xatolik",
         type: "danger",
       });
     }
   };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -132,22 +161,56 @@ export default function ProfilePage() {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.picBox}>
           <TouchableOpacity onPress={chooseAvatar} style={styles.picBoxCH}>
-            <Image source={{ uri: avatar || placeholderImage }} style={styles.avatar} />
-            <Text style={styles.changeText}>Rasmni o'zgartirish</Text>
+            <Image
+              source={{ uri: avatar || placeholderImage }}
+              style={styles.avatar}
+            />
+            <Text style={styles.changeText}>Rasmni o‘zgartirish</Text>
+
             {avatar ? (
               <TouchableOpacity onPress={deleteAvatar} style={styles.trash}>
-                <Ionicons name="trash-outline" size={24} color="red"/>
+                <Ionicons name="trash-outline" size={24} color="red" />
               </TouchableOpacity>
             ) : null}
           </TouchableOpacity>
         </View>
+
         <View style={styles.containerInputs}>
-          <TextField label="Ism" value={firstName} onChangeText={setFirstName} placeholder="Ism" />
-          <TextField label="Familiya" value={lastName} onChangeText={setLastName} placeholder="Familiya" />
-          <TextField label="Telefon raqam" value={phone} onChangeText={setPhone} placeholder="+998..." keyboardType="phone-pad" />
-          <TextField label="Faoliyat turi" value={job} onChangeText={setJob} placeholder="Faoliyat turi" />
-          <TextField label="Izoh" value={description} minHeight={100} onChangeText={setDescription} placeholder="Izoh uchun..." multiline/>
+          <TextField
+            label="Ism"
+            value={firstName}
+            onChangeText={setFirstName}
+            placeholder="Ism"
+          />
+          <TextField
+            label="Familiya"
+            value={lastName}
+            onChangeText={setLastName}
+            placeholder="Familiya"
+          />
+          <TextField
+            label="Telefon raqam"
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="+998..."
+            keyboardType="phone-pad"
+          />
+          <TextField
+            label="Faoliyat turi"
+            value={job}
+            onChangeText={setJob}
+            placeholder="Faoliyat turi"
+          />
+          <TextField
+            label="Izoh"
+            value={description}
+            minHeight={100}
+            onChangeText={setDescription}
+            placeholder="Izoh..."
+            multiline
+          />
         </View>
+
         <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
           <Text style={styles.saveText}>Saqlash</Text>
         </TouchableOpacity>
@@ -157,37 +220,42 @@ export default function ProfilePage() {
 }
 
 const styles = StyleSheet.create({
-  picBox:{
-    // borderWidth: 1,
+  picBox: {
     alignItems: "center",
     justifyContent: "flex-end",
   },
-  picBoxCH:{
+  picBoxCH: {
     position: "relative",
-    borderRadius:12,
-    // borderWidth: 1,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "flex-end",
   },
-  trash:{
+  trash: {
     position: "absolute",
-    right:-40,
-    backgroundColor:'#fbd1d1',
+    right: -40,
+    backgroundColor: "#fbd1d1",
     borderRadius: 8,
     padding: 4,
-    marginBottom: 11
+    marginBottom: 11,
   },
   container: {
     flexGrow: 1,
-    justifyContent: 'flex-end',
-    padding: 10, backgroundColor: "#f5f5f5",
+    justifyContent: "flex-end",
+    padding: 10,
+    backgroundColor: "#f5f5f5",
   },
   containerInputs: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 10
+    padding: 10,
   },
-  avatar: { width: 150, height: 150, borderRadius: 75, marginVertical: 10, backgroundColor: "#ccc" },
+  avatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginVertical: 10,
+    backgroundColor: "#ccc",
+  },
   changeText: { textAlign: "center", marginBottom: 10, color: "#007AFF" },
   saveButton: {
     marginTop: 20,

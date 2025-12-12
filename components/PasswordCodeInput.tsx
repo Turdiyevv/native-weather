@@ -2,7 +2,16 @@ import React, {useEffect, useState} from "react";
 import {View, Text, TouchableOpacity, StyleSheet, Vibration} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 
-export default function PasswordCodeInput({ onComplete, title, color, status, autoSubmit = false, borderStyle={} }: any) {
+export default function PasswordCodeInput(
+    {
+      onComplete,
+      title,
+      color,
+      status,
+      autoSubmit = false,
+      secureTextEntry = false,
+      borderStyle={}
+    }: any) {
   const [code, setCode] = useState<string>("");
 
   useEffect(() => {
@@ -45,7 +54,12 @@ export default function PasswordCodeInput({ onComplete, title, color, status, au
       <View style={styles.codeRow}>
         {[0, 1, 2, 3].map((i) => (
           <View key={i} style={[styles.codeBox, borderStyle]}>
-            <Text style={styles.codeText}>{code[i] || ""}</Text>
+            <Text
+                style={styles.codeText}
+            >{secureTextEntry
+              ? code[i] ? "•" : ""
+              : code[i] || ""}
+            </Text>
           </View>
         ))}
       </View>

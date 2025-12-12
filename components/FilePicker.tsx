@@ -34,10 +34,9 @@ export default function FilePickerComponent({ onChange, initialFiles = [], disab
 
   return (
     <View>
-      <Text style={styles.title}>Fayllar</Text>
       <View style={styles.btnRow}>
         <TouchableOpacity style={styles.btn} onPress={pickDocuments} disabled={disabled}>
-          <Text style={styles.btnText}>Fayl tanlash (PDF, DOCX...)</Text>
+          <Text style={styles.btnText}>Fayl tanlash</Text>
         </TouchableOpacity>
       </View>
 
@@ -63,22 +62,17 @@ export default function FilePickerComponent({ onChange, initialFiles = [], disab
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 18,
-    marginBottom: 10,
-    fontWeight: "600",
-  },
   btnRow: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   btn: {
-    backgroundColor: "black",
-    padding: 10,
+    backgroundColor: "#E7E7E7",
+    padding: 8,
     borderRadius: 8,
   },
   btnText: {
-    color: "white",
+    color: "#121",
     fontSize: 14,
   },
   fileBox: {

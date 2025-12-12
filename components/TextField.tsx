@@ -10,7 +10,11 @@ export default function TextField({
   required = false,
   errorMessage = "Bu maydon to‘ldirilishi shart!",
   minLength = 4,
+  secureTextEntry,
   minHeight,
+  editable,
+  multiline,
+  keyboardType,
   ...rest
 }: TextFieldProps) {
   const [touched, setTouched] = useState(false);
@@ -31,6 +35,9 @@ export default function TextField({
           minHeight ? { minHeight: minHeight } : {},
           (showError || showMinLengthError) && styles.errorBorder
         ]}
+        editable={editable}
+        multiline={multiline}
+        secureTextEntry={secureTextEntry}
         cursorColor="#000"
         selectionColor="#000"
         value={value}
@@ -38,6 +45,7 @@ export default function TextField({
           onChangeText(text);
           if (!touched) setTouched(true);
         }}
+        keyboardType={keyboardType}
         onBlur={() => setTouched(true)}
         placeholder={placeholder}
         placeholderTextColor="#C0C8DB"

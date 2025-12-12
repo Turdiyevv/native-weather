@@ -16,6 +16,7 @@ import FilePickerComponent from "../FilePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ConfirmModal from "../ConfirmModal";
 import {UserTask} from "../../pages/types/userTypes";
+import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
 
 
 export default function AddPage({ navigation, route }: any) {
@@ -38,54 +39,43 @@ export default function AddPage({ navigation, route }: any) {
   ];
 
   const saveTask = async () => {
-    if (task.trim() === "" || description.trim() === "") {
-      showMessage({
-        message: "Vazifa nomi va description bo‘sh bo‘lishi mumkin emas",
-        type: "warning",
-      });
-      return;
-    }
-    if (view) {
-        if (taskToEdit.isDeleted) {
+      if (task.trim() === "" || description.trim() === "") {
+        showMessage({
+          message: "Vazifa nomi va izoh bo‘sh bo‘lishi mumkin emas",
+          type: "warning",
+        });
+        return;
+      }
+
+      // Agar ko‘rish rejimi bo‘lsa, tahrirlashga o‘tadi
+      if (view) {
+        if (taskToEdit?.isDeleted) {
           showMessage({
-            message: "Vazifa allaqachon tugatilgan !",
+            message: "Bu vazifa allaqachon o‘chirilgan",
             type: "danger",
           });
-          return
+          return;
         }
         setView(false);
         return;
-    }
+      }
 
-    try {
-      const activeUserStr = await AsyncStorage.getItem("activeUser");
-      if (!activeUserStr) return;
-      const activeUser = JSON.parse(activeUserStr);
-      if (!Array.isArray(activeUser.usertasks)) activeUser.usertasks = [];
+      const activeUser = await getActiveUser();
+      if (!activeUser) return;
 
-      const storedUsers = await AsyncStorage.getItem("users");
-      let users = storedUsers ? JSON.parse(storedUsers) : [];
-
-      const chosenStatus = selected ?? (taskToEdit ? taskToEdit.status : 0);
-      const chosenDeleted = isActive !== null ? isActive : (taskToEdit ? taskToEdit.isDeleted : false);
-      const chosenFiles = attachments.length > 0 ? attachments : (taskToEdit ? taskToEdit.files : []);
-
+      // UPDATE (edit)
       if (taskToEdit) {
-        activeUser.usertasks = activeUser.usertasks.map((t: UserTask) =>
-          t.id === taskToEdit.id
-            ? {
-                ...t,
-                title: task,
-                description,
-                deadline: deadline ? deadline.toISOString() : null,
-                status: chosenStatus,
-                isDeleted: chosenDeleted,
-                files: chosenFiles,
-              }
-            : t
-        );
-      } else {
-        // New task
+        await updateTask(activeUser.username, taskToEdit.id, {
+          title: task,
+          description,
+          deadline: deadline ? deadline.toISOString() : null,
+          status: selected,
+          isDeleted: isActive,
+          files: attachments,
+        });
+      }
+      // CREATE (add)
+      else {
         const now = new Date();
         const newTask: UserTask = {
           id: Date.now().toString(),
@@ -94,21 +84,13 @@ export default function AddPage({ navigation, route }: any) {
           done: false,
           deadline: deadline ? deadline.toISOString() : null,
           time: now.toISOString(),
-          status: chosenStatus,
-          isDeleted: chosenDeleted,
-          files: chosenFiles,
+          status: selected,
+          isDeleted: isActive,
+          files: attachments,
         };
-        activeUser.usertasks.push(newTask);
-      }
-      const idx = users.findIndex((u: any) => u.username === activeUser.username);
-      if (idx >= 0) {
-        users[idx] = activeUser;
-      } else {
-        users.push(activeUser);
-      }
 
-      await AsyncStorage.setItem("users", JSON.stringify(users));
-      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+        await addTask(activeUser.username, newTask);
+      }
 
       showMessage({
         message: "Muvaffaqiyatli saqlandi!",
@@ -116,43 +98,25 @@ export default function AddPage({ navigation, route }: any) {
       });
 
       navigation.goBack();
-    } catch (e) {
-      showMessage({
-        message: String(e),
-        type: "danger",
-      });
-    }
-  };
+    };
+
   const modalVisible=() => {setDeleteModalVisible(true)}
-  const handleDeleteConfirm = async (id: number) => {
-    try {
-      const activeUserStr = await AsyncStorage.getItem("activeUser");
-      if (!activeUserStr) return;
-      const activeUser = JSON.parse(activeUserStr);
-      const updatedTasks = activeUser.usertasks.map((t) =>
-        t.id === id ? { ...t, isDeleted: true } : t
-      );
-      activeUser.usertasks = updatedTasks;
-      const storedUsers = await AsyncStorage.getItem("users");
-      let users = storedUsers ? JSON.parse(storedUsers) : [];
-      users = users.map((u) =>
-        u.username === activeUser.username ? activeUser : u
-      );
-      await AsyncStorage.setItem("users", JSON.stringify(users));
-      await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
+  const handleDeleteConfirm = async () => {
+      const activeUser = await getActiveUser();
+      if (!activeUser || !taskToEdit) return;
+
+      await softDeleteTask(activeUser.username, taskToEdit.id);
+
       showMessage({
-        message: "Vazifa o'chirildi!",
+        message: "Vazifa o‘chirildi!",
         type: "success",
       });
+
       setIsActive(true);
+      setDeleteModalVisible(false);
       navigation.goBack();
-    } catch (e) {
-      showMessage({
-        message: String(e),
-        type: "danger",
-      });
-    }
-  }
+  };
+
   return (
       <View style={{flex: 1}}>
         <KeyboardAwareScrollView
@@ -254,9 +218,7 @@ export default function AddPage({ navigation, route }: any) {
         <ConfirmModal
           visible={deleteModalVisible}
           message="Hisobni butunlay o‘chirmoqchimisiz?"
-          onConfirm={() => {
-            handleDeleteConfirm(taskToEdit.id);
-          }}
+          onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteModalVisible(false)}
         />
       </View>
@@ -322,7 +284,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   addButton: {
-    backgroundColor: "black",
+    backgroundColor: "#121",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",

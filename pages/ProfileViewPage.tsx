@@ -19,6 +19,15 @@ import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "../components/ConfirmModal";
 import {showMessage} from "react-native-flash-message";
 import PasswordCodeInput from "../components/PasswordCodeInput";
+import {
+  getActiveUser,
+  updateUserInfo,
+  deleteUser,
+  loadUsers,
+  saveUsers
+} from "../service/storage";
+import {User} from "./types/userTypes";
+
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -37,27 +46,30 @@ export function ProfileViewPage() {
   const [borderStyle, setBorderStyle] = useState({});
 
   const loadActiveUser = async () => {
-    try {
-      const userData = await AsyncStorage.getItem("activeUser");
-      if (!userData) return;
-      const activeUser = JSON.parse(userData);
-      const profile = activeUser.userinfo || {};
-      setUser({
-        username: activeUser.username,
-        firstName: profile.firstName || "",
-        lastName: profile.lastName || "",
-        avatar: profile.avatar || "",
-        phone: profile.phone || "",
-        job: profile.job || "",
-        description: profile.description || ""
-      });
-    } catch (e) {
-      showMessage({
-        message: e,
-        type: "danger",
-      });
-    }
+      try {
+        const active = await getActiveUser();
+        if (!active) return;
+
+        const profile = active.userinfo || {};
+
+        setUser({
+          username: active.username,
+          firstName: profile.firstName || "",
+          lastName: profile.lastName || "",
+          avatar: profile.avatar || "",
+          phone: profile.phone || "",
+          job: profile.job || "",
+          description: profile.description || "",
+          passwordCode: active.passwordCode || ""
+        });
+      } catch (e) {
+        showMessage({
+          message: "Foydalanuvchini yuklashda xatolik",
+          type: "danger",
+        });
+      }
   };
+
 
   useEffect(() => {
     loadActiveUser();
@@ -93,19 +105,16 @@ export function ProfileViewPage() {
     setDeleteModalVisible(true);
   };
   const handleDeleteConfirm = async () => {
-    if (!user) return;
-    const storedUsers = await AsyncStorage.getItem("users");
-    let users = storedUsers ? JSON.parse(storedUsers) : [];
-    users = users.filter((u: any) => u.username !== user.username);
-    await AsyncStorage.setItem("users", JSON.stringify(users));
-    await AsyncStorage.removeItem("activeUser");
-    setDeleteModalVisible(false);
-    showMessage({
-      message: "Hisob muvaffaqiyatli o‘chirildi!",
-      type: "success",
-    });
-    navigation.replace("LoginPage");
+      if (!user) return;
+      await deleteUser(user.username);
+      setDeleteModalVisible(false);
+      showMessage({
+        message: "Hisob muvaffaqiyatli o‘chirildi!",
+        type: "success",
+      });
+      navigation.replace("LoginPage");
   };
+
   const openPasswordBox = async () => {
     setPasswordBoxVisible(!passwordBoxVisible);
   }
@@ -205,56 +214,53 @@ export function ProfileViewPage() {
       {passwordBoxVisible && (
         <View style={styles.infoBox}>
           <PasswordCodeInput
-            onComplete={async (code) => {
-              setPasswordCode(code);
+              onComplete={async (code) => {
+                setPasswordCode(code);
 
-              const activeUserStr = await AsyncStorage.getItem("activeUser");
-              const activeUser = activeUserStr ? JSON.parse(activeUserStr) : null;
-              if (!activeUser) return;
+                const activeUser = await getActiveUser();
+                if (!activeUser) return;
 
-              const usersStr = await AsyncStorage.getItem("users");
-              let users = usersStr ? JSON.parse(usersStr) : [];
+                const users = await loadUsers();
 
-              // Kod boshqa userlarda mavjudligini tekshirish
-              const isCodeTaken = users.some(
-                (u: any) => u.username !== activeUser.username && u.passwordCode === code
-              );
+                // Kod boshqa userlarda bor-yo‘qligini tekshirish
+                const isTaken = users.some(
+                  u => u.username !== activeUser.username && u.passwordCode === code
+                );
 
-              if (isCodeTaken) {
-                setStatusTitle("⚠ Allaqachon egallangan");
-                setBorderStyle({borderColor: "orange"});
-                setStatusColor("orange");
+                if (isTaken) {
+                  setStatusTitle("⚠ Allaqachon egallangan");
+                  setBorderStyle({ borderColor: "orange" });
+                  setStatusColor("orange");
+                  setTimeout(() => {
+                    setBorderStyle({});
+                    setStatusTitle("");
+                    setStatusColor("");
+                  }, 1000);
+                  return;
+                }
+                const updatedUsers = users.map(u =>
+                  u.username === activeUser.username
+                    ? { ...u, passwordCode: code }
+                    : u
+                );
+
+                await saveUsers(updatedUsers);
+
+                setStatusTitle("✔ Tasdiqlandi");
+                setBorderStyle({ borderColor: "green" });
+                setStatusColor("green");
+
                 setTimeout(() => {
                   setBorderStyle({});
                   setStatusTitle("");
                   setStatusColor("");
+                  openPasswordBox();
                 }, 1000);
-                return;
-              }
-
-              // Agar kod erkin bo‘lsa, activeUser ga qo‘shish
-              activeUser.passwordCode = code;
-              const updatedUsers = users.map((u: any) =>
-                u.username === activeUser.username ? activeUser : u
-              );
-
-              await AsyncStorage.setItem("users", JSON.stringify(updatedUsers));
-              await AsyncStorage.setItem("activeUser", JSON.stringify(activeUser));
-
-              setStatusTitle("✔ Tasdiqlandi");
-              setBorderStyle({borderColor: "green"});
-              setStatusColor("green");
-              setTimeout(() => {
-                setBorderStyle({});
-                setStatusTitle("");
-                setStatusColor("");
-                openPasswordBox();
-              }, 1000);
-            }}
-            title={statusTitle}
-            color={statusColor}
-            autoSubmit={false}
-            borderStyle={borderStyle}
+              }}
+              title={statusTitle}
+              color={statusColor}
+              autoSubmit={false}
+              borderStyle={borderStyle}
           />
           <TouchableOpacity onPress={openPasswordBox}>
             <Text style={styles.closeBox}>Yopish</Text>

@@ -12,18 +12,18 @@ export interface UserTask {
 }
 
 export interface UserInfo {
-  firstName: string;
-  lastName: string;
-  avatar: string;
-  phone: string;
-  job: string;
-  description: string;
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+  phone?: string;
+  job?: string;
+  description?: string;
 }
 
 export interface User {
   username: string;
   password: string;
-  passwordCode: string;
+  passwordCode?: string;
   userinfo: UserInfo;
   usertasks: UserTask[];
 }
