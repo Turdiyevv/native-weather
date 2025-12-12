@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import AdminIcon from "../assets/admin_icon.png";
 import {useNavigation} from "@react-navigation/native";
-import {RootStackParamList} from "./types";
+import {RootStackParamList} from "./types/types";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Chat">;

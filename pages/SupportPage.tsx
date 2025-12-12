@@ -15,7 +15,7 @@ import AdminIcon from "../assets/admin_icon.png";
 
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {RootStackParamList} from "./types";
+import {RootStackParamList} from "./types/types";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Support">;
 

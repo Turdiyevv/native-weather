@@ -14,7 +14,7 @@ import * as ImagePicker from "expo-image-picker";
 import TextField from "../components/TextField";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./types";
+import { RootStackParamList } from "./types/types";
 import {showMessage} from "react-native-flash-message";
 import {Ionicons} from "@expo/vector-icons";
 

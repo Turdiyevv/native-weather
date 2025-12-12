@@ -10,7 +10,7 @@ import ChatPage from "./pages/ChatPage";
 import SupportPage from "./pages/SupportPage";
 import Bussiness from "./pages/Bussiness";
 import LoginPage from "./pages/LogIn";
-import { RootStackParamList } from "./pages/types";
+import { RootStackParamList } from "./pages/types/types";
 import FlashMessage from "react-native-flash-message";
 import {Platform, StatusBar, View, StyleSheet, AppState} from "react-native";
 import LoginCodePage from "./pages/LoginCodePage";

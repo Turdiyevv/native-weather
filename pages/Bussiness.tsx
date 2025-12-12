@@ -11,7 +11,7 @@ import {
     Platform
 } from 'react-native';
 import AdminIcon from "../assets/admin_icon.png";
-import {RootStackParamList} from "./types";
+import {RootStackParamList} from "./types/types";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 

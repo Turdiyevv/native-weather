@@ -13,7 +13,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./types";
+import { RootStackParamList } from "./types/types";
 import { logout } from "../utills/LogOut";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "../components/ConfirmModal";
