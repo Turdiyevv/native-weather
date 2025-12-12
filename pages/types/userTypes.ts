@@ -27,3 +27,9 @@ export interface User {
   userinfo: UserInfo;
   usertasks: UserTask[];
 }
+export interface CustomHeaderProps {
+  firstName?: string;
+  username?: string;
+  avatar?: string;
+  onProfilePress?: () => void;
+}

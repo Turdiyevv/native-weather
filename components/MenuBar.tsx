@@ -2,17 +2,7 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
-interface LeftMenuProps {
-  buttons: {
-      icon: string;
-      size?: number;
-      color?: string;
-      marginLeft?:string | any;
-      onPress: () => void;
-  }[];
-      containerStyle?: object;
-}
+import {LeftMenuProps} from "../pages/types/types";
 
 const LeftMenu: React.FC<LeftMenuProps> = ({ buttons, containerStyle }) => {
   return (
@@ -35,7 +25,6 @@ const styles = StyleSheet.create({
     height: 100,
     borderTopLeftRadius: 35,
     borderTopEndRadius: 35,
-    // width: "100%",
     marginHorizontal: 10,
     backgroundColor: "rgba(18, 18, 18, 0.01)",
     position: "absolute",

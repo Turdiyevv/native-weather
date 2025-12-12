@@ -5,8 +5,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  KeyboardAvoidingView,
-  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -17,18 +15,8 @@ import SingleCheckBox from "../CheckBox";
 import FilePickerComponent from "../FilePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ConfirmModal from "../ConfirmModal";
+import {UserTask} from "../../pages/types/userTypes";
 
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  done: boolean;
-  deadline?: string | null;
-  time: string;
-  status?: number;
-  isDeleted?: boolean;
-  files:string[]
-}
 
 export default function AddPage({ navigation, route }: any) {
   const { task: taskToEdit, initialView } = route.params || {};
@@ -83,7 +71,7 @@ export default function AddPage({ navigation, route }: any) {
       const chosenFiles = attachments.length > 0 ? attachments : (taskToEdit ? taskToEdit.files : []);
 
       if (taskToEdit) {
-        activeUser.usertasks = activeUser.usertasks.map((t: Task) =>
+        activeUser.usertasks = activeUser.usertasks.map((t: UserTask) =>
           t.id === taskToEdit.id
             ? {
                 ...t,
@@ -99,7 +87,7 @@ export default function AddPage({ navigation, route }: any) {
       } else {
         // New task
         const now = new Date();
-        const newTask: Task = {
+        const newTask: UserTask = {
           id: Date.now().toString(),
           title: task,
           description,

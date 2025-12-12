@@ -11,3 +11,54 @@ export type RootStackParamList = {
   DeletedTasks: undefined;
   DoneTasks: undefined;
 };
+export interface Checkbox {
+  label?: string;
+  value: boolean;
+  onChange: (val: boolean) => void;
+  color?: string;
+}
+export interface TextFieldProps {
+  label: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  placeholder?: string;
+  required?: boolean;
+  errorMessage?: string;
+  minLength?: number;
+  minHeight?: number;
+}
+export interface ConfirmModalProps {
+  visible: boolean;
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+export interface TodoItemProps {
+  item: {
+    id: string;
+    title: string;
+    description: string;
+    done: boolean;
+    deadline?: string | Date;
+    time: string | Date;
+    isReturning?: number;
+    status?: number;
+    isDeleted?: boolean;
+    files?: []
+  };
+  index: number;
+  isFirst: boolean;
+  isLast: boolean;
+  onToggle: (item: object) => void;
+  onLongPress?: (y: number) => void;
+}
+export interface LeftMenuProps {
+  buttons: {
+      icon: string;
+      size?: number;
+      color?: string;
+      marginLeft?:string | any;
+      onPress: () => void;
+  }[];
+  containerStyle?: object;
+}

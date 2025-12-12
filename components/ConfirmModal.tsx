@@ -1,12 +1,6 @@
 import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
-
-interface ConfirmModalProps {
-  visible: boolean;
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
+import {ConfirmModalProps} from "../pages/types/types";
 
 export default function ConfirmModal({ visible, message, onConfirm, onCancel }: ConfirmModalProps) {
   return (

@@ -1,26 +1,7 @@
 import React from "react";
 import {TouchableOpacity, Text, StyleSheet, View, Dimensions} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
-
-interface TodoItemProps {
-  item: {
-    id: string;
-    title: string;
-    description: string;
-    done: boolean;
-    deadline?: string | Date;
-    time: string | Date;
-    isReturning?: number;
-    status?: number;
-    isDeleted?: boolean;
-    files?: []
-  };
-  index: number;
-  isFirst: boolean;
-  isLast: boolean;
-  onToggle: (item: object) => void;
-  onLongPress?: (y: number) => void;
-}
+import {TodoItemProps} from "../pages/types/types";
 
 export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast }: TodoItemProps) {
 
@@ -123,7 +104,7 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
                 <Text style={styles.time}>{formattedTime}</Text>
               </View>
           </View>
-          <View style={[styles.draft, item.isReturning ? {right: 64,} : {right: 44,}]}>
+          <View style={[styles.draft, (item.isReturning && item.isDeleted) ? {right: 64,} : {right: 47,}]}>
                 {item.status > 1 && (
                     <Ionicons
                         name="bookmark" size={20}

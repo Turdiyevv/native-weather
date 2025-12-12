@@ -1,16 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
-
-interface TextFieldProps extends TextInputProps {
-  label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
-  required?: boolean;
-  errorMessage?: string;
-  minLength?: number;
-  minHeight?: number;
-}
+import {TextFieldProps} from "../pages/types/types";
 
 export default function TextField({
   label,

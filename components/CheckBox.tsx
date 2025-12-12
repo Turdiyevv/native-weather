@@ -1,14 +1,8 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
+import {Checkbox} from "../pages/types/types"
 
-interface Props {
-  label?: string;
-  value: boolean;
-  onChange: (val: boolean) => void;
-  color?: string;
-}
-
-export default function SingleCheckBox({ label, value, onChange, color = "orange" }: Props) {
+export default function SingleCheckBox({ label, value, onChange, color = "orange" }: Checkbox) {
   return (
     <TouchableOpacity style={styles.row} onPress={() => onChange(!value)}>
       <View style={[styles.checkbox, { borderColor: value ? color : "#444" }]}>

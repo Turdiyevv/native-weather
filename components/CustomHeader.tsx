@@ -1,13 +1,7 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
-interface CustomHeaderProps {
-  firstName?: string;
-  username?: string;
-  avatar?: string;
-  onProfilePress?: () => void;
-}
+import {CustomHeaderProps} from "../pages/types/userTypes";
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
   firstName,
