@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function FilePickerComponent({ onChange, initialFiles = [], disabled = false }: any) {
-  const [files, setFiles] = useState<any[]>(initialFiles);
+  const { theme } = useTheme();
+    const [files, setFiles] = useState<any[]>(initialFiles);
 
   const pickDocuments = async () => {
       try {
@@ -35,8 +37,8 @@ export default function FilePickerComponent({ onChange, initialFiles = [], disab
   return (
     <View>
       <View style={styles.btnRow}>
-        <TouchableOpacity style={styles.btn} onPress={pickDocuments} disabled={disabled}>
-          <Text style={styles.btnText}>Fayl tanlash</Text>
+        <TouchableOpacity style={[styles.btn, {backgroundColor: theme.card}]} onPress={pickDocuments} disabled={disabled}>
+          <Text style={[styles.btnText, {color: theme.text}]}>Fayl tanlash</Text>
         </TouchableOpacity>
       </View>
 
@@ -67,7 +69,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   btn: {
-    backgroundColor: "#E7E7E7",
     padding: 8,
     borderRadius: 8,
   },

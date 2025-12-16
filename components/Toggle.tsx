@@ -1,10 +1,12 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
-  return (
+  const { theme } = useTheme();
+    return (
     <TouchableOpacity
-      style={[styles.container, value ? styles.on : styles.off]}
+      style={[styles.container, value ? styles.on : styles.off, {backgroundColor: theme.card}]}
       onPress={() => onChange(!value)}
       activeOpacity={0.8}
     >
@@ -26,7 +28,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   off: {
-    backgroundColor: "#121",
     alignItems: "flex-start",
   },
   dot: {

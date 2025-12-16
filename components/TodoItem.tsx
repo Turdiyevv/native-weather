@@ -2,14 +2,16 @@ import React from "react";
 import {TouchableOpacity, Text, StyleSheet, View, Dimensions} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {TodoItemProps} from "../pages/types/types";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast }: TodoItemProps) {
 
+    const { theme } = useTheme();
     const today = new Date();
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
 
-    let deadlineColor = "#007AFF";
+    let deadlineColor = "#2b87af";
 
     if (item.deadline) {
       const deadlineDate = new Date(item.deadline);
@@ -40,7 +42,7 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
   return (
     <TouchableOpacity
       style={[
-        styles.item,
+        styles.item, {backgroundColor: theme.card, borderColor: theme.border},
         isFirst && styles.firstBorder,
         isLast && styles.lastBorder,
       ]}
@@ -55,10 +57,10 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
             item.isReturning && item.isReturning > 0 && !item.done ?
                 styles.returningBorder : item.done ?
                 styles.done : null,
-            item.isDeleted && styles.deleted
+            item.isDeleted && {backgroundColor: theme.deleted}
         ]}>
             <View style={styles.titleContainer}>
-                <Text style={[styles.text, item.isDeleted && styles.doneText]}>{displayTitle}</Text>
+                <Text style={[styles.text, item.isDeleted && styles.doneText, {color: theme.text}]}>{displayTitle}</Text>
             <View style={styles.iconBox}>
               {item.isReturning && item.isReturning > 0 && (
                 <View style={styles.returnCount}>
@@ -99,7 +101,8 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
                 <Text
                     numberOfLines={1}
                     ellipsizeMode="tail"
-                    style={formattedDeadline ? styles.description : styles.description2}>{item.description}</Text>
+                    style={[formattedDeadline ? styles.description : styles.description2, {color: theme.description}]}
+                >{item.description}</Text>
               <View style={styles.timeContainer}>
                 <Text style={styles.time}>{formattedTime}</Text>
               </View>
@@ -144,9 +147,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   item: {
-    backgroundColor: "#fff",
     borderTopWidth: 1,
-    borderColor: "#ecebeb",
     height: 64,
   },
     defaultItem:{
@@ -193,6 +194,6 @@ const styles = StyleSheet.create({
   deadlineBox: { height: 14, marginTop: 0 },
   timeContainer: {marginLeft: "auto" },
   time: { fontSize: 12, color: "gray" },
-  description: { fontSize: 14, color: "#d3d1d1", marginLeft: 3, maxWidth: screenWidth - 154,},
-  description2: { fontSize: 14, color: "#d3d1d1", marginLeft: 3, maxWidth: screenWidth - 84,},
+  description: { fontSize: 14, marginLeft: 3, maxWidth: screenWidth - 154,},
+  description2: { fontSize: 14, marginLeft: 3, maxWidth: screenWidth - 84,},
 });

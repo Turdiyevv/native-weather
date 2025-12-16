@@ -5,8 +5,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "../components/ConfirmModal";
 import { loadUsers, setActiveUser } from "../service/storage";
 import { User } from "./types/userTypes";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function LoginCodePage({ navigation }: any) {
+  const { theme } = useTheme();
   const [statusTitle, setStatusTitle] = useState("");
   const [statusColor, setStatusColor] = useState("");
   const [resetCode, setResetCode] = useState(false);
@@ -76,7 +78,7 @@ export default function LoginCodePage({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.card }]}>
       <PasswordCodeInput
         onComplete={handleCode}
         title={statusTitle}

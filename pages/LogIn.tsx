@@ -20,8 +20,10 @@ import {
   addUser,
   getActiveUser
 } from "../service/storage";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function LoginPage({ navigation }: any) {
+  const { theme } = useTheme();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [userCount, setUserCount] = useState<number>(0);
@@ -102,15 +104,15 @@ export default function LoginPage({ navigation }: any) {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: theme.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Xush kelibsiz!</Text>
+        <View style={[styles.container]}>
+          <Text style={[styles.title, {color: theme.text}]}>Xush kelibsiz!</Text>
 
           <View style={styles.countBox}>
-            <Text style={styles.count}>Hisoblar: {userCount} / 3</Text>
+            <Text style={[styles.count, {color: theme.text}]}>Hisoblar: {userCount} / 3</Text>
             <Text style={styles.pass}>{pass}</Text>
           </View>
 
@@ -133,8 +135,8 @@ export default function LoginPage({ navigation }: any) {
             required
           />
 
-          <TouchableOpacity style={styles.btn} onPress={handleLogin}>
-            <Text style={styles.btnText}>Kirish</Text>
+          <TouchableOpacity style={[styles.btn, {backgroundColor: theme.card}]} onPress={handleLogin}>
+            <Text style={[styles.btnText, {color: theme.text}]}>Kirish</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -210,12 +212,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   pass: { color: "orange", fontSize: 11, marginLeft: 2 },
-  count: { color: "#555", fontSize: 16 },
+  count: {fontSize: 16 },
   btn: {
-    backgroundColor: "#121",
     paddingVertical: 12,
     borderRadius: 10,
     marginTop: 20,
   },
-  btnText: { color: "#fff", textAlign: "center", fontSize: 18, fontWeight: "600" },
+  btnText: { textAlign: "center", fontSize: 18, fontWeight: "600" },
 });

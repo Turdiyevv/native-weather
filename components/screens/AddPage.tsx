@@ -17,9 +17,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import ConfirmModal from "../ConfirmModal";
 import {UserTask} from "../../pages/types/userTypes";
 import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
+import {useTheme} from "../../theme/ThemeContext";
 
 
 export default function AddPage({ navigation, route }: any) {
+    const { theme } = useTheme();
   const { task: taskToEdit, initialView } = route.params || {};
   const [view, setView] = useState<boolean>(initialView || false);
   const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
@@ -118,7 +120,7 @@ export default function AddPage({ navigation, route }: any) {
   };
 
   return (
-      <View style={{flex: 1}}>
+      <View style={[{flex: 1}, {backgroundColor: theme.background}]}>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
@@ -128,11 +130,11 @@ export default function AddPage({ navigation, route }: any) {
           extraHeight={100}
           keyboardShouldPersistTaps="handled"
         >
-            <Text style={styles.title}>
+            <Text style={[styles.title, {color: theme.text}]}>
               {taskToEdit ? view ? "Vazifani ko'rish" : "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
             </Text>
 
-            <View style={styles.containerInputs}>
+            <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
               <TextField
                 label="Vazifa"
                 value={task}
@@ -162,7 +164,7 @@ export default function AddPage({ navigation, route }: any) {
               </View>
             </View>
 
-            <View style={styles.containerInputs}>
+            <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
               <FilePickerComponent
                   onChange={setAttachments}
                   initialFiles={taskToEdit ? taskToEdit.files : []}
@@ -172,11 +174,11 @@ export default function AddPage({ navigation, route }: any) {
 
             <View style={styles.deadlineContainer}>
               <TouchableOpacity
-                style={styles.dateButton}
+                style={[styles.dateButton, {backgroundColor: theme.card}]}
                 onPress={() => !view && setShowPicker(true)}
                 disabled={view}
               >
-                <Text style={styles.dateText}>
+                <Text style={[styles.dateText, {color: theme.text}]}>
                   {deadline ? deadline.toLocaleDateString() : "Deadline belgilanmadi"}
                 </Text>
               </TouchableOpacity>
@@ -210,8 +212,8 @@ export default function AddPage({ navigation, route }: any) {
                 </View>
             )}
 
-            <TouchableOpacity style={styles.addButton} onPress={saveTask}>
-              <Text style={styles.addText}>{taskToEdit ? view ? "Tahrirlash" : "Saqlash" : "Qo‘shish"}</Text>
+            <TouchableOpacity style={[styles.addButton, {backgroundColor: theme.card}]} onPress={saveTask}>
+              <Text style={[styles.addText, {color: theme.text}]}>{taskToEdit ? view ? "Tahrirlash" : "Saqlash" : "Qo‘shish"}</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
 
@@ -233,16 +235,9 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     paddingHorizontal: 2
   },
-  container: {
-    padding: 10,
-    backgroundColor: "#f5f5f5",
-    flexGrow: 1,
-    justifyContent: "flex-end",
-  },
   containerInputs: {
     marginTop:20,
     padding: 10,
-    backgroundColor: "#fff",
     borderRadius: 10,
   },
   row: {
@@ -262,7 +257,6 @@ const styles = StyleSheet.create({
   dateButton: {
     marginTop: 20,
     flex: 1,
-    backgroundColor: "#fff",
     padding: 12,
     borderRadius: 10,
     alignItems: "flex-start",
@@ -291,7 +285,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   addText: {
-    color: "white",
     fontSize: 18,
   },
 });

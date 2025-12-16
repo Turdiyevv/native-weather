@@ -10,7 +10,6 @@ import {
   Alert,
   BackHandler
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types/types";
@@ -21,12 +20,11 @@ import {showMessage} from "react-native-flash-message";
 import PasswordCodeInput from "../components/PasswordCodeInput";
 import {
   getActiveUser,
-  updateUserInfo,
   deleteUser,
   loadUsers,
   saveUsers
 } from "../service/storage";
-import {User} from "./types/userTypes";
+import {useTheme} from "../theme/ThemeContext";
 
 
 const screenWidth = Dimensions.get("window").width;
@@ -34,6 +32,7 @@ const screenWidth = Dimensions.get("window").width;
 type ProfileViewNavProp = NativeStackNavigationProp<RootStackParamList, "ProfileView">;
 
 export function ProfileViewPage() {
+    const { theme } = useTheme();
   const navigation = useNavigation<ProfileViewNavProp>();
   const [user, setUser] = useState<any>(null);
   const avatarAnim = useRef(new Animated.Value(0)).current;
@@ -44,6 +43,8 @@ export function ProfileViewPage() {
   const [statusColor, setStatusColor] = useState("");
   const [passwordBoxVisible, setPasswordBoxVisible] = useState(false);
   const [borderStyle, setBorderStyle] = useState({});
+  const { setTheme, themeName } = useTheme();
+
 
   const loadActiveUser = async () => {
       try {
@@ -130,14 +131,14 @@ export function ProfileViewPage() {
         }).start();
       }}
       scrollEventThrottle={16}
-      contentContainerStyle={styles.scrollContainer}
+      contentContainerStyle={[styles.scrollContainer, {backgroundColor: theme.background}]}
     >
       <View style={styles.container}>
         {user?.avatar ? (
           <Animated.Image
             source={{ uri: user.avatar }}
             style={[
-              styles.avatarBase,
+              styles.avatarBase, {backgroundColor: theme.card},
               {
                 width: animatedSize,
                 height: animatedSize,
@@ -149,19 +150,19 @@ export function ProfileViewPage() {
           <Ionicons
             name="person-circle-outline"
             size={150}
-            color="#555"
+            color={theme.card}
           />
         )}
       </View>
 
       <View style={styles.container}>
-        <Text style={styles.title}>
+        <Text style={[styles.title, {color: theme.text}]}>
           {user?.firstName} {user?.lastName}
         </Text>
         <Text style={styles.username}>@{user?.username}</Text>
       </View>
 
-      <View style={styles.infoBox}>
+      <View style={[styles.infoBox, {backgroundColor: theme.card}]}>
         <View style={styles.btns}>
           <TouchableOpacity
             style={styles.editButton}
@@ -178,32 +179,45 @@ export function ProfileViewPage() {
             <Ionicons name="log-out" size={20} color="red" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.label}>Telefon:</Text>
-        <Text style={styles.value}>{user?.phone}</Text>
+        <Text style={[styles.label, {color: theme.text}]}>Telefon:</Text>
+        <Text style={[styles.value, {color: theme.text}]}>{user?.phone}</Text>
 
-        <Text style={styles.label}>Faoliyat:</Text>
-        <Text style={styles.value}>{user?.job}</Text>
+        <Text style={[styles.label, {color: theme.text}]}>Faoliyat:</Text>
+        <Text style={[styles.value, {color: theme.text}]}>{user?.job}</Text>
 
-        <Text style={styles.label}>Izoh:</Text>
-        <Text style={styles.value}>{user?.description}</Text>
+        <Text style={[styles.label, {color: theme.text}]}>Izoh:</Text>
+        <Text style={[styles.value, {color: theme.text}]}>{user?.description}</Text>
       </View>
 
-      <View style={styles.infoBox}>
+      <View style={[styles.infoBox, {backgroundColor: theme.card}]}>
         <View style={styles.settingsText}>
-          <Ionicons name="settings" size={20} color="#555"/>
-          <Text style={styles.settingsTitle}>Sozlamalar</Text>
+          <Ionicons name="settings" size={20} color={theme.text}/>
+          <Text style={[styles.settingsTitle, {color: theme.text}]}>Sozlamalar</Text>
         </View>
+
+        <View style={styles.themeBox}>
+            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("dark")}>
+              <Text style={{color: theme.text}}>🌙 Tungi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("light")}>
+              <Text style={{color: theme.text}}>🌞 Kunduzgi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("blue")}>
+              <Text style={{color: theme.text}}>🔵 Ko'k</Text>
+            </TouchableOpacity>
+        </View>
+
         <TouchableOpacity onPress={openPasswordBox}>
-          <Text style={styles.loginCode}>Oson kirish kodi</Text>
+          <Text style={[styles.loginCode, {color: theme.text}]}>Oson kirish kodi</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Support")}>
-          <Text style={styles.loginCode}>Biz haqimizda.</Text>
+          <Text style={[styles.loginCode, {color: theme.text}]}>Biz haqimizda.</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
-          <Text style={styles.loginCode}>Chat bo'limi</Text>
+          <Text style={[styles.loginCode, {color: theme.text}]}>Chat bo'limi</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Bussiness")}>
-          <Text style={styles.loginCode}>Beznis bo'limi</Text>
+          <Text style={[styles.loginCode, {color: theme.text}]}>Beznis bo'limi</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={deleteAccount}>
           <Text style={styles.deleteText}>Hisobni butunlay o'chirish</Text>
@@ -263,7 +277,7 @@ export function ProfileViewPage() {
               borderStyle={borderStyle}
           />
           <TouchableOpacity onPress={openPasswordBox}>
-            <Text style={styles.closeBox}>Yopish</Text>
+            <Text style={styles.closeBox}>Yopish ⛔️</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -290,7 +304,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     padding: 20,
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
     paddingBottom: 50
   },
   container: {
@@ -299,14 +312,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   avatarBase: {
-    backgroundColor: "#ddd",
     marginTop: 10,
   },
   title: { fontSize: 24, fontWeight: "bold" },
   username: { fontSize: 18, color: "#666" },
+    themeBox:{
+      flexDirection: "row",justifyContent: "space-between",
+    },
+    themeBtn:{
+        borderRadius: 5,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+    },
   infoBox: {
     width: "100%",
-    backgroundColor: "#fff",
     padding: 15,
     borderRadius: 12,
     marginBottom: 30

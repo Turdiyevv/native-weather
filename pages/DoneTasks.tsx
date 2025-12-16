@@ -17,9 +17,11 @@ import { UserTask, User } from "./types/userTypes";
 import { getActiveUser, updateTask, softDeleteTask, loadUsers, saveUsers } from "../service/storage";
 import TodoItem from "../components/TodoItem";
 import TaskContextMenu from "../components/TaskContextMenu";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function MainPage({ navigation }: any) {
   const [tasks, setTasks] = useState<UserTask[]>([]);
+  const { theme } = useTheme();
   const [firstName, setFirstName] = useState("");
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState<string>("");
@@ -126,16 +128,16 @@ export default function MainPage({ navigation }: any) {
     }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme.background}]}>
       <View style={styles.bar} />
-      <View style={styles.containerLittle}>
+      <View style={[styles.containerLittle, {backgroundColor: theme.background}]}>
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
         <SectionList
           style={{ marginBottom: 0 }}
           sections={groupedTasks}
           keyExtractor={(item) => item.id}
           renderSectionHeader={({ section }) => (
-            <Text style={styles.sectionHeader}>{section.title}</Text>
+            <Text style={[styles.sectionHeader, {color: theme.subText}]}>{section.title}</Text>
           )}
           renderItem={({ item, index, section }) => (
             <TodoItem
@@ -179,7 +181,7 @@ export default function MainPage({ navigation }: any) {
 
 const styles = StyleSheet.create({
   bar: { height: 35, width: "100%" },
-  container: { flex: 1, backgroundColor: "#f5f5f5" },
-  containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
-  sectionHeader: { fontSize: 11, fontWeight: "bold", color: "#b3b3b3", marginVertical: 5 },
+  container: { flex: 1 },
+  containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10 },
+  sectionHeader: { fontSize: 11, fontWeight: "bold", marginVertical: 5 },
 });

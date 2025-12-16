@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {View, Text, TouchableOpacity, StyleSheet, Vibration} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function PasswordCodeInput(
     {
@@ -13,6 +14,7 @@ export default function PasswordCodeInput(
       borderStyle={}
     }: any) {
   const [code, setCode] = useState<string>("");
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (status === true) {
@@ -53,9 +55,9 @@ export default function PasswordCodeInput(
       {/* 4 ta katak */}
       <View style={styles.codeRow}>
         {[0, 1, 2, 3].map((i) => (
-          <View key={i} style={[styles.codeBox, borderStyle]}>
+          <View key={i} style={[styles.codeBox, {borderColor: theme.text}, borderStyle]}>
             <Text
-                style={styles.codeText}
+                style={[styles.codeText, {color: theme.text}]}
             >{secureTextEntry
               ? code[i] ? "•" : ""
               : code[i] || ""}
@@ -67,7 +69,7 @@ export default function PasswordCodeInput(
       {title ? (
         <Text style={[styles.title, {color: color}]}>{title}</Text>
       ) : (
-        <Text style={styles.title}>Tezkor kod</Text>
+        <Text style={[styles.title, {color: theme.text}]}>Tezkor kod</Text>
       )}
 
       <View style={styles.keyboard}>
@@ -110,7 +112,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderWidth: 2,
-    borderColor: "#333",
     borderRadius: 10,
     marginHorizontal: 8,
     justifyContent: "center",
@@ -120,7 +121,6 @@ const styles = StyleSheet.create({
   codeText: {
     fontSize: 28,
     fontWeight: "500",
-    color: "#111",
   },
 
   keyboard: {

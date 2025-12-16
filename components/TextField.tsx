@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
 import {TextFieldProps} from "../pages/types/types";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function TextField({
   label,
@@ -18,7 +19,7 @@ export default function TextField({
   ...rest
 }: TextFieldProps) {
   const [touched, setTouched] = useState(false);
-
+  const { theme } = useTheme();
   const showError = required && touched && value.trim().length === 0;
   const showMinLengthError = touched && value.length > 0 && value.length < minLength;
 
@@ -30,16 +31,15 @@ export default function TextField({
 
       <TextInput
         style={[
-          styles.input,
-            { color: "#121" },
+          styles.input, {backgroundColor: theme.card, color: theme.text},
           minHeight ? { minHeight: minHeight } : {},
           (showError || showMinLengthError) && styles.errorBorder
         ]}
         editable={editable}
         multiline={multiline}
         secureTextEntry={secureTextEntry}
-        cursorColor="#000"
-        selectionColor="#000"
+        cursorColor={theme.placeholder}
+        selectionColor={theme.placeholder}
         value={value}
         onChangeText={(text) => {
           onChangeText(text);
@@ -48,7 +48,7 @@ export default function TextField({
         keyboardType={keyboardType}
         onBlur={() => setTouched(true)}
         placeholder={placeholder}
-        placeholderTextColor="#C0C8DB"
+        placeholderTextColor={theme.placeholder}
         {...rest}
       />
 
@@ -68,11 +68,10 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, marginBottom: 3, color: "#858484" },
   input: {
     width: "100%",
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#535252",
     fontSize: 18,
   },
   errorBorder: {

@@ -9,6 +9,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "./ConfirmModal";
 import {UserTask} from "../pages/types/userTypes";
+import {useTheme} from "../theme/ThemeContext";
 
 interface Props {
   task: UserTask;
@@ -22,7 +23,6 @@ interface Props {
   modalVisible: boolean;
   setModalVisible: (v: boolean) => void;
 }
-
 export default function TaskContextMenu({
   task,
   visible,
@@ -35,6 +35,8 @@ export default function TaskContextMenu({
   modalVisible,
   setModalVisible,
 }: Props) {
+
+    const { theme } = useTheme();
   if (!visible) return null;
 
   const menuStyle: Animated.AnimatedProps<any> = {
@@ -47,7 +49,7 @@ export default function TaskContextMenu({
     }),
     opacity: menuAnim,
     transform: [{ scale: menuAnim }],
-    backgroundColor: "#fff",
+    backgroundColor: theme.card,
     borderRadius: 10,
     paddingVertical: 10,
     overflow: "hidden",
@@ -74,7 +76,7 @@ export default function TaskContextMenu({
           onPress={() => onMarkDone(task)}
           disabled={!!task?.isDeleted}
         >
-          <Text style={styles.menuText}>
+          <Text style={[styles.menuText, {color: theme.text}]}>
             {task.done ? "Qaytarish" : "Bajarildi"}
           </Text>
           <Ionicons
@@ -89,7 +91,7 @@ export default function TaskContextMenu({
           onPress={() => onEdit(task)}
           disabled={!!task?.isDeleted || !!task?.done}
         >
-          <Text style={styles.menuText}>Tahrirlash</Text>
+          <Text style={[styles.menuText, {color: theme.text}]}>Tahrirlash</Text>
           <Ionicons name="create-outline" size={20} color="blue" />
         </TouchableOpacity>
 

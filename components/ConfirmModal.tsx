@@ -1,9 +1,11 @@
 import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import {ConfirmModalProps} from "../pages/types/types";
+import {useTheme} from "../theme/ThemeContext";
 
 export default function ConfirmModal({ visible, message, onConfirm, onCancel }: ConfirmModalProps) {
-  return (
+  const { theme } = useTheme();
+    return (
     <Modal
       visible={visible}
       transparent
@@ -15,11 +17,11 @@ export default function ConfirmModal({ visible, message, onConfirm, onCancel }: 
         activeOpacity={1}
         onPress={onCancel}
       >
-        <View style={styles.modal}>
-          <Text style={styles.message}>{message}</Text>
+        <View style={[styles.modal, {backgroundColor: theme.background}]}>
+          <Text style={[styles.message, {color: theme.text}]}>{message}</Text>
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.btn} onPress={onCancel}>
-              <Text style={styles.canBtnText}>Yo‘q</Text>
+              <Text style={[styles.canBtnText, {color: theme.text}]}>Yo‘q</Text>
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity style={styles.btn} onPress={onConfirm}>
@@ -47,7 +49,6 @@ const styles = StyleSheet.create({
   modal: {
     width: "auto",
     maxWidth: "80%",
-    backgroundColor: "#fff",
     borderRadius: 12,
     paddingVertical: 20,
     paddingHorizontal: 30,

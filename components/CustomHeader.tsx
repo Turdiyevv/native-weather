@@ -4,10 +4,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { getActiveUser } from '../service/storage';
 import { User } from '../pages/types/userTypes';
 import { useFocusEffect } from "@react-navigation/native";
+import {useTheme} from "../theme/ThemeContext";
 
 interface HeaderProps {onProfilePress: () => void}
+
 const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const { theme } = useTheme();
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadCurrentUserData = useCallback(async () => {
@@ -50,12 +53,12 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
   return (
     <View style={styles.header}>
       <View>
-        <Text style={styles.username}>{firstName || "Name"}</Text>
+        <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
         <Text style={styles.keyUsername}>@{username || "username"}</Text>
       </View>
       <TouchableOpacity onPress={onProfilePress}>
         {avatar ? (
-          <Image source={{ uri: avatar }} style={styles.avatar} />
+          <Image source={{ uri: avatar }} style={[styles.avatar, {backgroundColor: theme.background}]} />
         ) : (
           <Ionicons name="person-circle-outline" size={50} color="#555" />
         )}
@@ -83,7 +86,6 @@ const styles = StyleSheet.create({
   avatar: {
     borderColor: "#121",
     borderWidth: 2,
-    backgroundColor: "#121",
     width: 50,
     height: 50,
     margin: 1,

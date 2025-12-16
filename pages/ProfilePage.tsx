@@ -20,12 +20,13 @@ import { Ionicons } from "@expo/vector-icons";
 
 // ⚡ Storage services
 import { getActiveUser, loadUsers, saveUsers } from "../service/storage";
+import {useTheme} from "../theme/ThemeContext";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 
 export default function ProfilePage() {
   const navigation = useNavigation<NavProp>();
-
+  const { theme } = useTheme();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -107,7 +108,6 @@ export default function ProfilePage() {
     });
   };
 
-  // 💾 Profilni saqlash — faqat storage xizmatlari orqali
   const saveProfile = async () => {
     try {
       const active = await getActiveUser();
@@ -155,17 +155,17 @@ export default function ProfilePage() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: theme.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={[styles.container, {backgroundColor: theme.background}]}>
         <View style={styles.picBox}>
           <TouchableOpacity onPress={chooseAvatar} style={styles.picBoxCH}>
             <Image
               source={{ uri: avatar || placeholderImage }}
-              style={styles.avatar}
+              style={[styles.avatar, {backgroundColor: theme.card}]}
             />
-            <Text style={styles.changeText}>Rasmni o‘zgartirish</Text>
+            <Text style={[styles.changeText, {color: theme.text}]}>Rasmni o‘zgartirish</Text>
 
             {avatar ? (
               <TouchableOpacity onPress={deleteAvatar} style={styles.trash}>
@@ -175,7 +175,7 @@ export default function ProfilePage() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.containerInputs}>
+        <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
           <TextField
             label="Ism"
             value={firstName}
@@ -211,8 +211,8 @@ export default function ProfilePage() {
           />
         </View>
 
-        <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
-          <Text style={styles.saveText}>Saqlash</Text>
+        <TouchableOpacity style={[styles.saveButton, {backgroundColor: theme.card}]} onPress={saveProfile}>
+          <Text style={[styles.saveText, {color: theme.text}]}>Saqlash</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -242,10 +242,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "flex-end",
     padding: 10,
-    backgroundColor: "#f5f5f5",
   },
   containerInputs: {
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
   },
@@ -254,9 +252,8 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     marginVertical: 10,
-    backgroundColor: "#ccc",
   },
-  changeText: { textAlign: "center", marginBottom: 10, color: "#007AFF" },
+  changeText: { textAlign: "center", marginBottom: 10 },
   saveButton: {
     marginTop: 20,
     backgroundColor: "#121",
@@ -265,5 +262,5 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  saveText: { color: "white", fontSize: 18 },
+  saveText: { fontSize: 18 },
 });
