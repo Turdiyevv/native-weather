@@ -1,6 +1,7 @@
 export const themes = {
   light: {
     name: "light",
+    isDark: false,
     background: "#f5f5f5",
     card: "#ffffff",
     text: "#1c1c1e",
@@ -17,6 +18,7 @@ export const themes = {
 
   dark: {
     name: "dark",
+    isDark: true,
     background: "#101010",
     card: "#202023",
     text: "#ffffff",
@@ -33,6 +35,7 @@ export const themes = {
 
   blue: {
     name: "blue",
+    isDark: true,
     background: "#111a30",
     card: "#1E293B",
     text: "#E5E7EB",
@@ -49,4 +52,6 @@ export const themes = {
 } as const;
 
 export type ThemeName = keyof typeof themes;
-export type Theme = (typeof themes)[ThemeName];
+export type Theme = (typeof themes)[ThemeName] & {
+  isDark: boolean;
+};

@@ -133,7 +133,7 @@ export default function MainPage({ navigation }: any) {
       <View style={[styles.containerLittle, {backgroundColor: theme.background}]}>
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
         <SectionList
-          style={{ marginBottom: 0 }}
+          style={{ marginBottom: 40 }}
           sections={groupedTasks}
           keyExtractor={(item) => item.id}
           renderSectionHeader={({ section }) => (

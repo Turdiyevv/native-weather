@@ -192,11 +192,9 @@ export default function LoginPage({ navigation }: any) {
 
 const styles = StyleSheet.create({
   closeBox: {
-    borderWidth: 1,
     paddingVertical: 3,
     paddingHorizontal: 6,
     borderRadius: 7,
-    borderColor: "orange",
     marginTop: 16,
   },
   closeBoxText: {

@@ -44,12 +44,11 @@ const AppNavigator = () => {
   const { theme } = useTheme();
 
   const navigationTheme = {
-      dark: theme.name === "dark", // 🔥 MUHIM
+      dark: theme.isDark,
       colors: {
-        ...(theme.name === "dark"
+        ...(theme.isDark
           ? NavigationDarkTheme.colors
           : NavigationDefaultTheme.colors),
-
         background: theme.background,
         card: theme.card,
         text: theme.text,
@@ -93,7 +92,7 @@ const AppNavigator = () => {
   return (
     <>
       <StatusBar
-        barStyle={theme.name === "dark" ? "light-content" : "dark-content"}
+        barStyle={theme.isDark ? "light-content" : "dark-content"}
         backgroundColor={theme.background}
       />
 

@@ -93,7 +93,8 @@ export default function LoginCodePage({ navigation }: any) {
         style={styles.closeBox}
         onPress={() => navigation.replace("LoginPage")}
       >
-        <Text style={styles.closeBoxText}>Username orqali kirish (Registratsiya)</Text>
+        <Text style={styles.closeBoxText}>Username orqali kirish</Text>
+        <Text style={styles.closeBoxText}>(Registratsiya)</Text>
       </TouchableOpacity>
 
       <ConfirmModal
@@ -112,15 +113,11 @@ export default function LoginCodePage({ navigation }: any) {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", paddingHorizontal: 20 },
   closeBox: {
-    borderWidth: 1,
     paddingVertical: 3,
-    paddingHorizontal: 6,
+    paddingHorizontal: 35,
     borderRadius: 7,
-    borderColor: "orange",
     fontSize: 17,
     marginTop: 16,
-    justifyContent: "center",
-    alignSelf: "center",
   },
   closeBoxText: {
     color: "orange",
