@@ -22,9 +22,9 @@ export default LeftMenu;
 
 const styles = StyleSheet.create({
   leftButtons: {
-    height: 100,
-    borderTopLeftRadius: 35,
-    borderTopEndRadius: 35,
+    height: 80,
+    borderTopLeftRadius: 36,
+    borderTopEndRadius: 36,
     marginHorizontal: 10,
     backgroundColor: "rgba(18, 18, 18, 0.001)",
     position: "absolute",

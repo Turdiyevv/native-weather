@@ -16,6 +16,7 @@ import CustomHeader from "../components/CustomHeader";
 import { UserTask, User } from "./types/userTypes";
 import { getActiveUser, updateTask, softDeleteTask, loadUsers, saveUsers } from "../service/storage";
 import TodoItem from "../components/TodoItem";
+import TaskContextMenu from "../components/TaskContextMenu";
 
 export default function MainPage({ navigation }: any) {
   const [tasks, setTasks] = useState<UserTask[]>([]);
@@ -147,57 +148,24 @@ export default function MainPage({ navigation }: any) {
             />
           )}
         />
-
-        {selectedTaskId && (() => {
-          const task = tasks.find(t => t.id === selectedTaskId);
-          if (!task) return null;
-
-          const menuStyle: Animated.AnimatedProps<any> = {
-            position: "absolute",
-            right: 20,
-            top: menuPosition.y,
-            width: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 200] }),
-            opacity: menuAnim,
-            transform: [{ scale: menuAnim }],
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            paddingVertical: 10,
-            overflow: "hidden",
-          };
-
-          return (
-            <TouchableOpacity style={styles.menuOverlay} activeOpacity={1} onPress={closeMenu}>
-              <Animated.View style={menuStyle}>
-                <View style={styles.menuButtonTitle}>
-                  <Text style={styles.taskTitle}>{task.title.length > 16 ? task.title.slice(0, 16) + "..." : task.title}</Text>
-                  <Ionicons name="document-outline" size={20} color="gray" />
-                </View>
-                <TouchableOpacity style={[styles.menuButton, !!task?.isDeleted && { opacity: 0.4 }]}
-                                  onPress={() => markDone(task)} disabled={!!task?.isDeleted}>
-                  <Text style={styles.menuText}>{task.done ? "Qaytarish" : "Bajarildi"}</Text>
-                  <Ionicons name={task.done ? "arrow-undo-outline" : "checkmark-circle-outline"} size={20} color={task.done ? "orange" : "green"} />
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.menuButton, !!task?.isDeleted && { opacity: 0.4 }]}
-                                  onPress={() => editTask(task, false)} disabled={!!task?.isDeleted}>
-                  <Text style={styles.menuText}>Tahrirlash</Text>
-                  <Ionicons name="create-outline" size={20} color="blue" />
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.menuButtonDel, !!task?.isDeleted && { opacity: 0.4 }]}
-                                  onPress={() => setModalVisible(true)} disabled={!!task?.isDeleted}>
-                  <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
-                  <Ionicons name="trash-outline" size={20} color="red" />
-                </TouchableOpacity>
-              </Animated.View>
-
-              <ConfirmModal
-                visible={modalVisible}
-                message="Ishonchingiz komilmi?"
-                onConfirm={() => { deleteTaskHandler(task); setModalVisible(false); }}
-                onCancel={() => setModalVisible(false)}
-              />
-            </TouchableOpacity>
-          );
-        })()}
+            {selectedTaskId && (() => {
+              const task = tasks.find(t => t.id === selectedTaskId);
+              if (!task) return null;
+              return (
+                <TaskContextMenu
+                  task={task}
+                  visible={true}
+                  menuAnim={menuAnim}
+                  menuPositionY={menuPosition.y}
+                  onClose={closeMenu}
+                  onMarkDone={markDone}
+                  onEdit={(task) => editTask(task, false)}
+                  onDelete={deleteTaskHandler}
+                  modalVisible={modalVisible}
+                  setModalVisible={setModalVisible}
+                />
+              );
+            })()}
         <LeftMenu
           buttons={[
             { icon: "home-outline", onPress: () => navigation.navigate("MainPage"),size: 26 },
@@ -210,14 +178,8 @@ export default function MainPage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-    bar: { height: 35, width: "100%" },
+  bar: { height: 35, width: "100%" },
   container: { flex: 1, backgroundColor: "#f5f5f5" },
   containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10, backgroundColor: "#f5f5f5" },
   sectionHeader: { fontSize: 11, fontWeight: "bold", color: "#b3b3b3", marginVertical: 5 },
-  menuOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.2)" },
-  taskTitle: { fontSize: 16, color: "#007AFF" },
-  menuButtonTitle: { paddingTop: 3, paddingBottom: 10, paddingHorizontal: 15, borderBottomWidth: 1, borderBottomColor: "#eee", flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  menuButton: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 15, borderBottomWidth: 1, borderBottomColor: "#eee" },
-  menuButtonDel: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10, paddingHorizontal: 15 },
-  menuText: { fontSize: 16 },
 });
