@@ -21,7 +21,7 @@ export const themes = {
     isDark: true,
     background: "#101010",
     card: "#202023",
-    text: "#ffffff",
+    text: "#e8e7e7",
     placeholder: "rgba(159,158,158,0.58)",
     subText: "#8e8e93",
     primary: "#0A84FF",

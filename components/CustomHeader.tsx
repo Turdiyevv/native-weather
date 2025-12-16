@@ -69,11 +69,11 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
 
 const styles = StyleSheet.create({
   header: {
-    borderColor: "#c8cbd2",
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderBottomEndRadius: 30,
-    borderTopEndRadius: 30,
+    // borderColor: "#c8cbd2",
+    // borderBottomWidth: 1,
+    // borderRightWidth: 1,
+    // borderBottomEndRadius: 30,
+    // borderTopEndRadius: 30,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
