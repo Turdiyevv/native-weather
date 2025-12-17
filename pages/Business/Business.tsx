@@ -17,14 +17,14 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
 import Calendar from "../../components/Calendar";
 
-type SupportNav = NativeStackNavigationProp<RootStackParamList, "Bussiness">;
+type SupportNav = NativeStackNavigationProp<RootStackParamList, "Business">;
 export default function BackdropFilterExample() {
     const { theme } = useTheme();
   const navigation = useNavigation<SupportNav>();
 
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate("ProfileView");
+      navigation.navigate("MainPage");
       return true;
     };
 
@@ -64,7 +64,6 @@ export default function BackdropFilterExample() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   scrollContainer: {
     flexGrow: 1,

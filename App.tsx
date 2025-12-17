@@ -20,9 +20,10 @@ import ProfilePage from "./pages/ProfilePage";
 import { ProfileViewPage } from "./pages/ProfileViewPage";
 import ChatPage from "./pages/ChatPage";
 import SupportPage from "./pages/SupportPage";
-import Bussiness from "./pages/Bussiness/Bussiness";
+import Business from "./pages/Business/Business";
 import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
+import IncomeAndExpenses from "./pages/Business/IncomeAndExpenses";
 
 import { RootStackParamList } from "./pages/types/types";
 import {
@@ -108,8 +109,9 @@ const AppNavigator = () => {
               <Stack.Screen name="ProfileEdit" component={ProfilePage} />
               <Stack.Screen name="Chat" component={ChatPage} />
               <Stack.Screen name="Support" component={SupportPage} />
-              <Stack.Screen name="Bussiness" component={Bussiness} />
+              <Stack.Screen name="Business" component={Business} />
               <Stack.Screen name="AddPage" component={AddPage} />
+              <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
             </Stack.Navigator>
 
             <View style={styles.flashWrapper}>

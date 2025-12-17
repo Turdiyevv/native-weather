@@ -223,7 +223,7 @@ export function ProfileViewPage() {
         <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
           <Text style={[styles.loginCode, {color: theme.text}]}>Chat bo'limi</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Bussiness")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Business")}>
           <Text style={[styles.loginCode, {color: theme.text}]}>Beznis bo'limi</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={deleteAccount}>

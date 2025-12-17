@@ -8,8 +8,11 @@ export type RootStackParamList = {
   ProfileEdit: undefined;
   Chat: undefined;
   Support: undefined;
-  Bussiness: undefined;
+  Business: undefined;
   LoginCodePage: undefined;
+  IncomeAndExpenses: {
+    selectedDate: string;
+  };
 };
 export interface Checkbox {
   label?: string;

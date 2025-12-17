@@ -1,70 +1,120 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useTheme } from "../theme/ThemeContext";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../pages/types/types";
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-const Calendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState(null); // Bosilgan kun
+type NavProp = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
+
+export default function Calendar() {
+  const navigation = useNavigation<NavProp>();
+  const route = useRoute<any>();
   const { theme } = useTheme();
 
-  const getDaysInMonth = (month, year) => {
-    return new Array(new Date(year, month + 1, 0).getDate())
-      .fill(null)
-      .map((_, i) => i + 1);
-  };
+  const today = new Date();
+
+  const [currentDate, setCurrentDate] = useState(
+    new Date(today.getFullYear(), today.getMonth(), 1)
+  );
+  const [selectedDay, setSelectedDay] = useState<number>(today.getDate());
+
+  /* =========================
+     QAYTIB KELGANDA SAQLASH
+  ========================== */
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params?.selectedDate) {
+        const date = new Date(route.params.selectedDate);
+        setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
+        setSelectedDay(date.getDate());
+      }
+    }, [route.params])
+  );
+
+  /* =========================
+      KALENDAR LOGIKASI
+  ========================== */
+  const getDaysInMonth = (month: number, year: number) =>
+    Array.from(
+      { length: new Date(year, month + 1, 0).getDate() },
+      (_, i) => i + 1
+    );
 
   const prevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-    setSelectedDay(null); // Oy o‘zgarganda tanlovni tozalash
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    );
+    setSelectedDay(0);
   };
 
   const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-    setSelectedDay(null);
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    );
+    setSelectedDay(0);
   };
 
-  const getToday = () => {
-    const today = new Date();
+  const goToday = () => {
     setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
     setSelectedDay(today.getDate());
   };
 
-  const todayItem = (day) => {
-    console.log("Taday! Bosilgan kun:", day);
+  const onDayPress = (day: number) => {
     setSelectedDay(day);
+
+    const fullDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
+    navigation.navigate("IncomeAndExpenses", {selectedDate: fullDate.toISOString()});
   };
 
-  const today = new Date();
-  const days = getDaysInMonth(currentDate.getMonth(), currentDate.getFullYear());
+  const days = getDaysInMonth(
+    currentDate.getMonth(),
+    currentDate.getFullYear()
+  );
 
-  // Haftaning boshlanishi Dushanba uchun offset
-  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay(); // 0=Sun
+  const firstDay = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  ).getDay(); // 0 = Sunday
+
   const offset = firstDay === 0 ? 6 : firstDay - 1;
   const calendarDays = [...Array(offset).fill(null), ...days];
 
-  // 7 kunlik rowlarga ajratish
   const rows = [];
   for (let i = 0; i < calendarDays.length; i += 7) {
     rows.push(calendarDays.slice(i, i + 7));
   }
 
+  /* =========================
+            UI
+  ========================== */
   return (
     <View>
       <View style={[styles.container, { backgroundColor: theme.card }]}>
+        {/* HEADER */}
         <View style={styles.header}>
-          <TouchableOpacity style={{ padding: 10 }} onPress={prevMonth}>
+          <TouchableOpacity onPress={prevMonth}>
             <Text style={[styles.arrow, { color: theme.text }]}>◀</Text>
           </TouchableOpacity>
+
           <Text style={[styles.month, { color: theme.text }]}>
-            {currentDate.toLocaleString("default", { month: "long" })} {currentDate.getFullYear()}
+            {currentDate.toLocaleString("default", { month: "long" })}{" "}
+            {currentDate.getFullYear()}
           </Text>
-          <TouchableOpacity style={{ padding: 10 }} onPress={nextMonth}>
+
+          <TouchableOpacity onPress={nextMonth}>
             <Text style={[styles.arrow, { color: theme.text }]}>▶</Text>
           </TouchableOpacity>
         </View>
 
+        {/* WEEK DAYS */}
         <View style={styles.weekDays}>
           {WEEK_DAYS.map((day) => (
             <Text key={day} style={[styles.weekDay, { color: theme.success }]}>
@@ -73,36 +123,40 @@ const Calendar = () => {
           ))}
         </View>
 
+        {/* DAYS */}
         {rows.map((week, rowIndex) => (
           <View key={rowIndex} style={styles.weekRow}>
             {week.map((day, index) => {
-              if (!day) return <View key={index} style={styles.dayContainer} />;
+              if (!day) return <View key={index} style={styles.dayBox} />;
 
-              const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
               const isToday =
-                dayDate.getDate() === today.getDate() &&
-                dayDate.getMonth() === today.getMonth() &&
-                dayDate.getFullYear() === today.getFullYear();
+                day === today.getDate() &&
+                currentDate.getMonth() === today.getMonth() &&
+                currentDate.getFullYear() === today.getFullYear();
 
-              const isSunday = (index === 6);
               const isSelected = day === selectedDay;
+              const isSunday = index === 6;
 
               return (
                 <TouchableOpacity
                   key={index}
                   style={[
-                    styles.dayContainer,
+                    styles.dayBox,
                     {
-                      borderColor: isSelected
+                      borderColor: isToday ? theme.primary : theme.card,
+                      backgroundColor: isSelected
                         ? theme.placeholder
-                        : isToday
-                        ? theme.primary
-                        : theme.card,
+                        : "transparent",
                     },
                   ]}
-                  onPress={() => todayItem(day)}
+                  onPress={() => onDayPress(day)}
                 >
-                  <Text style={[styles.day, { color: isSunday ? theme.danger : theme.text }]}>
+                  <Text
+                    style={[
+                      styles.dayText,
+                      { color: isSunday ? theme.danger : theme.text },
+                    ]}
+                  >
                     {day}
                   </Text>
                 </TouchableOpacity>
@@ -111,27 +165,47 @@ const Calendar = () => {
           </View>
         ))}
       </View>
-      <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={[styles.barBtns, { backgroundColor: theme.card }]} onPress={getToday}>
-          <Text style={[styles.barText, { color: theme.text }]}>Bugun</Text>
-        </TouchableOpacity>
-      </View>
+
+      {/* TODAY BUTTON */}
+      <TouchableOpacity
+        style={[styles.todayBtn, { backgroundColor: theme.card }]}
+        onPress={goToday}
+      >
+        <Text style={{ color: theme.text, fontSize: 16 }}>Bugun</Text>
+      </TouchableOpacity>
     </View>
   );
-};
+}
 
+/* =========================
+          STYLES
+========================= */
 const styles = StyleSheet.create({
-  barBtns: { paddingHorizontal: 14, paddingVertical: 6, marginVertical: 10, borderRadius: 10 },
-  barText: { fontSize: 16 },
-  container: { padding: 10, borderRadius: 10 },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
-  arrow: { fontSize: 20 },
+  container: { padding: 10, borderRadius: 12 },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  arrow: { fontSize: 20, padding: 8 },
   month: { fontSize: 18, fontWeight: "bold" },
-  weekDays: { flexDirection: "row", marginBottom: 5 },
+  weekDays: { flexDirection: "row", marginBottom: 6 },
   weekDay: { flex: 1, textAlign: "center", fontWeight: "bold" },
   weekRow: { flexDirection: "row" },
-  dayContainer: { flex: 1, padding: 8, margin: 2, borderWidth: 1, borderRadius: 8, alignItems: "center", justifyContent: "center" },
-  day: { textAlign: "center", fontSize: 16 },
+  dayBox: {
+    flex: 1,
+    margin: 2,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  dayText: { fontSize: 16 },
+  todayBtn: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+  },
 });
-
-export default Calendar;
