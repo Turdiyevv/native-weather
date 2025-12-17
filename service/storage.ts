@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User, UserInfo, UserTask } from "../pages/types/userTypes";
+import {ThemeName} from "../theme/theme";
 
 export const loadUsers = async (): Promise<User[]> => {
   try {
@@ -99,4 +100,24 @@ export const updateUserTasks = async (username: string, newTasks: UserTask[]) =>
 
   users[idx].usertasks = newTasks;
   await saveUsers(users);
+};
+// store.ts oxiriga qo‘sh
+const THEME_KEY = "appTheme";
+
+export const loadTheme = async (): Promise<ThemeName | null> => {
+  try {
+    const theme = await AsyncStorage.getItem(THEME_KEY);
+    return theme as ThemeName | null;
+  } catch (e) {
+    console.log("loadTheme error:", e);
+    return null;
+  }
+};
+
+export const saveTheme = async (theme: ThemeName) => {
+  try {
+    await AsyncStorage.setItem(THEME_KEY, theme);
+  } catch (e) {
+    console.log("saveTheme error:", e);
+  }
 };

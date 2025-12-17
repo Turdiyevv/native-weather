@@ -174,7 +174,7 @@ export default function MainPage({ navigation }: any) {
 
         <LeftMenu
           buttons={[
-            { icon: "person-circle-outline", onPress: () => navigation.navigate("ProfileView") },
+            { icon: "home-outline", onPress: () => navigation.navigate("MainPage"), size: 26 },
             { icon: "checkbox-outline", onPress: () => navigation.navigate("DoneTasks"), size: 26 },
             { icon: "trash-outline", onPress: () => navigation.navigate("DeletedTasks"), size: 24 },
             { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto"},

@@ -67,22 +67,22 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
                   <Text style={styles.returnCountText}>{item.isReturning}</Text>
                 </View>
               )}
-              {item.done ? (
+              {item.done && (
                   <Ionicons
                     name="checkmark-circle"
                     size={22}
                     color="#4CAF50"
                     style={{marginLeft:1}}
                   />
-                ) : (
+                )}
+                {(item.isDeleted && !item.done || deadlineColor === "#fa5d5d") && (
                   <Ionicons
                     name="alert-circle"
                     size={22}
                     color="grey"
                     style={{marginLeft:1}}
                   />
-                )
-              }
+                )}
               {item.isDeleted &&(
                 <Ionicons
                   name="trash-outline"

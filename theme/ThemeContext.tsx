@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
-import {Theme, ThemeName, themes} from "./theme";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Theme, ThemeName, themes } from "./theme";
+import { loadTheme, saveTheme } from "../service/storage";
 
 interface ThemeContextType {
   theme: Theme;
@@ -11,13 +12,32 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [themeName, setThemeName] = useState<ThemeName>("light");
+  const [ready, setReady] = useState(false);
+
+  // 🔹 app ochilganda theme ni oqib olish
+  useEffect(() => {
+    (async () => {
+      const savedTheme = await loadTheme();
+      if (savedTheme && themes[savedTheme]) {
+        setThemeName(savedTheme);
+      }
+      setReady(true);
+    })();
+  }, []);
+
+  const changeTheme = async (name: ThemeName) => {
+    setThemeName(name);
+    await saveTheme(name);
+  };
+
+  if (!ready) return null; // splash yoki bo‘sh ekran
 
   return (
     <ThemeContext.Provider
       value={{
         theme: themes[themeName],
         themeName,
-        setTheme: setThemeName,
+        setTheme: changeTheme,
       }}
     >
       {children}

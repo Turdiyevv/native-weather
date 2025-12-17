@@ -3,14 +3,16 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {LeftMenuProps} from "../pages/types/types";
+import {useTheme} from "../theme/ThemeContext";
 
 const LeftMenu: React.FC<LeftMenuProps> = ({ buttons, containerStyle }) => {
-  return (
+    const { theme } = useTheme();
+    return (
     <View style={[styles.leftButtons, containerStyle]}>
       <View style={[styles.buttonBox, containerStyle]}>
         {buttons.map((btn, idx) => (
-          <TouchableOpacity key={idx} style={[styles.sideButton, {marginLeft: btn.marginLeft}]} onPress={btn.onPress}>
-            <Ionicons name={btn.icon as any} size={btn.size || 32} color={btn.color || "#121"} />
+          <TouchableOpacity key={idx} style={[styles.sideButton, {backgroundColor: theme.background}, {marginLeft: btn.marginLeft}]} onPress={btn.onPress}>
+            <Ionicons name={btn.icon as any} size={btn.size || 32} color={btn.color || theme.text} />
           </TouchableOpacity>
         ))}
       </View>
