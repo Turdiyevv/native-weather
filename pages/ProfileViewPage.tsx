@@ -25,6 +25,7 @@ import {
   saveUsers
 } from "../service/storage";
 import {useTheme} from "../theme/ThemeContext";
+import {exportTasksAsTxt} from "../service/exportTasks";
 
 
 const screenWidth = Dimensions.get("window").width;
@@ -165,18 +166,18 @@ export function ProfileViewPage() {
       <View style={[styles.infoBox, {backgroundColor: theme.card}]}>
         <View style={styles.btns}>
           <TouchableOpacity
-            style={styles.editButton}
+            style={[styles.editButton, {backgroundColor: theme.success}]}
             onPress={() => navigation.navigate("ProfileEdit")}
           >
-            <Text style={styles.editText}>Tahrirlash</Text>
-            <Ionicons name="pencil" size={16} color="#121" />
+            <Text style={[styles.editText, {color: theme.border}]}>Tahrirlash</Text>
+            <Ionicons name="pencil" size={16} color={theme.border} />
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.outButton}
+            style={[styles.outButton, {backgroundColor: theme.danger}]}
             onPress={() => setModalVisible(true)}
           >
-            <Text style={styles.outText}>Chiqish</Text>
-            <Ionicons name="log-out" size={20} color="red" />
+            <Text style={[styles.outText, {color: theme.border}]}>Chiqish</Text>
+            <Ionicons name="log-out" size={20} color={theme.border} />
           </TouchableOpacity>
         </View>
         <Text style={[styles.label, {color: theme.text}]}>Telefon:</Text>
@@ -210,6 +211,9 @@ export function ProfileViewPage() {
             </TouchableOpacity>
         </View>
 
+        <TouchableOpacity onPress={exportTasksAsTxt} style={{ padding: 10, marginTop:10, backgroundColor: theme.primary, borderRadius: 8 }}>
+          <Text style={{ color: theme.text }}>Tasklarni yuklab olish</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={openPasswordBox}>
           <Text style={[styles.loginCode, {color: theme.text}]}>Oson kirish kodi</Text>
         </TouchableOpacity>
@@ -344,7 +348,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#bcddbc",
     padding: 10,
     borderRadius: 10,
     width: "48%",
@@ -354,14 +357,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#fbd1d1",
     padding: 10,
     borderRadius: 10,
     width: "48%",
     alignItems: "center"
   },
-  editText: { color: "#121", fontSize: 14 },
-  outText: { color: "red", fontSize: 14 },
+  editText: { fontSize: 14 },
+  outText: { fontSize: 14 },
   settings: { marginTop: 20 },
   settingsText: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginBottom: 8 },
   settingsTitle: { fontSize: 18, marginLeft: 3 },
