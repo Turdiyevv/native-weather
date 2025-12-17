@@ -30,6 +30,9 @@ export default function MainPage({ navigation }: any) {
   const [menuDirection, setMenuDirection] = useState<"top" | "bottom">("bottom");
   const [modalVisible, setModalVisible] = useState(false);
 
+  type TaskTab = "main" | "done" | "deleted";
+  const [activeTab, setActiveTab] = useState<TaskTab>("main");
+
   const menuAnim = useRef(new Animated.Value(0)).current;
   const MENU_HEIGHT = 200;
   const BOTTOM_AREA = 100;
@@ -116,8 +119,12 @@ export default function MainPage({ navigation }: any) {
   };
 
   const groupedTasks = tasks
-    .filter(t => !t.isDeleted)
-    .filter(t => !t.done)
+      .filter(t => {
+        if (activeTab === "main") return !t.isDeleted && !t.done;
+        if (activeTab === "done") return t.done;
+        if (activeTab === "deleted") return t.isDeleted;
+        return true;
+      })
     .slice()
     .reverse()
     .reduce((acc: any[], task) => {
@@ -174,9 +181,9 @@ export default function MainPage({ navigation }: any) {
 
         <LeftMenu
           buttons={[
-            { icon: "home-outline", onPress: () => navigation.navigate("MainPage"), size: 26 },
-            { icon: "checkbox-outline", onPress: () => navigation.navigate("DoneTasks"), size: 26 },
-            { icon: "trash-outline", onPress: () => navigation.navigate("DeletedTasks"), size: 24 },
+            { icon: "home-outline", onPress: () => setActiveTab("main"), size: 26, color: activeTab === "main" ? theme.text : theme.subText },
+            { icon: "checkbox-outline", onPress: () => setActiveTab("done"), size: 26, color: activeTab === "done" ? theme.text : theme.subText },
+            { icon: "trash-outline", onPress: () => setActiveTab("deleted"), size: 24, color: activeTab === "deleted" ? theme.text : theme.subText },
             { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto"},
           ]}
           containerStyle={{ width: "100%" }}

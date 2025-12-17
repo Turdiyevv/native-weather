@@ -10,8 +10,6 @@ export type RootStackParamList = {
   Support: undefined;
   Bussiness: undefined;
   LoginCodePage: undefined;
-  DeletedTasks: undefined;
-  DoneTasks: undefined;
 };
 export interface Checkbox {
   label?: string;

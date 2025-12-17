@@ -23,8 +23,6 @@ import SupportPage from "./pages/SupportPage";
 import Bussiness from "./pages/Bussiness";
 import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
-import DeletedTasks from "./pages/DeletedTasks";
-import DoneTasks from "./pages/DoneTasks";
 
 import { RootStackParamList } from "./pages/types/types";
 import {
@@ -106,8 +104,6 @@ const AppNavigator = () => {
               <Stack.Screen name="LoginPage" component={LoginPage} />
 
               <Stack.Screen name="MainPage" component={MainPage} />
-              <Stack.Screen name="DoneTasks" component={DoneTasks} />
-              <Stack.Screen name="DeletedTasks" component={DeletedTasks} />
               <Stack.Screen name="ProfileView" component={ProfileViewPage} />
               <Stack.Screen name="ProfileEdit" component={ProfilePage} />
               <Stack.Screen name="Chat" component={ChatPage} />
