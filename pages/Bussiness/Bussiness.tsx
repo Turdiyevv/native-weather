@@ -10,11 +10,12 @@ import {
     ScrollView,
     Platform
 } from 'react-native';
-import AdminIcon from "../assets/admin_icon.png";
-import {RootStackParamList} from "./types/types";
+import AdminIcon from "../../assets/admin_icon.png";
+import {RootStackParamList} from "../types/types";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {useTheme} from "../theme/ThemeContext";
+import {useTheme} from "../../theme/ThemeContext";
+import Calendar from "../../components/Calendar";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Bussiness">;
 export default function BackdropFilterExample() {
@@ -53,6 +54,9 @@ export default function BackdropFilterExample() {
           </Text>
         </View>
       </ScrollView>
+        <View style={{marginHorizontal:20, marginBottom: 50}}>
+            <Calendar/>
+        </View>
     </KeyboardAvoidingView>
   );
 }

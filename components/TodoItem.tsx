@@ -64,7 +64,13 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
             <View style={styles.iconBox}>
               {item.isReturning && item.isReturning > 0 && (
                 <View style={styles.returnCount}>
-                  <Text style={styles.returnCountText}>{item.isReturning}</Text>
+                  <Ionicons
+                    name="refresh-outline"
+                    size={22}
+                    color="#DF00FF"
+                    style={styles.scale}
+                  />
+                  <Text style={[styles.returnCountText, {color: theme.text}]}>{item.isReturning}</Text>
                 </View>
               )}
               {item.done && (
@@ -121,6 +127,10 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
 }
 const screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
+    scale: {
+        top: -1,
+        transform: [{ scaleX: -1,  }, {rotate: "40deg"}],
+    },
     firstBorder: {
         borderTopLeftRadius: 10,
         borderTopEndRadius: 10,
@@ -137,7 +147,7 @@ const styles = StyleSheet.create({
   returningBorder: {
     borderLeftWidth: 2,
     borderRightWidth: 2,
-    borderColor: "purple",
+    borderColor: "#DF00FF",
     borderBottomWidth: 0,
   },
   done: {
@@ -150,12 +160,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     height: 64,
   },
-    defaultItem:{
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: 7,
-        height: "100%",
-    },
+  defaultItem:{
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: 7,
+    height: "100%",
+  },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -173,22 +183,18 @@ const styles = StyleSheet.create({
   text: { fontSize: 18 },
   doneText: { textDecorationLine: "line-through", color: "gray" },
   returnCount: {
-    width: "auto",
-    minWidth:18,
-    height: 18,
-    borderRadius: 12,
-    backgroundColor: "purple",
+    position: "relative",
     justifyContent: "center",
     alignItems: "center",
+  },
+  returnCountText: {
+     marginLeft: 3,
+     position: "absolute",
+     fontSize: 11,
   },
   draft: {
     position: "absolute",
     top: -4,
-  },
-  returnCountText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
   },
   deadline: { fontSize: 14, marginTop: 0 },
   deadlineBox: { height: 14, marginTop: 0 },

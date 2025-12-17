@@ -19,14 +19,14 @@ export const themes = {
   dark: {
       name: "dark",
       isDark: true,
-      background: "#121212",      // soft dark (AMOLED emas)
-      card: "#1C1C1E",            // iOS dark card
-      text: "#E6E6E8",            // soft white
+      background: "#121212",
+      card: "#1C1C1E",
+      text: "#E6E6E8",
       placeholder: "rgba(150,150,155,0.55)",
       subText: "#9A9AA0",
-      primary: "#7A7AFF",         // yumshoq indigo
+      primary: "#7A7AFF",
       success: "#4ECB8F",
-      danger: "#F28B82",
+      danger: "#f16b5f",
       border: "#2C2C2E",
       deleted: "#3A3A3C",
       overlay: "rgba(0,0,0,0.45)",
@@ -53,13 +53,13 @@ export const themes = {
       name: "orange",
       isDark: false,
 
-      background: "#f4ece3",      // iliq och kulrang (oq emas)
+      background: "#f4ece3",
       card: "#f6f4f1",
       text: "#2B2B2B",
       placeholder: "rgba(125,125,125,0.55)",
       subText: "#7A7A7A",
 
-      primary: "#F2994A",         // soft orange (neon emas)
+      primary: "#F2994A",
       success: "#6FCF97",
       danger: "#EB5757",
 

@@ -72,9 +72,9 @@ export default function TaskContextMenu({
         </View>
 
         <TouchableOpacity
-          style={[styles.menuButton, !!task?.isDeleted && { opacity: 0.4 }]}
+          style={[styles.menuButton, (!!task?.isDeleted || task.isReturning >=9) && { opacity: 0.4 }]}
           onPress={() => onMarkDone(task)}
-          disabled={!!task?.isDeleted}
+          disabled={!!task?.isDeleted || (!!task.done && task.isReturning >=9)}
         >
           <Text style={[styles.menuText, {color: theme.text}]}>
             {task.done ? "Qaytarish" : "Bajarildi"}

@@ -211,8 +211,8 @@ export default function ProfilePage() {
           />
         </View>
 
-        <TouchableOpacity style={[styles.saveButton, {backgroundColor: theme.card}]} onPress={saveProfile}>
-          <Text style={[styles.saveText, {color: theme.text}]}>Saqlash</Text>
+        <TouchableOpacity style={[styles.saveButton, {backgroundColor: theme.primary}]} onPress={saveProfile}>
+          <Text style={[styles.saveText, {color: "#fff"}]}>Saqlash</Text>
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

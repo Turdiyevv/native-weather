@@ -212,8 +212,8 @@ export default function AddPage({ navigation, route }: any) {
                 </View>
             )}
 
-            <TouchableOpacity style={[styles.addButton, {backgroundColor: theme.card}]} onPress={saveTask}>
-              <Text style={[styles.addText, {color: theme.text}]}>{taskToEdit ? view ? "Tahrirlash" : "Saqlash" : "Qo‘shish"}</Text>
+            <TouchableOpacity style={[styles.addButton, {backgroundColor: theme.primary}]} onPress={saveTask}>
+              <Text style={[styles.addText, {color: "#fff"}]}>{taskToEdit ? view ? "Tahrirlash" : "Saqlash" : "Qo‘shish"}</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
 

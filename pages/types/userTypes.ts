@@ -9,6 +9,7 @@ export interface UserTask {
   isDeleted?: boolean;
   files: any[];
   isReturning?: number;
+  isReturningAt?: string | null;
 }
 
 export interface UserInfo {

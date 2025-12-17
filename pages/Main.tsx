@@ -65,8 +65,13 @@ export default function MainPage({ navigation }: any) {
       if (!activeUser) return;
 
       const isReturning = task.done;
+      const now = new Date();
       const updatedTask: UserTask = { ...task, done: !task.done };
-      if (isReturning) updatedTask.isReturning = (task.isReturning || 0) + 1;
+      if (isReturning) {
+          updatedTask.isReturning = (task.isReturning || 0) + 1;
+          updatedTask.isReturningAt = updatedTask.time;
+          updatedTask.time = now.toISOString();
+      }
 
       await updateTask(activeUser.username, task.id, updatedTask);
       const updatedTasks = activeUser.usertasks.map(t => t.id === task.id ? updatedTask : t);
@@ -181,9 +186,9 @@ export default function MainPage({ navigation }: any) {
 
         <LeftMenu
           buttons={[
-            { icon: "home-outline", onPress: () => setActiveTab("main"), size: 26, color: activeTab === "main" ? theme.text : theme.subText },
-            { icon: "checkbox-outline", onPress: () => setActiveTab("done"), size: 26, color: activeTab === "done" ? theme.text : theme.subText },
-            { icon: "trash-outline", onPress: () => setActiveTab("deleted"), size: 24, color: activeTab === "deleted" ? theme.text : theme.subText },
+            { icon: "home-outline", onPress: () => setActiveTab("main"), size: 26, color: activeTab === "main" ? theme.primary : theme.text },
+            { icon: "checkbox-outline", onPress: () => setActiveTab("done"), size: 26, color: activeTab === "done" ? theme.primary : theme.text },
+            { icon: "trash-outline", onPress: () => setActiveTab("deleted"), size: 24, color: activeTab === "deleted" ? theme.primary : theme.text },
             { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto"},
           ]}
           containerStyle={{ width: "100%" }}

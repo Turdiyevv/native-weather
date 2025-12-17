@@ -212,7 +212,7 @@ export function ProfileViewPage() {
         </View>
 
         <TouchableOpacity onPress={exportTasksAsTxt} style={{ padding: 10, marginTop:10, backgroundColor: theme.primary, borderRadius: 8 }}>
-          <Text style={{ color: theme.text }}>Tasklarni yuklab olish</Text>
+          <Text style={{ color: "#fff" }}>Tasklarni yuklab olish</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={openPasswordBox}>
           <Text style={[styles.loginCode, {color: theme.text}]}>Oson kirish kodi</Text>
@@ -227,7 +227,7 @@ export function ProfileViewPage() {
           <Text style={[styles.loginCode, {color: theme.text}]}>Beznis bo'limi</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={deleteAccount}>
-          <Text style={styles.deleteText}>Hisobni butunlay o'chirish</Text>
+          <Text style={[styles.deleteText, {color: theme.danger}]}>Hisobni butunlay o'chirish</Text>
         </TouchableOpacity>
       </View>
 
@@ -368,6 +368,6 @@ const styles = StyleSheet.create({
   settingsText: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginBottom: 8 },
   settingsTitle: { fontSize: 18, marginLeft: 3 },
   loginCode: { color: "blue", fontSize: 17, textDecorationLine: "underline", marginTop: 10 },
-  deleteText: { color: "red", fontSize: 17, textDecorationLine: "underline",marginTop:10 },
+  deleteText: { fontSize: 17, textDecorationLine: "underline",marginTop:10 },
   closeBox: { color: "red", fontSize: 16, marginTop: 6, justifyContent: "center", marginHorizontal: "auto" },
 });

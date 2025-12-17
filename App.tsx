@@ -20,7 +20,7 @@ import ProfilePage from "./pages/ProfilePage";
 import { ProfileViewPage } from "./pages/ProfileViewPage";
 import ChatPage from "./pages/ChatPage";
 import SupportPage from "./pages/SupportPage";
-import Bussiness from "./pages/Bussiness";
+import Bussiness from "./pages/Bussiness/Bussiness";
 import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
 
