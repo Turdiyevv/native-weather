@@ -16,10 +16,12 @@ import AdminIcon from "../assets/admin_icon.png";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {RootStackParamList} from "./types/types";
+import {useTheme} from "../theme/ThemeContext";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Support">;
 
 const SupportPage: React.FC = () => {
+    const { theme } = useTheme();
   const navigation = useNavigation<SupportNav>();
 
   useEffect(() => {
@@ -38,17 +40,17 @@ const SupportPage: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, {backgroundColor:theme.background}]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image source={AdminIcon} style={styles.icon} />
-          <Text style={styles.description}>
+          <Text style={[styles.description, {color: theme.text}]}>
             Bu ilova sizning kundalik vazifalaringizni boshqarish va eslatmalarni kuzatishda yordam beradi.
           </Text>
-          <Text style={styles.description}>Bog'lanmoqchi bo'lsangiz xabar qoldiring!</Text>
+          <Text style={[styles.description, {color: theme.text}]}>Bog'lanmoqchi bo'lsangiz xabar qoldiring!</Text>
 
           <TouchableOpacity onPress={() => Linking.openURL("https://t.me/Anonim_life_msgbot")}>
             <Text style={[styles.link, { textDecorationLine: "underline" }]}>

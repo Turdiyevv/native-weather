@@ -14,9 +14,11 @@ import AdminIcon from "../assets/admin_icon.png";
 import {useNavigation} from "@react-navigation/native";
 import {RootStackParamList} from "./types/types";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {useTheme} from "../theme/ThemeContext";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Chat">;
 const ChatPage: React.FC = () => {
+    const { theme } = useTheme();
   const [message, setMessage] = useState("");
   const navigation = useNavigation<SupportNav>();
 
@@ -36,7 +38,7 @@ const ChatPage: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, {backgroundColor:theme.background}]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
@@ -46,8 +48,8 @@ const ChatPage: React.FC = () => {
       >
         <View style={styles.header}>
           <Image source={AdminIcon} style={styles.icon} />
-          <Text style={styles.description}>
-            Bu yerda keyinchalik, media olamida katta o'rin egallaydigan chat yaratiladi.
+          <Text style={[styles.description, {color: theme.text}]}>
+            Bu yerda keyinchalik online media chat yaratiladi.
           </Text>
         </View>
       </ScrollView>
@@ -60,7 +62,6 @@ export default ChatPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   scrollContainer: {
     flexGrow: 1,

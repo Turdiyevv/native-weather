@@ -14,9 +14,11 @@ import AdminIcon from "../assets/admin_icon.png";
 import {RootStackParamList} from "./types/types";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {useTheme} from "../theme/ThemeContext";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Bussiness">;
 export default function BackdropFilterExample() {
+    const { theme } = useTheme();
   const navigation = useNavigation<SupportNav>();
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function BackdropFilterExample() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, {backgroundColor:theme.background}]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
@@ -46,7 +48,7 @@ export default function BackdropFilterExample() {
       >
         <View style={styles.header}>
           <Image source={AdminIcon} style={styles.icon} />
-          <Text style={styles.description}>
+          <Text style={[styles.description, {color: theme.text}]}>
             Bu yerda biznesingiz bo'yicha qulay hisobotlar yig'ishingiz mumkin.
           </Text>
         </View>
