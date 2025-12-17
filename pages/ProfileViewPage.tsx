@@ -197,13 +197,16 @@ export function ProfileViewPage() {
 
         <View style={styles.themeBox}>
             <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("dark")}>
-              <Text style={{color: theme.text}}>🌙 Tungi</Text>
+              <Text style={{color: theme.text}}>Tungi</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("light")}>
-              <Text style={{color: theme.text}}>🌞 Kunduzgi</Text>
+              <Text style={{color: theme.text}}>Kunduzgi</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("blue")}>
-              <Text style={{color: theme.text}}>🔵 Ko'k</Text>
+              <Text style={{color: theme.text}}>Ko'k</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("orange")}>
+              <Text style={{color: theme.text}}>Mandarin</Text>
             </TouchableOpacity>
         </View>
 
@@ -317,7 +320,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: "bold" },
   username: { fontSize: 18, color: "#666" },
     themeBox:{
-      flexDirection: "row",justifyContent: "space-between",
+      flexDirection: "row",flexWrap: "wrap", justifyContent: "space-between", gap: 10,
     },
     themeBtn:{
         borderRadius: 5,
