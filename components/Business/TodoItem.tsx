@@ -1,57 +1,76 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import {useTheme} from "../../theme/ThemeContext";
+import { useTheme } from "../../theme/ThemeContext";
+import { BusinessEntry } from "../../pages/types/userTypes";
 
-type Props = {
-  title: string | any;
+type Props = BusinessEntry & {
   index: number;
-  total: number;
-  status: boolean;
+  listLength: number;
 };
 
-export default function TodoItem({ title, status, index, total }: Props) {
+export default function TodoItem({
+  title,
+  status,
+  total,
+  time,
+  index,
+  listLength,
+}: Props) {
   const isFirst = index === 0;
-  const isLast = index === total - 1;
+  const isLast = index === listLength - 1;
+  const isIncome = status === true;
 
   const { theme } = useTheme();
+
   return (
+    <View
+      style={[
+        styles.containerOne,
+        { backgroundColor: theme.card },
+        isFirst && styles.topRadius,
+        isLast && styles.bottomRadius,
+      ]}
+    >
       <View
-          style={[
-            styles.containerOne, {backgroundColor: theme.card},
-            isFirst && styles.topRadius,
-            isLast && styles.bottomRadius,
-          ]}
+        style={[
+          styles.container,
+          { borderBottomColor: theme.border },
+          !isLast && styles.borderBottom,
+        ]}
       >
-        <View
+        <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
+        <Text
           style={[
-            styles.container, {borderBottomColor: theme.border},
-            !isLast && styles.borderBottom,
+            styles.titlePlaceholder,
+            { color: isIncome ? "#2ecc71" : "#e74c3c" },
           ]}
         >
-          <Text style={[styles.title, {color: theme.text}]}>{title}</Text>
-          <Text style={[styles.titlePlaceholder, {color: theme.placeholder}]}>{total}</Text>
-        </View>
-        <View style={[styles.containerIc]}>
-          <Ionicons style={!status ? styles.scale : ""}
-            name={!!status ? "trending-up-outline" : "trending-down-outline"}
-            size={20}
-            color={!status ? "#2ecc71" : "#e74c3c"}
-          />
-            <Text style={{fontSize:10, bottom: 3, color: theme.placeholder}}>00:00</Text>
-        </View>
+          {total}
+        </Text>
       </View>
+
+      <View style={styles.containerIc}>
+        <Ionicons
+          style={!isIncome && styles.scale}
+          name={isIncome ? "trending-up-outline" : "trending-down-outline"}
+          size={20}
+          color={isIncome ? "#2ecc71" : "#e74c3c"}
+        />
+        <Text style={{ fontSize: 10, color: theme.placeholder }}>{time}</Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-    scale:{
-        transform: [{ scaleX: -1}],
-    },
+  scale: {
+    transform: [{ scaleX: -1 }],
+  },
   containerOne: {
     width: "100%",
     flexDirection: "row",
-      paddingLeft: 10
+    paddingLeft: 10,
   },
   container: {
     flex: 1,
@@ -59,30 +78,27 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   containerIc: {
-        paddingTop: 5,
+    paddingTop: 5,
     alignItems: "center",
-      justifyContent:"space-between",
+    justifyContent: "center", // old: space-between → center
     paddingHorizontal: 10,
   },
-
   topRadius: {
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
-
   bottomRadius: {
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
   },
-
   borderBottom: {
     borderBottomWidth: 1,
   },
-
   title: {
-        fontSize: 15
+    fontSize: 15,
   },
   titlePlaceholder: {
-        fontSize: 12
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });

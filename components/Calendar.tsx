@@ -8,7 +8,9 @@ import { RootStackParamList } from "../pages/types/types";
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
-
+interface Props {
+  businessId: string;
+}
 export default function Calendar() {
   const navigation = useNavigation<NavProp>();
   const route = useRoute<any>();
@@ -25,13 +27,13 @@ export default function Calendar() {
      QAYTIB KELGANDA SAQLASH
   ========================== */
   useFocusEffect(
-    React.useCallback(() => {
-      if (route.params?.selectedDate) {
-        const date = new Date(route.params.selectedDate);
-        setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
-        setSelectedDay(date.getDate());
-      }
-    }, [route.params])
+      React.useCallback(() => {
+        if (route.params?.selectedDate && route.params?.businessId) {
+          const date = new Date(route.params.selectedDate);
+          setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
+          setSelectedDay(date.getDate());
+        }
+      }, [route.params])
   );
 
   /* =========================
@@ -58,8 +60,14 @@ export default function Calendar() {
   };
 
   const goToday = () => {
-    setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
-    setSelectedDay(today.getDate());
+      setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
+      setSelectedDay(today.getDate());
+
+      const businessId = route.params?.businessId || "defaultBusiness";
+      navigation.navigate("IncomeAndExpenses", {
+        selectedDate: today.toISOString(),
+        businessId
+      });
   };
 
   const onDayPress = (day: number) => {
@@ -70,7 +78,11 @@ export default function Calendar() {
       currentDate.getMonth(),
       day
     );
-    navigation.navigate("IncomeAndExpenses", {selectedDate: fullDate.toISOString()});
+    const businessId = route.params?.businessId || "defaultBusiness";
+    navigation.navigate("IncomeAndExpenses", {
+        selectedDate: fullDate.toISOString(),
+        businessId
+    });
   };
 
   const days = getDaysInMonth(

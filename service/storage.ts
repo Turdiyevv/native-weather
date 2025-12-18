@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { User, UserInfo, UserTask } from "../pages/types/userTypes";
+import {BusinessItem, User, UserInfo, UserTask} from "../pages/types/userTypes";
 import {ThemeName} from "../theme/theme";
 
 export const loadUsers = async (): Promise<User[]> => {
@@ -120,4 +120,13 @@ export const saveTheme = async (theme: ThemeName) => {
   } catch (e) {
     console.log("saveTheme error:", e);
   }
+};
+
+export const updateUserBusiness = async (username: string, newBusiness: BusinessItem[]) => {
+  const users = await loadUsers();
+  const idx = users.findIndex(u => u.username === username);
+  if (idx === -1) return;
+
+  users[idx].business = newBusiness;
+  await saveUsers(users);
 };

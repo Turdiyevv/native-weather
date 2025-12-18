@@ -21,12 +21,30 @@ export interface UserInfo {
   description?: string;
 }
 
+export interface BusinessEntry {
+  id: string;
+  title: string;
+  status: boolean;
+  total: number;
+  time: string;
+}
+export interface BusinessDay {
+  date: string;
+  entries: BusinessEntry[];
+}
+export interface BusinessItem {
+  id: string;
+  name: string;
+  calendar: BusinessDay[];
+}
+
 export interface User {
   username: string;
   password: string;
   passwordCode?: string;
   userinfo: UserInfo;
   usertasks: UserTask[];
+  business: BusinessItem[];
 }
 export interface CustomHeaderProps {
   firstName?: string;

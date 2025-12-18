@@ -12,6 +12,7 @@ export type RootStackParamList = {
   LoginCodePage: undefined;
   IncomeAndExpenses: {
     selectedDate: string;
+    businessId: string;
   };
 };
 export interface Checkbox {
