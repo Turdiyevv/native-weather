@@ -40,7 +40,7 @@ export default function BackdropFilterExample() {
   return (
     <KeyboardAvoidingView
       style={[styles.container, {backgroundColor:theme.background}]}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView

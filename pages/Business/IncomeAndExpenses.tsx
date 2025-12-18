@@ -5,11 +5,12 @@ import {
   StyleSheet,
   BackHandler,
   KeyboardAvoidingView,
-  ScrollView,
+  ScrollView, // Oddiy ScrollView yetarli
   Platform,
   TouchableOpacity,
   Keyboard,
 } from "react-native";
+// Kerakli importlaringizni qo'shing (RootStackParamList, useNavigation, useTheme, etc.)
 import { RootStackParamList } from "../types/types";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,6 +18,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import TodoItem from "../../components/Business/TodoItem";
 import TextField from "../../components/TextField";
+
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Business">;
 
@@ -41,32 +43,37 @@ export default function IncomeAndExpenses({ route }) {
   }, []);
 
   const dismissForm = () => {
+    // Formani yopishda klaviaturani ham yopish muhim
+    Keyboard.dismiss();
+    // Animation tugashini kutish shart emas, darhol yopamiz
     setShowForm(false);
     setAmount("");
     setComment("");
-    Keyboard.dismiss();
   };
 
   const COUNT = 45;
 
   return (
-    // 1. KeyboardAvoidingView eng tashqarida bo'lishi kerak
+    // 1. Eng tashqi qobiq KeyboardAvoidingView
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: theme.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       <View style={styles.container}>
+        {/* Date Header (scroll bo'lmaydigan qism) */}
         <View style={styles.content}>
-          <Text style={[styles.mainTitle, { color: theme.text }]}>
+          <Text style={{color: theme.text}}>
             {date.toLocaleDateString()}
           </Text>
         </View>
 
+        {/* Scrollable Content (asosiy ro'yxat) */}
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
-          keyboardShouldPersistTaps="handled"
+          style={{ flex: 1 }} // ScrollView qolgan bo'sh joyni egallaydi
+          contentContainerStyle={{ paddingBottom: 0 }}
+          keyboardShouldPersistTaps="handled" // Klaviatura ochiq turgan holatda boshqa tugmalarni bosish imkonini beradi
         >
           {Array.from({ length: COUNT }).map((_, index) => (
             <TodoItem
@@ -79,7 +86,10 @@ export default function IncomeAndExpenses({ route }) {
           ))}
         </ScrollView>
 
+        {/* Bottom Section (Tugmalar va Forma joylashgan View) */}
+        {/* Bu View klaviatura ochilganda butunligi yuqoriga suriladi */}
         <View>
+          {/* Kirim / Chiqim bar */}
           <View style={styles.exchangeBar}>
             <TouchableOpacity
               onPress={() => {
@@ -88,10 +98,7 @@ export default function IncomeAndExpenses({ route }) {
               }}
               style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
             >
-              <View style={styles.exchangeContent}>
                 <Text style={{ color: theme.text }}>Kirim</Text>
-                <Ionicons name="trending-down-outline" size={24} color="#50C878" style={styles.scale} />
-              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -101,44 +108,25 @@ export default function IncomeAndExpenses({ route }) {
               }}
               style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
             >
-              <View style={styles.exchangeContent}>
                 <Text style={{ color: theme.text }}>Chiqim</Text>
-                <Ionicons name="trending-up-outline" size={24} color="#EB4C42" />
-              </View>
             </TouchableOpacity>
           </View>
 
-          {/* Form - KeyboardAvoidingView buni avtomatik ko'taradi */}
+          {/* Form qismi */}
           {showForm && (
             <View style={[styles.formContainer, { backgroundColor: theme.card }]}>
-              <View style={styles.formHeader}>
-                 <Text style={[styles.formTitle, { color: theme.text }]}>
+               <View style={styles.formHeader}>
+                 <Text style={{ color: theme.text }}>
                     {expenses ? "Chiqim" : "Kirim"}
                   </Text>
                   <TouchableOpacity onPress={dismissForm}>
                       <Ionicons name="close-circle" size={24} color={theme.text} />
                   </TouchableOpacity>
               </View>
-
-              <TextField
-                label="Summa"
-                value={amount}
-                onChangeText={setAmount}
-                keyboardType="numeric"
-                required
-              />
-
-              <TextField
-                label="Izoh"
-                value={comment}
-                onChangeText={setComment}
-              />
-
+              <TextField label="Summa" value={amount} onChangeText={setAmount} keyboardType="numeric" required />
+              <TextField label="Izoh" value={comment} onChangeText={setComment} />
               <TouchableOpacity
-                style={[
-                  styles.saveBtn,
-                  { backgroundColor: expenses ? "#EB4C42" : "#50C878" },
-                ]}
+                style={[styles.saveBtn, { backgroundColor: expenses ? "#EB4C42" : "#50C878" }]}
                 onPress={dismissForm}
               >
                 <Text style={styles.saveText}>Saqlash</Text>
@@ -154,7 +142,7 @@ export default function IncomeAndExpenses({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   content: {
     paddingTop: 40,
@@ -169,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 50,
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   exchangeBtn: {
     flex: 1,
@@ -177,25 +165,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 2, // Android uchun soya
-    shadowColor: '#000', // iOS uchun soya
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-  },
-  exchangeContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  scale: {
-    transform: [{ scaleX: -1 }],
   },
   formContainer: {
     padding: 16,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingBottom: Platform.OS === 'ios' ? 30 : 20, // iOS pastki qismi uchun
+    paddingBottom: Platform.OS === 'ios' ? 30 : 20,
   },
   formHeader: {
     flexDirection: 'row',
@@ -219,3 +194,4 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
 });
+
