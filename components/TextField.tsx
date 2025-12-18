@@ -10,7 +10,7 @@ export default function TextField({
   placeholder,
   required = false,
   errorMessage = "Bu maydon to‘ldirilishi shart!",
-  minLength = 4,
+  minLength = 0,
   secureTextEntry,
   minHeight,
   editable,

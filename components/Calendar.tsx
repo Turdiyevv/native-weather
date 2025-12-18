@@ -4,6 +4,7 @@ import { useTheme } from "../theme/ThemeContext";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../pages/types/types";
+import {getActiveUser} from "../service/storage";
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -22,6 +23,14 @@ export default function Calendar() {
     new Date(today.getFullYear(), today.getMonth(), 1)
   );
   const [selectedDay, setSelectedDay] = useState<number>(today.getDate());
+  const [markedDates, setMarkedDates] = useState<Set<string>>(new Set());
+
+  const formatLocalDate = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
 
   /* =========================
      QAYTIB KELGANDA SAQLASH
@@ -62,12 +71,11 @@ export default function Calendar() {
   const goToday = () => {
       setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
       setSelectedDay(today.getDate());
-
-      const businessId = route.params?.businessId || "defaultBusiness";
-      navigation.navigate("IncomeAndExpenses", {
-        selectedDate: today.toISOString(),
-        businessId
-      });
+      // const businessId = route.params?.businessId || "defaultBusiness";
+      // navigation.navigate("IncomeAndExpenses", {
+      //   selectedDate: today.toISOString(),
+      //   businessId
+      // });
   };
 
   const onDayPress = (day: number) => {
@@ -80,7 +88,7 @@ export default function Calendar() {
     );
     const businessId = route.params?.businessId || "defaultBusiness";
     navigation.navigate("IncomeAndExpenses", {
-        selectedDate: fullDate.toISOString(),
+        selectedDate: formatLocalDate(fullDate),
         businessId
     });
   };
@@ -104,9 +112,28 @@ export default function Calendar() {
     rows.push(calendarDays.slice(i, i + 7));
   }
 
-  /* =========================
-            UI
-  ========================== */
+  useEffect(() => {
+  const loadMarkedDays = async () => {
+    const user = await getActiveUser();
+    if (!user) return;
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1; // 1–12
+    const marks = new Set<string>();
+    user.business?.forEach((b) => {
+      // b.id = YYYY-MM-DD
+      const [y, m] = b.id.split("-").map(Number);
+
+      if (y === year && m === month && b.calendar.length > 0) {
+        marks.add(b.id);
+      }
+    });
+
+    setMarkedDates(marks);
+  };
+  loadMarkedDays();
+}, [currentDate]);
+
+
   return (
     <View>
       <View style={[styles.container, { backgroundColor: theme.card }]}>
@@ -139,8 +166,9 @@ export default function Calendar() {
         {rows.map((week, rowIndex) => (
           <View key={rowIndex} style={styles.weekRow}>
             {week.map((day, index) => {
-              if (!day) return <View key={index} style={styles.dayBox} />;
-
+              if (!day) {
+                return <View key={index} style={styles.dayBox}/>
+              }
               const isToday =
                 day === today.getDate() &&
                 currentDate.getMonth() === today.getMonth() &&
@@ -171,6 +199,15 @@ export default function Calendar() {
                   >
                     {day}
                   </Text>
+                  {(() => {
+                    const fullDateStr = `${currentDate.getFullYear()}-${String(
+                      currentDate.getMonth() + 1
+                    ).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+                    return markedDates.has(fullDateStr) ? (
+                      <View style={styles.notify} />
+                    ) : null;
+                  })()}
                 </TouchableOpacity>
               );
             })}
@@ -220,4 +257,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  notify:{
+    height: 5,
+    width: 5,
+    borderRadius: 5,
+    backgroundColor: "#599b9b",
+  }
 });

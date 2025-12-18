@@ -28,14 +28,10 @@ export interface BusinessEntry {
   total: number;
   time: string;
 }
-export interface BusinessDay {
-  date: string;
-  entries: BusinessEntry[];
-}
 export interface BusinessItem {
   id: string;
   name: string;
-  calendar: BusinessDay[];
+  calendar: BusinessEntry[];
 }
 
 export interface User {

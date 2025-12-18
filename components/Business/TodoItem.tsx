@@ -43,7 +43,7 @@ export default function TodoItem({
         <Text
           style={[
             styles.titlePlaceholder,
-            { color: isIncome ? "#2ecc71" : "#e74c3c" },
+            { color: !isIncome ? "#2ecc71" : "#e74c3c" },
           ]}
         >
           {total}
@@ -55,7 +55,7 @@ export default function TodoItem({
           style={!isIncome && styles.scale}
           name={isIncome ? "trending-up-outline" : "trending-down-outline"}
           size={20}
-          color={isIncome ? "#2ecc71" : "#e74c3c"}
+          color={!isIncome ? "#2ecc71" : "#e74c3c"}
         />
         <Text style={{ fontSize: 10, color: theme.placeholder }}>{time}</Text>
       </View>

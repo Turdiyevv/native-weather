@@ -20,16 +20,11 @@ import { useTheme } from "../../theme/ThemeContext";
 import TodoItem from "../../components/Business/TodoItem";
 import TextField from "../../components/TextField";
 import { BusinessEntry } from "../types/userTypes";
-import {
-  getOrCreateBusinessDay,
-  addEntryToBusinessDay,
-  getEntriesForBusinessDay,
-} from "../../service/business";
+import {getActiveUser} from "../../service/storage";
+import {addBusinessEntry, getBusinessEntriesByDate, getOrCreateBusinessByDate} from "../../service/business";
 
-type SupportNav = NativeStackNavigationProp<
-  RootStackParamList,
-  "IncomeAndExpenses"
->;
+
+type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
 
 interface Props {
   route: {
@@ -53,6 +48,24 @@ export default function Business({ route }: Props) {
   const [amount, setAmount] = useState("");
   const [comment, setComment] = useState("");
 
+  const [allIncome, setAllIncome] = useState(0);
+  const [allExpenses, setAllExpenses] = useState(0);
+  const calculateTotals = (list: BusinessEntry[]) => {
+    let income = 0;
+    let expense = 0;
+
+    list.forEach(item => {
+      if (item.status) {
+        expense += item.total;
+      } else {
+        income += item.total;
+      }
+    });
+
+    setAllIncome(income);
+    setAllExpenses(expense);
+  };
+
   /* 🔙 Android back */
   useEffect(() => {
     const backAction = () => {
@@ -66,17 +79,6 @@ export default function Business({ route }: Props) {
     return () => backHandler.remove();
   }, []);
 
-  /* 🗂 Load business entries */
-  useEffect(() => {
-    const loadEntries = async () => {
-      await getOrCreateBusinessDay(businessId, dateStr);
-      const data = await getEntriesForBusinessDay(businessId, dateStr);
-      setEntries(data);
-        console.log('data: ', data);
-    };
-    loadEntries();
-  }, [businessId, dateStr]);
-
   const dismissForm = () => {
     Keyboard.dismiss();
     setShowForm(false);
@@ -84,17 +86,42 @@ export default function Business({ route }: Props) {
     setComment("");
   };
 
+  useEffect(() => {
+    const loadData = async () => {
+      const user = await getActiveUser();
+      if (!user) return;
+      // BusinessItem yo‘q bo‘lsa yaratadi
+      await getOrCreateBusinessByDate(user.username, dateStr);
+      // Shu kun entrylarini olib keladi
+      const list = await getBusinessEntriesByDate(
+        user.username,
+        dateStr
+      );
+      setEntries(list);
+      calculateTotals(list);
+    };
+
+    loadData();
+  }, [dateStr]);
+
   const onSave = async () => {
     if (!amount) return;
-
-    const entryData = {
+    const user = await getActiveUser();
+    if (!user) return;
+    await addBusinessEntry(user.username, dateStr, {
       title: comment || (isExpense ? "Chiqim" : "Kirim"),
-      status: !isExpense, // true -> income, false -> expense
+      status: isExpense,
       total: Number(amount),
-    };
-      console.log("onSave: ", businessId, dateStr, entryData);
-    const newEntry = await addEntryToBusinessDay(businessId, dateStr, entryData)
-    setEntries(prev => [...prev, newEntry]);
+      time: new Date().toLocaleTimeString().slice(0, 5),
+    });
+    // qayta yuklash
+    const list = await getBusinessEntriesByDate(
+      user.username,
+      dateStr
+    );
+
+    setEntries(list);
+    calculateTotals(list);
     dismissForm();
   };
 
@@ -108,7 +135,18 @@ export default function Business({ route }: Props) {
         {/* 📅 Sana */}
         <View style={styles.content}>
           <Text style={[styles.mainTitle, { color: theme.text }]}>
-            {new Date(selectedDate).toLocaleDateString()}
+            {dateStr}
+          </Text>
+        </View>
+        <View style={styles.content2}>
+          <Text style={[styles.mainTitle, { color: theme.success }]}>
+            {allIncome}
+          </Text>
+          <Text style={[styles.mainTitle, { color: theme.text }]}>
+            {dateStr}
+          </Text>
+          <Text style={[styles.mainTitle, { color: theme.danger }]}>
+            {allExpenses}
           </Text>
         </View>
 
@@ -205,6 +243,7 @@ const styles = StyleSheet.create({
   },
   container: { flex: 1, paddingHorizontal: 20 },
   content: { paddingTop: 40, paddingBottom: 10 },
+  content2: { flexDirection: "row", paddingBottom: 10, justifyContent: "space-around" },
   mainTitle: { fontSize: 16, textAlign: "center", fontWeight: "bold" },
   exchangeBar: { flexDirection: "row", height: 50, marginTop: 10, marginBottom: 24 },
   exchangeBtn: { flex: 1, borderRadius: 10, marginHorizontal: 4, alignItems: "center", justifyContent: "center" },
