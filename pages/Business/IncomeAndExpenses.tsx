@@ -1,15 +1,15 @@
 // pages/Business.tsx
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  BackHandler,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
-  TouchableOpacity,
-  Keyboard,
+    View,
+    Text,
+    StyleSheet,
+    BackHandler,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    TouchableOpacity,
+    Keyboard, Animated, Vibration,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,8 +21,14 @@ import TodoItem from "../../components/Business/TodoItem";
 import TextField from "../../components/TextField";
 import { BusinessEntry } from "../types/userTypes";
 import {getActiveUser} from "../../service/storage";
-import {addBusinessEntry, getBusinessEntriesByDate, getOrCreateBusinessByDate} from "../../service/business";
+import {
+    addBusinessEntry,
+    deleteBusinessEntry,
+    getBusinessEntriesByDate,
+    getOrCreateBusinessByDate, updateBusinessEntry
+} from "../../service/business";
 import {formatSum} from "../../utills/utill";
+import BusinessContextMenu from "../../components/Business/BusinessContextMenu";
 
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
@@ -67,6 +73,34 @@ export default function Business({ route }: Props) {
     setSumma(income - expense);
   };
 
+  const [selectedEntry, setSelectedEntry] = useState<BusinessEntry | null>(null);
+  const [menuAnim] = useState(new Animated.Value(0));
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<BusinessEntry | null>(null);
+
+  const openMenu = (entry: BusinessEntry) => {
+      setSelectedEntry(entry);
+      setModalVisible(true);
+      menuAnim.setValue(0);
+      Vibration.vibrate(20);
+      Animated.timing(menuAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+  };
+  const closeMenu = () => {
+      Animated.timing(menuAnim, {
+        toValue: 0,
+        duration: 150,
+        useNativeDriver: true,
+      }).start(() => {
+        setModalVisible(false);
+        setSelectedEntry(null);
+      });
+  };
+
+
   /* 🔙 Android back */
   useEffect(() => {
     const backAction = () => {
@@ -101,40 +135,49 @@ export default function Business({ route }: Props) {
       setEntries(list);
       calculateTotals(list);
     };
-
     loadData();
   }, [dateStr]);
 
   const onSave = async () => {
-    if (!amount) return;
-    const user = await getActiveUser();
-    if (!user) return;
+      if (!amount) return;
+      const user = await getActiveUser();
+      if (!user) return;
 
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth() + 1;
-      const day = now.getDate();
-      const hours = String(now.getHours()).padStart(2, "0");
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const date = `${year}-${month}-${day}`;
-      const time = `${hours}:${minutes}`;
+      if (editingEntry) {
+        // 📝 EDIT
+        await updateBusinessEntry(user.username, dateStr, editingEntry.id, {
+          ...editingEntry,
+          total: Number(amount),
+          title: comment || editingEntry.title,
+          status: isExpense,
+        });
+      } else {
+        // ➕ ADD
+          const now = new Date();
+          const year = now.getFullYear();
+          const month = now.getMonth() + 1;
+          const day = now.getDate();
+          const hours = String(now.getHours()).padStart(2, "0");
+          const minutes = String(now.getMinutes()).padStart(2, "0");
+          const date = `${year}-${month}-${day}`;
+          const time = `${hours}:${minutes}`;
 
-    await addBusinessEntry(user.username, dateStr, {
-      title: comment || (isExpense ? "Chiqim" : "Kirim"),
-      status: isExpense,
-      total: Number(amount),
-      date: date,
-      time: time,
-    });
-    // qayta yuklash
-    const list = await getBusinessEntriesByDate(
-      user.username,
-      dateStr
-    );
-    setEntries(list);
-    calculateTotals(list);
-    dismissForm();
+        await addBusinessEntry(user.username, dateStr, {
+          title: comment || (isExpense ? "Chiqim" : "Kirim"),
+          status: isExpense,
+          total: Number(amount),
+          date: date,
+          time: time,
+        });
+      }
+      const list = await getBusinessEntriesByDate(user.username, dateStr);
+      setEntries(list);
+      calculateTotals(list);
+      // 🔄 reset
+      setEditingEntry(null);
+      dismissForm();
   };
+
 
   return (
     <KeyboardAvoidingView
@@ -169,9 +212,36 @@ export default function Business({ route }: Props) {
               {...item}
               index={index}
               listLength={entries.length}
+              onLongPress={() => openMenu(item)}
             />
           ))}
         </ScrollView>
+
+          {selectedEntry && (
+              <BusinessContextMenu
+                entry={selectedEntry}
+                visible={modalVisible}
+                menuAnim={menuAnim}
+                onClose={closeMenu}
+                onEdit={(entry) => {
+                  setEditingEntry(entry);
+                  setAmount(String(entry.total));
+                  setComment(entry.title);
+                  setIsExpense(entry.status);
+                  setShowForm(true);
+                  closeMenu();
+                }}
+                onDelete={async (entry) => {
+                  const user = await getActiveUser();
+                  if (!user) return;
+                  await deleteBusinessEntry(user.username, dateStr, entry.id);
+                  const list = await getBusinessEntriesByDate(user.username, dateStr);
+                  setEntries(list);
+                  calculateTotals(list);
+                  closeMenu();
+                }}
+              />
+          )}
 
         <View>
           <View style={styles.exchangeBar}>

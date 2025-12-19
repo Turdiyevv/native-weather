@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../theme/ThemeContext";
 import { BusinessEntry } from "../../pages/types/userTypes";
@@ -8,6 +8,7 @@ import {formatSum} from "../../utills/utill";
 type Props = BusinessEntry & {
   index: number;
   listLength: number;
+  onLongPress?: () => void;
 };
 
 export default function TodoItem({
@@ -18,6 +19,7 @@ export default function TodoItem({
   time,
   index,
   listLength,
+  onLongPress
 }: Props) {
   const isFirst = index === 0;
   const isLast = index === listLength - 1;
@@ -26,7 +28,9 @@ export default function TodoItem({
   const { theme } = useTheme();
 
   return (
-    <View
+    <TouchableOpacity
+        activeOpacity={0.8}
+        onLongPress={() => onLongPress?.()}
       style={[
         styles.containerOne,
         { backgroundColor: theme.card },
@@ -62,7 +66,7 @@ export default function TodoItem({
         />
         <Text style={{ fontSize: 10, bottom: -4, color: theme.placeholder }}>{time}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: "#a8a6a6",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: "#a8a6a6",
   },
   menuButtonDel: {
     flexDirection: "row",
