@@ -4,6 +4,7 @@ import {
   Text,
   SectionList,
   TouchableOpacity,
+    Image,
   StyleSheet,
   Animated,
   Vibration
@@ -18,6 +19,7 @@ import { getActiveUser, updateTask, softDeleteTask, loadUsers, saveUsers } from 
 import TodoItem from "../components/TodoItem";
 import TaskContextMenu from "../components/TaskContextMenu";
 import { useTheme } from "../theme/ThemeContext";
+import AdminIcon from "../assets/admin_icon.png";
 
 export default function MainPage({ navigation }: any) {
   const { theme } = useTheme();
@@ -140,30 +142,40 @@ export default function MainPage({ navigation }: any) {
       return acc;
     }, []);
 
+  const hasTasks = groupedTasks.some(section => section.data.length > 0);
+
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
       <View style={styles.bar} />
       <View style={[styles.containerLittle, {backgroundColor: theme.background}]}>
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
-        <SectionList
-          style={{ marginBottom: 40, borderRadius:12 }}
-          sections={groupedTasks}
-          keyExtractor={(item) => item.id}
-          renderSectionHeader={({ section }) => (
-            <Text style={[styles.sectionHeader, {color: theme.subText}]}>{section.title}</Text>
-          )}
-          renderItem={({ item, index, section }) => (
-            <TodoItem
-              item={item}
-              index={index}
-              isFirst={index === 0}
-              isLast={index === section.data.length - 1}
-              onToggle={() => {editTask(item, true)}}
-              onLongPress={(y) => openMenu(item.id, y)}
+        {hasTasks ? (
+            <SectionList
+              style={{ marginBottom: 40, borderRadius:12 }}
+              sections={groupedTasks}
+              keyExtractor={(item) => item.id}
+              renderSectionHeader={({ section }) => (
+                <Text style={[styles.sectionHeader, {color: theme.subText}]}>{section.title}</Text>
+              )}
+              renderItem={({ item, index, section }) => (
+                <TodoItem
+                  item={item}
+                  index={index}
+                  isFirst={index === 0}
+                  isLast={index === section.data.length - 1}
+                  onToggle={() => {editTask(item, true)}}
+                  onLongPress={(y) => openMenu(item.id, y)}
+                />
+              )}
             />
-          )}
-        />
-
+        ) :(
+            <View style={{flex: 1, alignItems: "center"}}>
+              <Image source={AdminIcon} style={styles.icon} />
+              <Text style={[styles.description, {color: theme.text}]}>
+                Bu yerda kun tartibingiz bo'yicha vazifalarni yozishingiz mumkin.
+              </Text>
+            </View>
+        )}
         {selectedTaskId && (() => {
           const task = tasks.find(t => t.id === selectedTaskId);
           if (!task) return null;
@@ -189,7 +201,7 @@ export default function MainPage({ navigation }: any) {
             { icon: "home-outline", onPress: () => setActiveTab("main"), size: 26, color: activeTab === "main" ? theme.primary : theme.text },
             { icon: "checkbox-outline", onPress: () => setActiveTab("done"), size: 26, color: activeTab === "done" ? theme.primary : theme.text },
             { icon: "trash-outline", onPress: () => setActiveTab("deleted"), size: 24, color: activeTab === "deleted" ? theme.primary : theme.text },
-            { icon: "list-outline", onPress: () => navigation.navigate("Business"), size: 24 },
+            { icon: "calendar-outline", onPress: () => navigation.navigate("Business"), size: 24 },
             { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto"},
           ]}
           containerStyle={{ width: "100%" }}
@@ -200,8 +212,19 @@ export default function MainPage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  description: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 15,
+    color: "#555",
+  },
+  icon: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
+  },
   bar: { height: 35, width: "100%" },
   container: { flex: 1 },
-  containerLittle: { flex: 1, justifyContent: "flex-end", paddingHorizontal: 10 },
+  containerLittle: { flex: 1, justifyContent: "flex-start", paddingHorizontal: 10 },
   sectionHeader: { fontSize: 11, fontWeight: "bold", marginVertical: 5 },
 });

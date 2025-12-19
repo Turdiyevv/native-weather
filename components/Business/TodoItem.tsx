@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../theme/ThemeContext";
 import { BusinessEntry } from "../../pages/types/userTypes";
+import {formatSum} from "../../utills/utill";
 
 type Props = BusinessEntry & {
   index: number;
@@ -46,7 +47,7 @@ export default function TodoItem({
             { color: !isIncome ? "#2ecc71" : "#e74c3c" },
           ]}
         >
-          {total}
+          {formatSum(total)}
         </Text>
       </View>
 
@@ -99,6 +100,5 @@ const styles = StyleSheet.create({
   },
   titlePlaceholder: {
     fontSize: 12,
-    fontWeight: "bold",
   },
 });

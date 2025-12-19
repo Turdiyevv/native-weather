@@ -133,6 +133,7 @@ export default function AddPage({ navigation, route }: any) {
             <Text style={[styles.title, {color: theme.text}]}>
               {taskToEdit ? view ? "Vazifani ko'rish" : "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
             </Text>
+            {/*<Text style={{color: theme.placeholder}}>{JSON.stringify(taskToEdit, null, 2)}</Text>*/}
 
             <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
               <TextField

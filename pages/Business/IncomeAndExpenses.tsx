@@ -22,6 +22,7 @@ import TextField from "../../components/TextField";
 import { BusinessEntry } from "../types/userTypes";
 import {getActiveUser} from "../../service/storage";
 import {addBusinessEntry, getBusinessEntriesByDate, getOrCreateBusinessByDate} from "../../service/business";
+import {formatSum} from "../../utills/utill";
 
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
@@ -50,10 +51,10 @@ export default function Business({ route }: Props) {
 
   const [allIncome, setAllIncome] = useState(0);
   const [allExpenses, setAllExpenses] = useState(0);
+  const [summa, setSumma] = useState(0);
   const calculateTotals = (list: BusinessEntry[]) => {
     let income = 0;
     let expense = 0;
-
     list.forEach(item => {
       if (item.status) {
         expense += item.total;
@@ -61,9 +62,9 @@ export default function Business({ route }: Props) {
         income += item.total;
       }
     });
-
     setAllIncome(income);
     setAllExpenses(expense);
+    setSumma(income - expense);
   };
 
   /* 🔙 Android back */
@@ -134,19 +135,19 @@ export default function Business({ route }: Props) {
       <View style={styles.container}>
         {/* 📅 Sana */}
         <View style={styles.content}>
-          <Text style={[styles.mainTitle, { color: theme.text }]}>
+          <Text style={{ color: theme.text, textAlign: "center", fontWeight: "bold", fontSize: 16 }}>
             {dateStr}
           </Text>
         </View>
         <View style={styles.content2}>
           <Text style={[styles.mainTitle, { color: theme.success }]}>
-            {allIncome}
+            {formatSum(allIncome)}
           </Text>
-          <Text style={[styles.mainTitle, { color: theme.text }]}>
-            {dateStr}
+          <Text style={[styles.mainTitle2, { color: theme.text }]}>
+            {formatSum(summa)}
           </Text>
           <Text style={[styles.mainTitle, { color: theme.danger }]}>
-            {allExpenses}
+            {formatSum(allExpenses)}
           </Text>
         </View>
 
@@ -243,8 +244,9 @@ const styles = StyleSheet.create({
   },
   container: { flex: 1, paddingHorizontal: 20 },
   content: { paddingTop: 40, paddingBottom: 10 },
-  content2: { flexDirection: "row", paddingBottom: 10, justifyContent: "space-around" },
-  mainTitle: { fontSize: 16, textAlign: "center", fontWeight: "bold" },
+  content2: { flexDirection: "row", paddingBottom: 10, justifyContent: "space-between" },
+  mainTitle: { fontSize: 12, textAlign: "center", fontWeight: "bold" },
+  mainTitle2: { fontSize: 12, textAlign: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },
   exchangeBar: { flexDirection: "row", height: 50, marginTop: 10, marginBottom: 24 },
   exchangeBtn: { flex: 1, borderRadius: 10, marginHorizontal: 4, alignItems: "center", justifyContent: "center" },
   formContainer: { padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: Platform.OS === "ios" ? 30 : 20 },
