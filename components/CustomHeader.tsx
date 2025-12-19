@@ -49,7 +49,6 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
   const { firstName, avatar } = currentUser.userinfo;
   const { username } = currentUser;
 
-
   return (
     <View style={styles.header}>
       <View>
@@ -60,7 +59,7 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
         {avatar ? (
           <Image source={{ uri: avatar }} style={[styles.avatar, {backgroundColor: theme.background}]} />
         ) : (
-          <Ionicons name="person-circle-outline" size={50} color="#555" />
+          <Ionicons name="person-circle-outline" size={52} color="#555" />
         )}
       </TouchableOpacity>
     </View>

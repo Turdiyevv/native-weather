@@ -71,11 +71,6 @@ export default function Calendar() {
   const goToday = () => {
       setCurrentDate(new Date(today.getFullYear(), today.getMonth(), 1));
       setSelectedDay(today.getDate());
-      // const businessId = route.params?.businessId || "defaultBusiness";
-      // navigation.navigate("IncomeAndExpenses", {
-      //   selectedDate: today.toISOString(),
-      //   businessId
-      // });
   };
 
   const onDayPress = (day: number) => {

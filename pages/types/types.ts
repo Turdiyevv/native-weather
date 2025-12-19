@@ -34,6 +34,7 @@ export interface TextFieldProps {
   editable?: boolean;
   multiline?: number | any;
   keyboardType?: KeyboardTypeOptions;
+  sumFormat?: boolean;
 }
 export interface ConfirmModalProps {
   visible: boolean;

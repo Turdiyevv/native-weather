@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: "#121",
-    padding: 15,
+    padding: 12,
     borderRadius: 10,
     alignItems: "center",
     marginTop: 10,

@@ -26,6 +26,7 @@ export interface BusinessEntry {
   title: string;
   status: boolean;
   total: number;
+  date: string;
   time: string;
 }
 export interface BusinessItem {

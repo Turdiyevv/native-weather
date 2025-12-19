@@ -92,7 +92,6 @@ export const deleteTask = async (username: string, taskId: string) => {
   users[idx].usertasks = users[idx].usertasks.filter((t) => t.id !== taskId);
   await saveUsers(users);
 };
-
 export const updateUserTasks = async (username: string, newTasks: UserTask[]) => {
   const users = await loadUsers();
   const idx = users.findIndex((u) => u.username === username);
@@ -101,9 +100,9 @@ export const updateUserTasks = async (username: string, newTasks: UserTask[]) =>
   users[idx].usertasks = newTasks;
   await saveUsers(users);
 };
-// store.ts oxiriga qo‘sh
-const THEME_KEY = "appTheme";
 
+
+const THEME_KEY = "appTheme";
 export const loadTheme = async (): Promise<ThemeName | null> => {
   try {
     const theme = await AsyncStorage.getItem(THEME_KEY);
@@ -113,20 +112,10 @@ export const loadTheme = async (): Promise<ThemeName | null> => {
     return null;
   }
 };
-
 export const saveTheme = async (theme: ThemeName) => {
   try {
     await AsyncStorage.setItem(THEME_KEY, theme);
   } catch (e) {
     console.log("saveTheme error:", e);
   }
-};
-
-export const updateUserBusiness = async (username: string, newBusiness: BusinessItem[]) => {
-  const users = await loadUsers();
-  const idx = users.findIndex(u => u.username === username);
-  if (idx === -1) return;
-
-  users[idx].business = newBusiness;
-  await saveUsers(users);
 };

@@ -14,6 +14,7 @@ export default function TodoItem({
   title,
   status,
   total,
+  date,
   time,
   index,
   listLength,
@@ -37,18 +38,19 @@ export default function TodoItem({
         style={[
           styles.container,
           { borderBottomColor: theme.border },
-          !isLast && styles.borderBottom,
+          !isLast && [styles.borderBottom, { borderBottomColor: theme.border }],
         ]}
       >
         <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
-        <Text
-          style={[
-            styles.titlePlaceholder,
-            { color: !isIncome ? "#2ecc71" : "#e74c3c" },
-          ]}
-        >
-          {formatSum(total)}
-        </Text>
+          <View style={styles.smContainer}>
+            <Text
+              style={[
+                styles.titlePlaceholder,
+                { color: !isIncome ? "#2ecc71" : "#e74c3c" },
+              ]}
+            >{formatSum(total)}</Text>
+              {date && (<Text style={[styles.dateFull, {color: theme.placeholder}]}>{date}</Text>)}
+          </View>
       </View>
 
       <View style={styles.containerIc}>
@@ -58,13 +60,14 @@ export default function TodoItem({
           size={20}
           color={!isIncome ? "#2ecc71" : "#e74c3c"}
         />
-        <Text style={{ fontSize: 10, color: theme.placeholder }}>{time}</Text>
+        <Text style={{ fontSize: 10, bottom: -4, color: theme.placeholder }}>{time}</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+    dateFull:{fontSize: 10, bottom: -9},
   scale: {
     transform: [{ scaleX: -1 }],
   },
@@ -76,12 +79,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "flex-start",
-    padding: 10,
+    padding: 8,
   },
   containerIc: {
     paddingTop: 5,
     alignItems: "center",
-    justifyContent: "center", // old: space-between → center
+    justifyContent: "center",
     paddingHorizontal: 10,
   },
   topRadius: {
@@ -98,6 +101,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
   },
+    smContainer:{
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
   titlePlaceholder: {
     fontSize: 12,
   },

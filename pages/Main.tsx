@@ -74,7 +74,6 @@ export default function MainPage({ navigation }: any) {
           updatedTask.isReturningAt = updatedTask.time;
           updatedTask.time = now.toISOString();
       }
-
       await updateTask(activeUser.username, task.id, updatedTask);
       const updatedTasks = activeUser.usertasks.map(t => t.id === task.id ? updatedTask : t);
       setTasks(updatedTasks);
@@ -135,12 +134,19 @@ export default function MainPage({ navigation }: any) {
     .slice()
     .reverse()
     .reduce((acc: any[], task) => {
-      const dateStr = new Date(task.time).toLocaleDateString();
-      const group = acc.find(g => g.title === dateStr);
+      const date = new Date(task.time);
+      const dateKey = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate()
+      ).getTime();
+      const title = date.toLocaleDateString("uz-Uz");
+      const group = acc.find(g => g.dateKey === dateKey);
       if (group) group.data.push(task);
-      else acc.push({ title: dateStr, data: [task] });
+      else acc.push({ title, dateKey, data: [task] });
       return acc;
-    }, []);
+    }, [])
+  .sort((a, b) => b.dateKey - a.dateKey);
 
   const hasTasks = groupedTasks.some(section => section.data.length > 0);
 
@@ -171,6 +177,7 @@ export default function MainPage({ navigation }: any) {
         ) :(
             <View style={{flex: 1, alignItems: "center"}}>
               <Image source={AdminIcon} style={styles.icon} />
+
               <Text style={[styles.description, {color: theme.text}]}>
                 Bu yerda kun tartibingiz bo'yicha vazifalarni yozishingiz mumkin.
               </Text>
@@ -194,8 +201,6 @@ export default function MainPage({ navigation }: any) {
             />
           );
         })()}
-
-
         <LeftMenu
           buttons={[
             { icon: "home-outline", onPress: () => setActiveTab("main"), size: 26, color: activeTab === "main" ? theme.primary : theme.text },

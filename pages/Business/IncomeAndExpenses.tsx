@@ -109,18 +109,28 @@ export default function Business({ route }: Props) {
     if (!amount) return;
     const user = await getActiveUser();
     if (!user) return;
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const date = `${year}-${month}-${day}`;
+      const time = `${hours}:${minutes}`;
+
     await addBusinessEntry(user.username, dateStr, {
       title: comment || (isExpense ? "Chiqim" : "Kirim"),
       status: isExpense,
       total: Number(amount),
-      time: new Date().toLocaleTimeString().slice(0, 5),
+      date: date,
+      time: time,
     });
     // qayta yuklash
     const list = await getBusinessEntriesByDate(
       user.username,
       dateStr
     );
-
     setEntries(list);
     calculateTotals(list);
     dismissForm();
@@ -143,8 +153,8 @@ export default function Business({ route }: Props) {
           <Text style={[styles.mainTitle, { color: theme.success }]}>
             {formatSum(allIncome)}
           </Text>
-          <Text style={[styles.mainTitle2, { color: theme.text }]}>
-            {formatSum(summa)}
+          <Text style={[styles.mainTitle2, { color: summa > 0 ? theme.success : summa < 0 ? theme.danger : theme.text }]}>
+              {summa > 0 ? "+" : summa < 0 ? "" : "" }{formatSum(summa)}
           </Text>
           <Text style={[styles.mainTitle, { color: theme.danger }]}>
             {formatSum(allExpenses)}
@@ -152,6 +162,7 @@ export default function Business({ route }: Props) {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
+            {/*<Text>{JSON.stringify(entries, null, 2)}</Text>*/}
           {entries.map((item, index) => (
             <TodoItem
               key={item.id}
@@ -207,6 +218,7 @@ export default function Business({ route }: Props) {
                 value={amount}
                 onChangeText={setAmount}
                 keyboardType="numeric"
+                sumFormat={true}
                 required
               />
 
@@ -244,9 +256,9 @@ const styles = StyleSheet.create({
   },
   container: { flex: 1, paddingHorizontal: 20 },
   content: { paddingTop: 40, paddingBottom: 10 },
-  content2: { flexDirection: "row", paddingBottom: 10, justifyContent: "space-between" },
+  content2: { flexDirection: "row", flexWrap: "wrap", paddingBottom: 10, alignItems: "center", justifyContent: "space-between", },
   mainTitle: { fontSize: 12, textAlign: "center", fontWeight: "bold" },
-  mainTitle2: { fontSize: 12, textAlign: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },
+  mainTitle2: { fontSize: 12, textAlign: "center", alignItems: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },
   exchangeBar: { flexDirection: "row", height: 50, marginTop: 10, marginBottom: 24 },
   exchangeBtn: { flex: 1, borderRadius: 10, marginHorizontal: 4, alignItems: "center", justifyContent: "center" },
   formContainer: { padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: Platform.OS === "ios" ? 30 : 20 },

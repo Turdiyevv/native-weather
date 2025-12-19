@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
-import {TextFieldProps} from "../pages/types/types";
-import {useTheme} from "../theme/ThemeContext";
+import { TextFieldProps } from "../pages/types/types";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function TextField({
   label,
@@ -16,12 +16,24 @@ export default function TextField({
   editable,
   multiline,
   keyboardType,
+  sumFormat = false, // 🔥 yangi prop
   ...rest
 }: TextFieldProps) {
   const [touched, setTouched] = useState(false);
   const { theme } = useTheme();
   const showError = required && touched && value.trim().length === 0;
   const showMinLengthError = touched && value.length > 0 && value.length < minLength;
+
+  // 🔥 summa format funksiyasi
+  const formatNumber = (val: string) => {
+    if (!val) return "";
+    // faqat raqam qoldiramiz
+    const numeric = val.replace(/\D/g, "");
+    // 3 xonali ajratish
+    return numeric.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
+  const displayValue = sumFormat ? formatNumber(value) : value;
 
   return (
     <View style={{ width: "100%", marginBottom: 10 }}>
@@ -31,18 +43,20 @@ export default function TextField({
 
       <TextInput
         style={[
-          styles.input, {backgroundColor: theme.card, color: theme.text},
+          styles.input,
+          { backgroundColor: theme.card, color: theme.text },
           minHeight ? { minHeight: minHeight } : {},
-          (showError || showMinLengthError) && styles.errorBorder
+          (showError || showMinLengthError) && styles.errorBorder,
         ]}
         editable={editable}
         multiline={multiline}
         secureTextEntry={secureTextEntry}
         cursorColor={theme.placeholder}
         selectionColor={theme.placeholder}
-        value={value}
+        value={displayValue}
         onChangeText={(text) => {
-          onChangeText(text);
+          // agar sumFormat bo'lsa, faqat raqamlarni onChange ga yuboramiz
+          onChangeText(sumFormat ? text.replace(/\D/g, "") : text);
           if (!touched) setTouched(true);
         }}
         keyboardType={keyboardType}
@@ -52,9 +66,7 @@ export default function TextField({
         {...rest}
       />
 
-      {showError && (
-        <Text style={styles.errorText}>{errorMessage}</Text>
-      )}
+      {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
       {showMinLengthError && (
         <Text style={styles.errorText}>
           {label} kamida {minLength} ta belgi bo'lishi kerak
