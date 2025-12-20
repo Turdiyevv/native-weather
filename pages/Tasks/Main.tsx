@@ -71,7 +71,7 @@ export default function MainPage({ navigation }: any) {
   };
 
   const editTask = (task: UserTask, initialView: boolean) => {
-    navigation.navigate("AddPage", { task, initialView });
+    navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
     closeMenu();
   };
 
@@ -143,14 +143,14 @@ const onTabPress = (tab: TaskTab) => {
   setActiveTab(tab);
   Animated.timing(listAnim, {
     toValue: 0,
-    duration: 300,
+    duration: 200,
     easing: Easing.out(Easing.cubic),
     useNativeDriver: true,
   }).start();
   Animated.timing(listOpacity, {
     toValue: 1,
-    duration: 150,
-    delay: 100,
+    duration: 50,
+    delay: 20,
     useNativeDriver: true,
   }).start();
 };

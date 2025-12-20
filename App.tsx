@@ -30,6 +30,7 @@ import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
+import ViewTask from "./pages/Tasks/ViewTask";
 
 enableScreens();
 
@@ -111,6 +112,7 @@ const AppNavigator = () => {
               <Stack.Screen name="Support" component={SupportPage} />
               <Stack.Screen name="Business" component={Business} />
               <Stack.Screen name="AddPage" component={AddPage} />
+              <Stack.Screen name="ViewTask" component={ViewTask} />
               <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
             </Stack.Navigator>
 

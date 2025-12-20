@@ -10,6 +10,7 @@ export type RootStackParamList = {
   Support: undefined;
   Business: undefined;
   LoginCodePage: undefined;
+  ViewTask: undefined;
   IncomeAndExpenses: {
     selectedDate: string;
     businessId: string;

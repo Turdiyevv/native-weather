@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 10,
     padding: 10,
-    borderWidth: 1,
-    borderColor: "#535252",
+    borderWidth: 0.5,
+    borderColor: "#eaeaea",
     fontSize: 18,
   },
   errorBorder: {

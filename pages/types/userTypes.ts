@@ -41,7 +41,7 @@ export interface User {
   passwordCode?: string;
   userinfo: UserInfo;
   usertasks: UserTask[];
-  business: BusinessItem[];
+  business?: BusinessItem[];
 }
 export interface CustomHeaderProps {
   firstName?: string;

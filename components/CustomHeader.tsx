@@ -3,13 +3,19 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getActiveUser } from '../service/storage';
 import { User } from '../pages/types/userTypes';
-import { useFocusEffect } from "@react-navigation/native";
+import {NavigationProp, useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useTheme} from "../theme/ThemeContext";
+import {RootStackParamList} from "../pages/types/types";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 interface HeaderProps {onProfilePress: () => void}
-
+type HeaderNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "MainPage"
+>;
 const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
     const { theme } = useTheme();
+    const navigation = useNavigation<HeaderNavigationProp>();
     const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,9 +61,12 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
         <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
         <Text style={styles.keyUsername}>@{username || "username"}</Text>
       </View>
+        <TouchableOpacity onPress={() => {navigation.navigate("ViewTask");}}>
+            <Text>open view</Text>
+        </TouchableOpacity>
       <TouchableOpacity onPress={onProfilePress}>
         {avatar ? (
-          <Image source={{ uri: avatar }} style={[styles.avatar, {backgroundColor: theme.background}]} />
+          <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
         ) : (
           <Ionicons name="person-circle-outline" size={52} color="#555" />
         )}
@@ -83,7 +92,6 @@ const styles = StyleSheet.create({
   username: { fontSize: 22, fontWeight: "bold" },
   keyUsername: { fontSize: 12, color: "gray" },
   avatar: {
-    borderColor: "#121",
     borderWidth: 2,
     width: 50,
     height: 50,

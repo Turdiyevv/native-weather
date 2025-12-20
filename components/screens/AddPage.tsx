@@ -23,8 +23,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function AddPage({ navigation, route }: any) {
     const { theme } = useTheme();
     const insets = useSafeAreaInsets();
-  const { task: taskToEdit, initialView } = route.params || {};
-  const [view, setView] = useState<boolean>(initialView || false);
+  const { task: taskToEdit } = route.params || {};
   const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
   const [description, setDescription] = useState(taskToEdit ? taskToEdit.description || "" : "");
   const [deadline, setDeadline] = useState<Date | null>(
@@ -49,22 +48,8 @@ export default function AddPage({ navigation, route }: any) {
         });
         return;
       }
-      // Agar ko‘rish rejimi bo‘lsa, tahrirlashga o‘tadi
-      if (view) {
-        if (taskToEdit?.isDeleted) {
-          showMessage({
-            message: "Bu vazifa allaqachon o‘chirilgan",
-            type: "danger",
-          });
-          return;
-        }
-        setView(false);
-        return;
-      }
-
       const activeUser = await getActiveUser();
       if (!activeUser) return;
-
       // UPDATE (edit)
       if (taskToEdit) {
         await updateTask(activeUser.username, taskToEdit.id, {
@@ -132,7 +117,7 @@ export default function AddPage({ navigation, route }: any) {
           keyboardShouldPersistTaps="handled"
         >
             <Text style={[styles.title, {color: theme.text}]}>
-              {taskToEdit ? view ? "Vazifani ko'rish" : "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
+              {taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
             </Text>
             {/*<Text style={{color: theme.placeholder}}>{JSON.stringify(taskToEdit, null, 2)}</Text>*/}
 
@@ -142,7 +127,6 @@ export default function AddPage({ navigation, route }: any) {
                 value={task}
                 onChangeText={setTask}
                 placeholder="Vazifa nomi"
-                editable={!view}
               />
               <TextField
                 label="Batafsil izoh"
@@ -151,7 +135,6 @@ export default function AddPage({ navigation, route }: any) {
                 placeholder="Enter description..."
                 multiline={true}
                 minHeight={100}
-                editable={!view}
               />
               <View style={styles.selectsBox}>
                 {options.map((option) => (
@@ -159,7 +142,7 @@ export default function AddPage({ navigation, route }: any) {
                     key={option.id}
                     label={option.text}
                     value={selected === option.id}
-                    onChange={() => !view && setSelected(option.id)}
+                    onChange={() => setSelected(option.id)}
                     color={option.color}
                   />
                 ))}
@@ -170,15 +153,13 @@ export default function AddPage({ navigation, route }: any) {
               <FilePickerComponent
                   onChange={setAttachments}
                   initialFiles={taskToEdit ? taskToEdit.files : []}
-                  disabled={view}
               />
             </View>
 
             <View style={styles.deadlineContainer}>
               <TouchableOpacity
                 style={[styles.dateButton, {backgroundColor: theme.card}]}
-                onPress={() => !view && setShowPicker(true)}
-                disabled={view}
+                onPress={() => setShowPicker(true)}
               >
                 <Text style={[styles.dateText, {color: theme.text}]}>
                   {deadline ? deadline.toLocaleDateString() : "Deadline belgilanmadi"}
@@ -188,7 +169,7 @@ export default function AddPage({ navigation, route }: any) {
               {deadline && (
                 <TouchableOpacity
                   style={styles.clearButton}
-                  onPress={() => !view && setDeadline(null)}
+                  onPress={() =>setDeadline(null)}
                 >
                   <Text style={styles.clearText}>X</Text>
                 </TouchableOpacity>
@@ -215,7 +196,7 @@ export default function AddPage({ navigation, route }: any) {
             )}
 
             <TouchableOpacity style={[styles.addButton, {backgroundColor: theme.primary}]} onPress={saveTask}>
-              <Text style={[styles.addText, {color: "#fff"}]}>{taskToEdit ? view ? "Tahrirlash" : "Saqlash" : "Qo‘shish"}</Text>
+              <Text style={[styles.addText, {color: "#fff"}]}>{taskToEdit ? "Saqlash" : "Qo‘shish"}</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
 
