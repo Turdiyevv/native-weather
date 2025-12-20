@@ -1,4 +1,5 @@
 import {KeyboardTypeOptions} from "react-native";
+import {UserTask} from "./userTypes";
 
 export type RootStackParamList = {
   LoginPage: undefined;
@@ -10,7 +11,7 @@ export type RootStackParamList = {
   Support: undefined;
   Business: undefined;
   LoginCodePage: undefined;
-  ViewTask: undefined;
+  ViewTask: { task: UserTask };
   IncomeAndExpenses: {
     selectedDate: string;
     businessId: string;

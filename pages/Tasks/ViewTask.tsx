@@ -1,4 +1,4 @@
-             import React from "react";
+import React, {useState} from "react";
 import {
   View,
   Text,
@@ -10,11 +10,24 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {useTheme} from "../../theme/ThemeContext";
-             import InfoRow from "../../components/Task/InfoRow";
+import InfoRow from "../../components/Task/InfoRow";
+import { useRoute, RouteProp } from "@react-navigation/native";
+import {RootStackParamList} from "../types/types";
+import SingleCheckBox from "../../components/CheckBox";
 
+type ViewTaskRouteProp = RouteProp<RootStackParamList, "ViewTask">;
 const ViewPage: React.FC = () => {
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const route = useRoute<ViewTaskRouteProp>();
+  const taskToEdit = route.params?.task;
+  const options = [
+    {id: 1, text: "Yengil", color: 'green'},
+    {id: 2, text: "O'rtacha", color: 'orange'},
+    {id: 3, text: "Og'ir", color: '#fb5151'},
+  ];
+  const [selected, setSelected] = useState<number | null>(taskToEdit ? taskToEdit.status : 1);
+
   return (
     <SafeAreaView style={styles.safe}>
       {/* Header */}
@@ -23,31 +36,38 @@ const ViewPage: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-
-        <Text style={[styles.headerTitle, {color: theme.text}]}>View Details</Text>
-
+        <Text style={[styles.headerTitle, {color: theme.text}]}>Ko'rish</Text>
         <View style={{ width: 24 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Card */}
+        {/*<Text>{JSON.stringify(taskToEdit)}</Text>*/}
         <View style={[styles.card, {backgroundColor: theme.card, shadowColor: theme.card}]}>
-          <Text style={[styles.title, {color: theme.text}]}>Business Name</Text>
+          <Text style={[styles.title, {color: theme.text}]}>{taskToEdit.title}</Text>
+          <Text style={{color: theme.placeholder, fontSize: 12}}>{taskToEdit.time}</Text>
 
           <View style={[styles.divider, {backgroundColor: theme.border}]} />
 
-          <InfoRow label="Category" value="Technology"/>
-          <InfoRow label="Phone" value="+998 90 123 45 67"/>
-          <InfoRow label="Email" value="info@company.com"/>
-          <InfoRow label="Location" value="Tashkent, Uzbekistan"/>
+          <InfoRow label="Category" value={taskToEdit?.done ? "success" : "warning"}/>
+          <Text style={{color: theme.placeholder}}>Status</Text>
+          <View style={styles.selectsBox}>
+            {options.map((option) => (
+              <SingleCheckBox
+                key={option.id}
+                label={option.text}
+                value={selected === option.id}
+                onChange={() => {}}
+                color={option.color}
+              />
+            ))}
+          </View>
+
+          <InfoRow label="Deadline" value={taskToEdit?.deadline ? taskToEdit.deadline : "0000-00-00"}/>
 
           <View style={styles.descriptionBox}>
             <Text style={[styles.label, {color: theme.placeholder}]}>Description</Text>
-            <Text style={[styles.description, {color: theme.text}]}>
-              This is a modern business view page design. Clean UI, readable
-              typography and comfortable spacing are used to improve user
-              experience.
-            </Text>
+            <Text style={[styles.description, {color: theme.text}]}>{taskToEdit.description}</Text>
           </View>
         </View>
 
@@ -62,11 +82,15 @@ const ViewPage: React.FC = () => {
 export default ViewPage;
 
 const styles = StyleSheet.create({
-    bar: { height: 35, width: "100%" },
-  safe: {
-    flex: 1,
+  selectsBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 12,
+    paddingHorizontal: 2
   },
-
+  bar: { height: 35, width: "100%" },
+  safe: {flex: 1},
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -75,7 +99,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderBottomWidth: 1,
   },
-
   descriptionBox: {
     marginTop: 16,
   },

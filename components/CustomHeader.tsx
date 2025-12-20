@@ -61,9 +61,6 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
         <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
         <Text style={styles.keyUsername}>@{username || "username"}</Text>
       </View>
-        <TouchableOpacity onPress={() => {navigation.navigate("ViewTask");}}>
-            <Text>open view</Text>
-        </TouchableOpacity>
       <TouchableOpacity onPress={onProfilePress}>
         {avatar ? (
           <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
@@ -77,11 +74,6 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
 
 const styles = StyleSheet.create({
   header: {
-    // borderColor: "#c8cbd2",
-    // borderBottomWidth: 1,
-    // borderRightWidth: 1,
-    // borderBottomEndRadius: 30,
-    // borderTopEndRadius: 30,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -89,7 +81,7 @@ const styles = StyleSheet.create({
     height: 60,
     // backgroundColor: "#f5f5f5",
   },
-  username: { fontSize: 22, fontWeight: "bold" },
+  username: { fontSize: 18, fontWeight: "bold" },
   keyUsername: { fontSize: 12, color: "gray" },
   avatar: {
     borderWidth: 2,
