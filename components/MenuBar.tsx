@@ -1,18 +1,40 @@
 // components/LeftMenu.tsx
 import React from "react";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import {LeftMenuProps} from "../pages/types/types";
-import {useTheme} from "../theme/ThemeContext";
+import { LeftMenuProps } from "../pages/types/types";
+import { useTheme } from "../theme/ThemeContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const LeftMenu: React.FC<LeftMenuProps> = ({ buttons, containerStyle }) => {
-    const { theme } = useTheme();
-    return (
-    <View style={[styles.leftButtons, containerStyle]}>
-      <View style={[styles.buttonBox, containerStyle]}>
+const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
+  const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View
+      style={[
+        styles.wrapper,
+        {
+          bottom: insets.bottom,
+        },
+      ]}
+    >
+      <View style={styles.buttonBox}>
         {buttons.map((btn, idx) => (
-          <TouchableOpacity key={idx} style={[styles.sideButton, {backgroundColor: theme.background}, {marginLeft: btn.marginLeft}]} onPress={btn.onPress}>
-            <Ionicons name={btn.icon as any} size={btn.size || 32} color={btn.color || theme.text} />
+          <TouchableOpacity
+            key={idx}
+            style={[
+              styles.sideButton,
+              { backgroundColor: theme.background },
+              btn.marginLeft ? { marginLeft: btn.marginLeft } : null,
+            ]}
+            onPress={btn.onPress}
+          >
+            <Ionicons
+              name={btn.icon as any}
+              size={btn.size || 26}
+              color={btn.color || theme.text}
+            />
           </TouchableOpacity>
         ))}
       </View>
@@ -21,37 +43,34 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons, containerStyle }) => {
 };
 
 export default LeftMenu;
-
 const styles = StyleSheet.create({
-  leftButtons: {
+  wrapper: {
+    position: "absolute", // 🔥 ENG MUHIM
+    left: 10,
+    right: 10,
     height: 80,
     borderTopLeftRadius: 36,
-    borderTopEndRadius: 36,
-    marginHorizontal: 10,
-    backgroundColor: "rgba(18, 18, 18, 0.001)",
-    position: "absolute",
-    bottom: 0,
-    flexDirection: "row",
-    alignItems: "flex-start",
+    borderTopRightRadius: 36,
+    backgroundColor: "rgba(18,18,18,0.001)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonBox: {
-    borderRadius: 40,
-    padding: 10,
-    // width: "100%",
-    backgroundColor: "rgba(195,194,194,0.3)",
     flexDirection: "row",
     gap: 15,
+    padding: 10,
+    borderRadius: 40,
+    backgroundColor: "rgba(195,194,194,0.3)",
   },
   sideButton: {
-    backgroundColor: "#fff",
     width: 50,
     height: 50,
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 5,
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5,
   },
 });

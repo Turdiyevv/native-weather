@@ -14,7 +14,7 @@ import FlashMessage from "react-native-flash-message";
 
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 
-import MainPage from "./pages/Main";
+import MainPage from "./pages/Tasks/Main";
 import AddPage from "./components/screens/AddPage";
 import ProfilePage from "./pages/ProfilePage";
 import { ProfileViewPage } from "./pages/ProfileViewPage";

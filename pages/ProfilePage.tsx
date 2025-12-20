@@ -21,12 +21,14 @@ import { Ionicons } from "@expo/vector-icons";
 // ⚡ Storage services
 import { getActiveUser, loadUsers, saveUsers } from "../service/storage";
 import {useTheme} from "../theme/ThemeContext";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 
 export default function ProfilePage() {
   const navigation = useNavigation<NavProp>();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -155,10 +157,13 @@ export default function ProfilePage() {
 
   return (
     <KeyboardAvoidingView
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       style={{ flex: 1, backgroundColor: theme.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={[styles.container, {backgroundColor: theme.background}]}>
+      <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[styles.container, {backgroundColor: theme.background, paddingBottom: 20 + insets.bottom}]}>
         <View style={styles.picBox}>
           <TouchableOpacity onPress={chooseAvatar} style={styles.picBoxCH}>
             <Image

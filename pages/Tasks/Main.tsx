@@ -9,20 +9,20 @@ import {
   Animated,
   Vibration
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { showMessage } from "react-native-flash-message";
-import ConfirmModal from "../components/ConfirmModal";
-import LeftMenu from "../components/MenuBar";
-import CustomHeader from "../components/CustomHeader";
-import { UserTask, User } from "./types/userTypes";
-import { getActiveUser, updateTask, softDeleteTask, loadUsers, saveUsers } from "../service/storage";
-import TodoItem from "../components/TodoItem";
-import TaskContextMenu from "../components/TaskContextMenu";
-import { useTheme } from "../theme/ThemeContext";
-import AdminIcon from "../assets/admin_icon.png";
+import LeftMenu from "../../components/MenuBar";
+import CustomHeader from "../../components/CustomHeader";
+import { UserTask, User } from "../types/userTypes";
+import { getActiveUser, updateTask, softDeleteTask, loadUsers, saveUsers } from "../../service/storage";
+import TodoItem from "../../components/TodoItem";
+import TaskContextMenu from "../../components/TaskContextMenu";
+import { useTheme } from "../../theme/ThemeContext";
+import AdminIcon from "../../assets/admin_icon.png";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MainPage({ navigation }: any) {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const [tasks, setTasks] = useState<UserTask[]>([]);
   const [firstName, setFirstName] = useState("");
   const [username, setUsername] = useState("");
@@ -149,6 +149,7 @@ export default function MainPage({ navigation }: any) {
   .sort((a, b) => b.dateKey - a.dateKey);
 
   const hasTasks = groupedTasks.some(section => section.data.length > 0);
+  const BOTTOM_BAR_HEIGHT = 80;
 
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
@@ -157,6 +158,9 @@ export default function MainPage({ navigation }: any) {
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
         {hasTasks ? (
             <SectionList
+              contentContainerStyle={{
+                paddingBottom: BOTTOM_BAR_HEIGHT + insets.bottom + 16,
+              }}
               style={{ marginBottom: 40, borderRadius:12 }}
               sections={groupedTasks}
               keyExtractor={(item) => item.id}
@@ -209,7 +213,10 @@ export default function MainPage({ navigation }: any) {
             { icon: "calendar-outline", onPress: () => navigation.navigate("Business"), size: 24 },
             { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto"},
           ]}
-          containerStyle={{ width: "100%" }}
+          containerStyle={{
+            width: "100%",
+            paddingBottom: insets.bottom + 8,
+          }}
         />
       </View>
     </View>

@@ -29,6 +29,7 @@ import {
 } from "../../service/business";
 import {formatSum} from "../../utills/utill";
 import BusinessContextMenu from "../../components/Business/BusinessContextMenu";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
@@ -46,6 +47,7 @@ export default function Business({ route }: Props) {
   const { selectedDate, businessId } = route.params;
   const dateStr = new Date(selectedDate).toISOString().slice(0, 10); // YYYY-MM-DD
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<SupportNav>();
 
   const [entries, setEntries] = useState<BusinessEntry[]>([]);
@@ -204,7 +206,12 @@ export default function Business({ route }: Props) {
           </Text>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+                paddingBottom: 20 + insets.bottom,
+            }}
+        >
             {/*<Text>{JSON.stringify(entries, null, 2)}</Text>*/}
           {entries.map((item, index) => (
             <TodoItem
@@ -243,7 +250,7 @@ export default function Business({ route }: Props) {
               />
           )}
 
-        <View>
+        <View style={{paddingBottom: insets.bottom}}>
           <View style={styles.exchangeBar}>
             <TouchableOpacity
               onPress={() => {
@@ -331,7 +338,7 @@ const styles = StyleSheet.create({
   mainTitle2: { fontSize: 12, textAlign: "center", alignItems: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },
   exchangeBar: { flexDirection: "row", height: 50, marginTop: 10, marginBottom: 24 },
   exchangeBtn: { flex: 1, borderRadius: 10, marginHorizontal: 4, alignItems: "center", justifyContent: "center" },
-  formContainer: { padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingBottom: Platform.OS === "ios" ? 30 : 20 },
+  formContainer: { padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   formHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
   saveBtn: { padding: 15, borderRadius: 12, alignItems: "center", marginTop: 10 },
   saveText: { color: "#fff", fontWeight: "bold", fontSize: 16 },

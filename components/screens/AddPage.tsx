@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Platform,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import TextField from "../../components/TextField";
 import {showMessage} from "react-native-flash-message";
@@ -18,10 +17,12 @@ import ConfirmModal from "../ConfirmModal";
 import {UserTask} from "../../pages/types/userTypes";
 import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 export default function AddPage({ navigation, route }: any) {
     const { theme } = useTheme();
+    const insets = useSafeAreaInsets();
   const { task: taskToEdit, initialView } = route.params || {};
   const [view, setView] = useState<boolean>(initialView || false);
   const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
@@ -48,7 +49,6 @@ export default function AddPage({ navigation, route }: any) {
         });
         return;
       }
-
       // Agar ko‘rish rejimi bo‘lsa, tahrirlashga o‘tadi
       if (view) {
         if (taskToEdit?.isDeleted) {
@@ -125,9 +125,10 @@ export default function AddPage({ navigation, route }: any) {
           style={{ flex: 1 }}
           contentContainerStyle={{
           flexGrow: 1,
-          justifyContent: "flex-end", paddingTop: 40, paddingBottom: 30, paddingHorizontal: 10 }}
+          paddingBottom: 30 + insets.bottom,
+          justifyContent: "flex-end", paddingTop: 40, paddingHorizontal: 10 }}
           enableOnAndroid={true}
-          extraHeight={100}
+          extraHeight={100 + insets.bottom}
           keyboardShouldPersistTaps="handled"
         >
             <Text style={[styles.title, {color: theme.text}]}>
