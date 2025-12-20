@@ -67,7 +67,7 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
                   <Ionicons
                     name="refresh-outline"
                     size={22}
-                    color="#DF00FF"
+                    color="#a19e9e"
                     style={styles.scale}
                   />
                   <Text style={[styles.returnCountText, {color: theme.text}]}>{item.isReturning}</Text>
@@ -145,15 +145,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#e1e0e0",
   },
   returningBorder: {
-    borderLeftWidth: 2,
-    borderRightWidth: 2,
-    borderColor: "#DF00FF",
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: "#a19e9e",
     borderBottomWidth: 0,
   },
   done: {
     borderColor: "#4CAF50",
-    borderLeftWidth: 2,
-    borderRightWidth: 2,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
     borderBottomWidth: 0,
   },
   item: {
