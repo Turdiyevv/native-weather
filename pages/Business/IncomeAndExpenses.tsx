@@ -79,6 +79,22 @@ export default function Business({ route }: Props) {
   const [menuAnim] = useState(new Animated.Value(0));
   const [modalVisible, setModalVisible] = useState(false);
   const [editingEntry, setEditingEntry] = useState<BusinessEntry | null>(null);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  useEffect(() => {
+      const showSub = Keyboard.addListener("keyboardDidShow", () => {
+        setKeyboardOpen(true);
+      });
+
+      const hideSub = Keyboard.addListener("keyboardDidHide", () => {
+        setKeyboardOpen(false);
+      });
+
+      return () => {
+        showSub.remove();
+        hideSub.remove();
+      };
+  }, []);
+
 
   const openMenu = (entry: BusinessEntry) => {
       setSelectedEntry(entry);
@@ -209,7 +225,7 @@ export default function Business({ route }: Props) {
         <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-                paddingBottom: 20 + insets.bottom,
+              paddingBottom: keyboardOpen ? 20 : 20 + insets.bottom,
             }}
         >
             {/*<Text>{JSON.stringify(entries, null, 2)}</Text>*/}
@@ -250,7 +266,7 @@ export default function Business({ route }: Props) {
               />
           )}
 
-        <View style={{paddingBottom: insets.bottom}}>
+        <View style={{ paddingBottom: keyboardOpen ? 0 : insets.bottom }}>
           <View style={styles.exchangeBar}>
             <TouchableOpacity
               onPress={() => {
