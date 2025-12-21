@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Platform, BackHandler,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import TextField from "../../components/TextField";
@@ -18,6 +18,7 @@ import {UserTask} from "../../pages/types/userTypes";
 import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Header from "../Header";
 
 
 export default function AddPage({ navigation, route }: any) {
@@ -39,7 +40,15 @@ export default function AddPage({ navigation, route }: any) {
     {id: 2, text: "O'rtacha", color: 'orange'},
     {id: 3, text: "Og'ir", color: '#fb5151'},
   ];
-
+  useEffect(() => {
+      const backAction = () => {
+          navigation.navigate("MainPage"); // har doim MainPage ga qaytadi
+          return true; // default behaviorni to‘xtatadi
+        };
+      const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress", backAction);
+      return () => backHandler.remove()
+  }, [navigation]);
   const saveTask = async () => {
       if (task.trim() === "" || description.trim() === "") {
         showMessage({
@@ -83,8 +92,7 @@ export default function AddPage({ navigation, route }: any) {
         message: "Muvaffaqiyatli saqlandi!",
         type: "success",
       });
-
-      navigation.goBack();
+      navigation.navigate("MainPage");
     };
 
   const modalVisible=() => {setDeleteModalVisible(true)}
@@ -106,6 +114,8 @@ export default function AddPage({ navigation, route }: any) {
 
   return (
       <View style={[{flex: 1}, {backgroundColor: theme.background}]}>
+          <View style={styles.bar} />
+          <Header title={""}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
@@ -211,6 +221,7 @@ export default function AddPage({ navigation, route }: any) {
 }
 
 const styles = StyleSheet.create({
+  bar: { height: 35, width: "100%" },
   selectsBox: {
     flexDirection: "row",
     alignItems: "center",

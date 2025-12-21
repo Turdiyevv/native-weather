@@ -4,7 +4,7 @@ import {UserTask} from "./userTypes";
 export type RootStackParamList = {
   LoginPage: undefined;
   MainPage: undefined;
-  AddPage: undefined;
+  AddPage: { task?: UserTask };
   ProfileView: undefined;
   ProfileEdit: undefined;
   Chat: undefined;

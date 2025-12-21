@@ -16,6 +16,7 @@ import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
 import Calendar from "../../components/Calendar";
+import Header from "../../components/Header";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Business">;
 export default function BackdropFilterExample() {
@@ -43,17 +44,19 @@ export default function BackdropFilterExample() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-      >
+      <View style={styles.bar} />
+      <Header title={"Beznis"}/>
+      {/*<ScrollView*/}
+      {/*  contentContainerStyle={styles.scrollContainer}*/}
+      {/*  keyboardShouldPersistTaps="handled"*/}
+      {/*>*/}
         <View style={styles.header}>
           <Image source={AdminIcon} style={styles.icon} />
           <Text style={[styles.description, {color: theme.text}]}>
             Bu yerda biznesingiz bo'yicha qulay hisobotlar yig'ishingiz mumkin.
           </Text>
         </View>
-      </ScrollView>
+      {/*</ScrollView>*/}
         <View style={{marginHorizontal:20, marginBottom: 50}}>
             <Calendar/>
         </View>
@@ -62,6 +65,7 @@ export default function BackdropFilterExample() {
 }
 
 const styles = StyleSheet.create({
+  bar: { height: 35, width: "100%" },
   container: {
     flex: 1,
   },
@@ -73,7 +77,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 15,
   },
   icon: {
     width: 200,

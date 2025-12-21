@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
 import LeftMenu from "../../components/MenuBar";
-import CustomHeader from "../../components/CustomHeader";
+import CustomHeader from "../../components/Task/CustomHeader";
 import { UserTask } from "../types/userTypes";
 import { getActiveUser, updateTask, softDeleteTask } from "../../service/storage";
 import TodoItem from "../../components/TodoItem";
@@ -221,7 +221,7 @@ const onTabPress = (tab: TaskTab) => {
 
         <LeftMenu
           buttons={[
-            { icon: "home-outline", onPress: () => onTabPress("main"), size: 26, color: activeTab === "main" ? theme.primary : theme.text },
+            { icon: "list-outline", onPress: () => onTabPress("main"), size: 26, color: activeTab === "main" ? theme.primary : theme.text },
             { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 26, color: activeTab === "done" ? theme.primary : theme.text },
             { icon: "trash-outline", onPress: () => onTabPress("deleted"), size: 24, color: activeTab === "deleted" ? theme.primary : theme.text },
             { icon: "calendar-outline", onPress: () => navigation.navigate("Business"), size: 24 },

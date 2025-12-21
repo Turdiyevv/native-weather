@@ -26,6 +26,7 @@ import {
 } from "../service/storage";
 import {useTheme} from "../theme/ThemeContext";
 import {exportTasksAsTxt} from "../service/exportTasks";
+import Header from "../components/Header";
 
 
 const screenWidth = Dimensions.get("window").width;
@@ -122,196 +123,201 @@ export function ProfileViewPage() {
   }
 
   return (
-    <ScrollView
-      onScroll={(e) => {
-        const y = e.nativeEvent.contentOffset.y;
-        Animated.timing(avatarAnim, {
-          toValue: y > 50 ? 0 : 1,
-          duration: 250,
-          useNativeDriver: false,
-        }).start();
-      }}
-      scrollEventThrottle={16}
-      contentContainerStyle={[styles.scrollContainer, {backgroundColor: theme.background}]}
-    >
-      <View style={styles.container}>
-        {user?.avatar ? (
-          <Animated.Image
-            source={{ uri: user.avatar }}
-            style={[
-              styles.avatarBase, {backgroundColor: theme.card},
-              {
-                width: animatedSize,
-                height: animatedSize,
-                borderRadius: animatedRadius,
-              },
-            ]}
-          />
-        ) : (
-          <Ionicons
-            name="person-circle-outline"
-            size={150}
-            color={theme.card}
-          />
-        )}
-      </View>
+    <View>
+      <View style={styles.bar} />
+      <Header title={"Profil"}/>
+      <ScrollView
+        onScroll={(e) => {
+          const y = e.nativeEvent.contentOffset.y;
+          Animated.timing(avatarAnim, {
+            toValue: y > 50 ? 0 : 1,
+            duration: 250,
+            useNativeDriver: false,
+          }).start();
+        }}
+        scrollEventThrottle={16}
+        contentContainerStyle={[styles.scrollContainer, {backgroundColor: theme.background}]}
+      >
+        <View style={styles.container}>
+          {user?.avatar ? (
+            <Animated.Image
+              source={{ uri: user.avatar }}
+              style={[
+                styles.avatarBase, {backgroundColor: theme.card},
+                {
+                  width: animatedSize,
+                  height: animatedSize,
+                  borderRadius: animatedRadius,
+                },
+              ]}
+            />
+          ) : (
+            <Ionicons
+              name="person-circle-outline"
+              size={150}
+              color={theme.card}
+            />
+          )}
+        </View>
 
-      <View style={styles.container}>
-        <Text style={[styles.title, {color: theme.text}]}>
-          {user?.firstName} {user?.lastName}
-        </Text>
-        <Text style={styles.username}>@{user?.username}</Text>
-      </View>
+        <View style={styles.container}>
+          <Text style={[styles.title, {color: theme.text}]}>
+            {user?.firstName} {user?.lastName}
+          </Text>
+          <Text style={styles.username}>@{user?.username}</Text>
+        </View>
 
-      <View style={[styles.infoBox, {backgroundColor: theme.card}]}>
-        <View style={styles.btns}>
-          <TouchableOpacity
-            style={[styles.editButton, {backgroundColor: theme.success}]}
-            onPress={() => navigation.navigate("ProfileEdit")}
-          >
-            <Text style={[styles.editText, {color: theme.border}]}>Tahrirlash</Text>
-            <Ionicons name="pencil" size={16} color={theme.border} />
+        <View style={[styles.infoBox, {backgroundColor: theme.card}]}>
+          <View style={styles.btns}>
+            <TouchableOpacity
+              style={[styles.editButton, {backgroundColor: theme.success}]}
+              onPress={() => navigation.navigate("ProfileEdit")}
+            >
+              <Text style={[styles.editText, {color: theme.border}]}>Tahrirlash</Text>
+              <Ionicons name="pencil" size={16} color={theme.border} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.outButton, {backgroundColor: theme.danger}]}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={[styles.outText, {color: theme.border}]}>Chiqish</Text>
+              <Ionicons name="log-out" size={20} color={theme.border} />
+            </TouchableOpacity>
+          </View>
+          <Text style={[styles.label, {color: theme.text}]}>Telefon:</Text>
+          <Text style={[styles.value, {color: theme.text}]}>{user?.phone}</Text>
+
+          <Text style={[styles.label, {color: theme.text}]}>Faoliyat:</Text>
+          <Text style={[styles.value, {color: theme.text}]}>{user?.job}</Text>
+
+          <Text style={[styles.label, {color: theme.text}]}>Izoh:</Text>
+          <Text style={[styles.value, {color: theme.text}]}>{user?.description}</Text>
+        </View>
+
+        <View style={[styles.infoBox, {backgroundColor: theme.card}]}>
+          <View style={styles.settingsText}>
+            <Ionicons name="settings" size={20} color={theme.text}/>
+            <Text style={[styles.settingsTitle, {color: theme.text}]}>Sozlamalar</Text>
+          </View>
+
+          <View style={styles.themeBox}>
+              <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("dark")}>
+                <Text style={{color: theme.text}}>Tungi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("light")}>
+                <Text style={{color: theme.text}}>Kunduzgi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("blue")}>
+                <Text style={{color: theme.text}}>Ko'k</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("orange")}>
+                <Text style={{color: theme.text}}>Mandarin</Text>
+              </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity onPress={exportTasksAsTxt} style={{ padding: 10, marginTop:10, backgroundColor: theme.primary, borderRadius: 8 }}>
+            <Text style={{ color: "#fff" }}>Tasklarni yuklab olish</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.outButton, {backgroundColor: theme.danger}]}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={[styles.outText, {color: theme.border}]}>Chiqish</Text>
-            <Ionicons name="log-out" size={20} color={theme.border} />
+          <TouchableOpacity onPress={openPasswordBox}>
+            <Text style={[styles.loginCode, {color: theme.text}]}>Oson kirish kodi</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Support")}>
+            <Text style={[styles.loginCode, {color: theme.text}]}>Biz haqimizda.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+            <Text style={[styles.loginCode, {color: theme.text}]}>Chat bo'limi</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Business")}>
+            <Text style={[styles.loginCode, {color: theme.text}]}>Beznis bo'limi</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={deleteAccount}>
+            <Text style={[styles.deleteText, {color: theme.danger}]}>Hisobni butunlay o'chirish</Text>
           </TouchableOpacity>
         </View>
-        <Text style={[styles.label, {color: theme.text}]}>Telefon:</Text>
-        <Text style={[styles.value, {color: theme.text}]}>{user?.phone}</Text>
-
-        <Text style={[styles.label, {color: theme.text}]}>Faoliyat:</Text>
-        <Text style={[styles.value, {color: theme.text}]}>{user?.job}</Text>
-
-        <Text style={[styles.label, {color: theme.text}]}>Izoh:</Text>
-        <Text style={[styles.value, {color: theme.text}]}>{user?.description}</Text>
-      </View>
-
-      <View style={[styles.infoBox, {backgroundColor: theme.card}]}>
-        <View style={styles.settingsText}>
-          <Ionicons name="settings" size={20} color={theme.text}/>
-          <Text style={[styles.settingsTitle, {color: theme.text}]}>Sozlamalar</Text>
-        </View>
-
-        <View style={styles.themeBox}>
-            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("dark")}>
-              <Text style={{color: theme.text}}>Tungi</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("light")}>
-              <Text style={{color: theme.text}}>Kunduzgi</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("blue")}>
-              <Text style={{color: theme.text}}>Ko'k</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.themeBtn, {backgroundColor: theme.placeholder}]} onPress={() => setTheme("orange")}>
-              <Text style={{color: theme.text}}>Mandarin</Text>
-            </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity onPress={exportTasksAsTxt} style={{ padding: 10, marginTop:10, backgroundColor: theme.primary, borderRadius: 8 }}>
-          <Text style={{ color: "#fff" }}>Tasklarni yuklab olish</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={openPasswordBox}>
-          <Text style={[styles.loginCode, {color: theme.text}]}>Oson kirish kodi</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Support")}>
-          <Text style={[styles.loginCode, {color: theme.text}]}>Biz haqimizda.</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
-          <Text style={[styles.loginCode, {color: theme.text}]}>Chat bo'limi</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Business")}>
-          <Text style={[styles.loginCode, {color: theme.text}]}>Beznis bo'limi</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={deleteAccount}>
-          <Text style={[styles.deleteText, {color: theme.danger}]}>Hisobni butunlay o'chirish</Text>
-        </TouchableOpacity>
-      </View>
 
 
-      {passwordBoxVisible && (
-        <View style={styles.infoBox}>
-          <PasswordCodeInput
-              onComplete={async (code) => {
-                setPasswordCode(code);
+        {passwordBoxVisible && (
+          <View style={styles.infoBox}>
+            <PasswordCodeInput
+                onComplete={async (code) => {
+                  setPasswordCode(code);
 
-                const activeUser = await getActiveUser();
-                if (!activeUser) return;
+                  const activeUser = await getActiveUser();
+                  if (!activeUser) return;
 
-                const users = await loadUsers();
+                  const users = await loadUsers();
 
-                // Kod boshqa userlarda bor-yo‘qligini tekshirish
-                const isTaken = users.some(
-                  u => u.username !== activeUser.username && u.passwordCode === code
-                );
+                  // Kod boshqa userlarda bor-yo‘qligini tekshirish
+                  const isTaken = users.some(
+                    u => u.username !== activeUser.username && u.passwordCode === code
+                  );
 
-                if (isTaken) {
-                  setStatusTitle("⚠ Allaqachon egallangan");
-                  setBorderStyle({ borderColor: "orange" });
-                  setStatusColor("orange");
+                  if (isTaken) {
+                    setStatusTitle("⚠ Allaqachon egallangan");
+                    setBorderStyle({ borderColor: "orange" });
+                    setStatusColor("orange");
+                    setTimeout(() => {
+                      setBorderStyle({});
+                      setStatusTitle("");
+                      setStatusColor("");
+                    }, 1000);
+                    return;
+                  }
+                  const updatedUsers = users.map(u =>
+                    u.username === activeUser.username
+                      ? { ...u, passwordCode: code }
+                      : u
+                  );
+
+                  await saveUsers(updatedUsers);
+
+                  setStatusTitle("✔ Tasdiqlandi");
+                  setBorderStyle({ borderColor: "green" });
+                  setStatusColor("green");
+
                   setTimeout(() => {
                     setBorderStyle({});
                     setStatusTitle("");
                     setStatusColor("");
+                    openPasswordBox();
                   }, 1000);
-                  return;
-                }
-                const updatedUsers = users.map(u =>
-                  u.username === activeUser.username
-                    ? { ...u, passwordCode: code }
-                    : u
-                );
-
-                await saveUsers(updatedUsers);
-
-                setStatusTitle("✔ Tasdiqlandi");
-                setBorderStyle({ borderColor: "green" });
-                setStatusColor("green");
-
-                setTimeout(() => {
-                  setBorderStyle({});
-                  setStatusTitle("");
-                  setStatusColor("");
-                  openPasswordBox();
-                }, 1000);
-              }}
-              title={statusTitle}
-              color={statusColor}
-              autoSubmit={false}
-              borderStyle={borderStyle}
-          />
-          <TouchableOpacity onPress={openPasswordBox}>
-            <Text style={styles.closeBox}>Yopish ⛔️</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      <ConfirmModal
-        visible={modalVisible}
-        message="Ishonchingiz komilmi?"
-        onConfirm={() => {
-          logout(navigation);
-          setModalVisible(false);
-        }}
-        onCancel={() => setModalVisible(false)}
-      />
-      <ConfirmModal
-        visible={deleteModalVisible}
-        message="Hisobni butunlay o‘chirmoqchimisiz?"
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => setDeleteModalVisible(false)}
-      />
-    </ScrollView>
+                }}
+                title={statusTitle}
+                color={statusColor}
+                autoSubmit={false}
+                borderStyle={borderStyle}
+            />
+            <TouchableOpacity onPress={openPasswordBox}>
+              <Text style={styles.closeBox}>Yopish ⛔️</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        <ConfirmModal
+          visible={modalVisible}
+          message="Ishonchingiz komilmi?"
+          onConfirm={() => {
+            logout(navigation);
+            setModalVisible(false);
+          }}
+          onCancel={() => setModalVisible(false)}
+        />
+        <ConfirmModal
+          visible={deleteModalVisible}
+          message="Hisobni butunlay o‘chirmoqchimisiz?"
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleteModalVisible(false)}
+        />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  bar: { height: 35, width: "100%" },
   scrollContainer: {
     padding: 20,
     alignItems: "center",
-    paddingBottom: 50
+    paddingBottom: 70
   },
   container: {
     alignItems: "center",

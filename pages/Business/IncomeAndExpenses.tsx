@@ -30,6 +30,7 @@ import {
 import {formatSum} from "../../utills/utill";
 import BusinessContextMenu from "../../components/Business/BusinessContextMenu";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import Header from "../../components/Header";
 
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
@@ -203,6 +204,8 @@ export default function Business({ route }: Props) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
+      <View style={styles.bar} />
+      <Header title={"Kun"}/>
       <View style={styles.container}>
         {/* 📅 Sana */}
         <View style={styles.content}>
@@ -339,6 +342,7 @@ export default function Business({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
+  bar: { height: 35, width: "100%" },
   exchangeContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -348,7 +352,7 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: -1 }],
   },
   container: { flex: 1, paddingHorizontal: 20 },
-  content: { paddingTop: 40, paddingBottom: 10 },
+  content: { paddingVertical: 10 },
   content2: { flexDirection: "row", flexWrap: "wrap", paddingBottom: 10, alignItems: "center", justifyContent: "space-between", },
   mainTitle: { fontSize: 12, textAlign: "center", fontWeight: "bold" },
   mainTitle2: { fontSize: 12, textAlign: "center", alignItems: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },

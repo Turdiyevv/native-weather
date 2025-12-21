@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getActiveUser } from '../service/storage';
-import { User } from '../pages/types/userTypes';
+import { getActiveUser } from '../../service/storage';
+import { User } from '../../pages/types/userTypes';
 import {NavigationProp, useFocusEffect, useNavigation} from "@react-navigation/native";
-import {useTheme} from "../theme/ThemeContext";
-import {RootStackParamList} from "../pages/types/types";
+import {useTheme} from "../../theme/ThemeContext";
+import {RootStackParamList} from "../../pages/types/types";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
 interface HeaderProps {onProfilePress: () => void}

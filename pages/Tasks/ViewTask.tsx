@@ -8,16 +8,20 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
 import InfoRow from "../../components/Task/InfoRow";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import {useRoute, RouteProp, useNavigation} from "@react-navigation/native";
 import {RootStackParamList} from "../types/types";
 import SingleCheckBox from "../../components/CheckBox";
+import {formatDateTime} from "../../utills/date";
+import Header from "../../components/Header";
+import {showMessage} from "react-native-flash-message";
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type ViewTaskRouteProp = RouteProp<RootStackParamList, "ViewTask">;
 const ViewPage: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
   const route = useRoute<ViewTaskRouteProp>();
   const taskToEdit = route.params?.task;
@@ -32,24 +36,16 @@ const ViewPage: React.FC = () => {
     <SafeAreaView style={styles.safe}>
       {/* Header */}
       <View style={styles.bar} />
-      <View style={[styles.header, {backgroundColor: theme.background, borderBottomColor: theme.border}]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={theme.text} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, {color: theme.text}]}>Ko'rish</Text>
-        <View style={{ width: 24 }} />
-      </View>
+      <Header title={"ELement"}/>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Card */}
         {/*<Text>{JSON.stringify(taskToEdit)}</Text>*/}
         <View style={[styles.card, {backgroundColor: theme.card, shadowColor: theme.card}]}>
           <Text style={[styles.title, {color: theme.text}]}>{taskToEdit.title}</Text>
-          <Text style={{color: theme.placeholder, fontSize: 12}}>{taskToEdit.time}</Text>
+          <Text style={{color: theme.placeholder, fontSize: 12}}>{formatDateTime(taskToEdit.time)}</Text>
 
           <View style={[styles.divider, {backgroundColor: theme.border}]} />
-
-          <InfoRow label="Category" value={taskToEdit?.done ? "success" : "warning"}/>
           <Text style={{color: theme.placeholder}}>Status</Text>
           <View style={styles.selectsBox}>
             {options.map((option) => (
@@ -63,7 +59,8 @@ const ViewPage: React.FC = () => {
             ))}
           </View>
 
-          <InfoRow label="Deadline" value={taskToEdit?.deadline ? taskToEdit.deadline : "0000-00-00"}/>
+          <InfoRow label="Category" value={taskToEdit?.done ? "success" : "warning"}/>
+          <InfoRow label="Deadline" value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "0000-00-00"}/>
 
           <View style={styles.descriptionBox}>
             <Text style={[styles.label, {color: theme.placeholder}]}>Description</Text>
@@ -72,8 +69,20 @@ const ViewPage: React.FC = () => {
         </View>
 
         {/* Action button */}
-        <TouchableOpacity style={[styles.button, {backgroundColor: theme.card}]}>
-          <Text style={[styles.buttonText, {color: theme.text}]}>Edit Information</Text>
+        <TouchableOpacity
+            onPress={() => {
+              if (!taskToEdit.done && !taskToEdit.isDeleted) {
+                navigation.navigate("AddPage", {task: taskToEdit});
+              }else {
+                showMessage({
+                  message: "Tahrirlashni imkoni yo'q!",
+                  type: "danger",
+                });
+              }
+            }}
+            style={[styles.button, {backgroundColor: theme.card}]}>
+          <Text style={[styles.buttonText, {color: theme.text}]}>Tahrirlash</Text>
+          <Ionicons name={"pencil"} size={16} color={theme.text} />
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -91,14 +100,6 @@ const styles = StyleSheet.create({
   },
   bar: { height: 35, width: "100%" },
   safe: {flex: 1},
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-  },
   descriptionBox: {
     marginTop: 16,
   },
@@ -107,10 +108,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
 
   content: {
     padding: 16,
@@ -145,13 +142,18 @@ const styles = StyleSheet.create({
   },
 
   button: {
+    flexDirection: "row",
     marginTop: 20,
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: "center",
+    justifyContent: "center",
+    width: 120,
+    marginLeft: "auto"
   },
 
   buttonText: {
+    marginRight: 5,
     fontSize: 16,
     fontWeight: "600",
   },

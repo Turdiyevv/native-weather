@@ -22,6 +22,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getActiveUser, loadUsers, saveUsers } from "../service/storage";
 import {useTheme} from "../theme/ThemeContext";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import Header from "../components/Header";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 
@@ -161,6 +162,8 @@ export default function ProfilePage() {
       style={{ flex: 1, backgroundColor: theme.background }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <View style={styles.bar} />
+      <Header title={"Tahrirlash"}/>
       <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={[styles.container, {backgroundColor: theme.background, paddingBottom: 20 + insets.bottom}]}>
@@ -225,6 +228,7 @@ export default function ProfilePage() {
 }
 
 const styles = StyleSheet.create({
+  bar: { height: 35, width: "100%" },
   picBox: {
     alignItems: "center",
     justifyContent: "flex-end",
