@@ -205,14 +205,8 @@ export default function Business({ route }: Props) {
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       <View style={styles.bar} />
-      <Header title={"Kun"}/>
+      <Header title={dateStr}/>
       <View style={styles.container}>
-        {/* 📅 Sana */}
-        <View style={styles.content}>
-          <Text style={{ color: theme.text, textAlign: "center", fontWeight: "bold", fontSize: 16 }}>
-            {dateStr}
-          </Text>
-        </View>
         <View style={styles.content2}>
           <Text style={[styles.mainTitle, { color: theme.success }]}>
             {formatSum(allIncome)}
@@ -352,8 +346,7 @@ const styles = StyleSheet.create({
     transform: [{ scaleX: -1 }],
   },
   container: { flex: 1, paddingHorizontal: 20 },
-  content: { paddingVertical: 10 },
-  content2: { flexDirection: "row", flexWrap: "wrap", paddingBottom: 10, alignItems: "center", justifyContent: "space-between", },
+  content2: { flexDirection: "row", flexWrap: "wrap", paddingVertical: 10, alignItems: "center", justifyContent: "space-between", },
   mainTitle: { fontSize: 12, textAlign: "center", fontWeight: "bold" },
   mainTitle2: { fontSize: 12, textAlign: "center", alignItems: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },
   exchangeBar: { flexDirection: "row", height: 50, marginTop: 10, marginBottom: 24 },
