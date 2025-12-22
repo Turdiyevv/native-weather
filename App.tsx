@@ -60,35 +60,49 @@ const AppNavigator = () => {
   useEffect(() => {
     let lastState = AppState.currentState;
 
-    const sub = AppState.addEventListener("change", (nextState) => {
+    const sub = AppState.addEventListener("change", async (nextState) => {
       if (global.filePickerOpen) return;
-
       if (nextState === "background" || nextState === "inactive") {
         lastTimeRef.current = Date.now();
       }
-
       if (lastState !== "active" && nextState === "active") {
         const diff = Date.now() - lastTimeRef.current;
-        if (diff > 10000) {
-          navigationRef.current?.navigate("LoginCodePage");
+        if (diff > 10000) { // 10 sekunddan ko'p background bo'lsa
+          const activeUserStr = await AsyncStorage.getItem("activeUser");
+          const activeUser = activeUserStr ? JSON.parse(activeUserStr) : null;
+          if (activeUser?.passwordCode) {
+            navigationRef.current?.navigate("LoginCodePage");
+          }
         }
       }
       lastState = nextState;
     });
-
     return () => sub.remove();
   }, []);
-
   useEffect(() => {
-    (async () => {
+  (async () => {
+    try {
+      const activeUsername = await AsyncStorage.getItem("activeUser");
       const usersStr = await AsyncStorage.getItem("users");
       const users = usersStr ? JSON.parse(usersStr) : [];
-      setInitialRoute(users.length > 0 ? "LoginCodePage" : "LoginPage");
-    })();
-  }, []);
+      const activeUser = users.find((u: any) => u.username === activeUsername);
 
+      if (!activeUser) {
+        setInitialRoute("LoginPage");
+        return;
+      }
+
+      if (activeUser.passwordCode) {
+        setInitialRoute("LoginCodePage");
+      } else {
+        setInitialRoute("MainPage");
+      }
+    } catch (e) {
+      setInitialRoute("LoginPage");
+    }
+  })();
+}, []);
   if (!initialRoute) return null;
-
   return (
     <>
       <StatusBar
@@ -104,7 +118,6 @@ const AppNavigator = () => {
             >
               <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
               <Stack.Screen name="LoginPage" component={LoginPage} />
-
               <Stack.Screen name="MainPage" component={MainPage} />
               <Stack.Screen name="ProfileView" component={ProfileViewPage} />
               <Stack.Screen name="ProfileEdit" component={ProfilePage} />

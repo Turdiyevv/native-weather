@@ -17,8 +17,8 @@ export default function FilePickerComponent({
   disabled = false,
 }: any) {
   const { theme } = useTheme();
-  const [files, setFiles] = useState<any[]>(initialFiles);
 
+  const [files, setFiles] = useState<any[]>(initialFiles);
   const [previewIndex, setPreviewIndex] = useState<number>(0);
   const [viewerVisible, setViewerVisible] = useState(false);
 
@@ -30,14 +30,12 @@ export default function FilePickerComponent({
     try {
       global.filePickerOpen = true;
       const result = await DocumentPicker.getDocumentAsync({ multiple: true });
-
       if (result.assets) {
         const selected = result.assets.map(file => ({
           uri: file.uri,
           name: file.name,
           type: file.mimeType,
         }));
-
         const newFiles = [...files, ...selected];
         setFiles(newFiles);
         onChange(newFiles);

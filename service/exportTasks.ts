@@ -7,11 +7,8 @@ export const exportTasksAsTxt = async (): Promise<void> => {
     const activeUser = await getActiveUser();
     if (!activeUser || !activeUser.usertasks) return;
     const tasks = activeUser.usertasks;
-    // 1. Fayl nomini yaratamiz
     const fileName = `tasks_${activeUser.username}_${Date.now()}.txt`;
-    // 2. Faylni yaratamiz
     const file = new File(Paths.document, fileName);
-    // 3. Faylga yoziladigan matnni tayyorlaymiz
     const fileContent = tasks
       .map(
         (t, i) =>
@@ -24,11 +21,7 @@ Username: ${activeUser.username}
 --------------------------`
       )
       .join("\n");
-
-    // 4. Faylga yozish
     await file.write(fileContent);
-
-    // 5. Agar sharing mavjud bo'lsa, faylni ulashish
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(file.uri);
     }

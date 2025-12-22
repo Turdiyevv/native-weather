@@ -15,10 +15,8 @@ import ConfirmModal from "../components/ConfirmModal";
 import { User, UserInfo } from "./types/userTypes";
 import {
   loadUsers,
-  saveUsers,
   setActiveUser,
   addUser,
-  getActiveUser
 } from "../service/storage";
 import {useTheme} from "../theme/ThemeContext";
 

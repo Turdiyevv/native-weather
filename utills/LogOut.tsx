@@ -1,15 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { BackHandler } from "react-native";
 
-export const logout = async (navigation: any) => {
+export const logout = async () => {
   try {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "LoginCodePage" }],
-      })
-    );
+    BackHandler.exitApp();
   } catch (error) {
-    console.log("Logout xatosi:", error);
+    console.log("Exit xatosi:", error);
   }
 };
