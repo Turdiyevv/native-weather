@@ -1,8 +1,8 @@
 import React from "react";
 import {TouchableOpacity, Text, StyleSheet, View, Dimensions} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
-import {TodoItemProps} from "../pages/types/types";
-import {useTheme} from "../theme/ThemeContext";
+import {TodoItemProps} from "../../pages/types/types";
+import {useTheme} from "../../theme/ThemeContext";
 
 export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast }: TodoItemProps) {
 
@@ -129,7 +129,7 @@ const screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
     scale: {
         top: -1,
-        transform: [{ scaleX: -1,  }, {rotate: "40deg"}],
+        transform: [{scaleX: -1,}, {rotate: "40deg"}],
     },
     firstBorder: {
         borderTopLeftRadius: 10,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   defaultItem:{
     flexDirection: "column",
     justifyContent: "space-between",
-    padding: 7,
+    padding: 12,
     height: "100%",
   },
   titleContainer: {

@@ -378,8 +378,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "600",
   },
-  title: { fontSize: 24, fontWeight: "bold" },
-  username: { fontSize: 18, color: "#666" },
+  title: { fontSize: 20, fontWeight: "bold" },
+  username: { fontSize: 14, color: "#666" },
   themeBox: {
     flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", gap: 10,
   },

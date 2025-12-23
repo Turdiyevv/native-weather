@@ -14,7 +14,7 @@ import LeftMenu from "../../components/MenuBar";
 import CustomHeader from "../../components/Task/CustomHeader";
 import { UserTask } from "../types/userTypes";
 import { getActiveUser, updateTask, softDeleteTask } from "../../service/storage";
-import TodoItem from "../../components/TodoItem";
+import TodoItem from "../../components/Task/TodoItem";
 import TaskContextMenu from "../../components/TaskContextMenu";
 import { useTheme } from "../../theme/ThemeContext";
 import AdminIcon from "../../assets/admin_icon.png";
@@ -55,20 +55,25 @@ export default function MainPage({ navigation }: any) {
     return unsubscribe;
   }, [navigation]);
 
-  const markDone = async (task: UserTask) => {
-    try {
-      const activeUser = await getActiveUser();
-      if (!activeUser) return;
-      const updatedTask: UserTask = { ...task, done: !task.done };
-      await updateTask(activeUser.username, task.id, updatedTask);
-      const updatedTasks = activeUser.usertasks.map(t => t.id === task.id ? updatedTask : t);
-      setTasks(updatedTasks);
-      closeMenu();
-      showMessage({ message: "Vazifa statusi o'zgartirildi!", type: "success" });
-    } catch (e) {
-      showMessage({ message: String(e), type: "danger" });
-    }
-  };
+    const markDone = async (task: UserTask) => {
+      try {
+        const activeUser = await getActiveUser();
+        if (!activeUser) return;
+        const newDone = !task.done;
+        const updatedTask: UserTask = {
+          ...task,
+          done: newDone,
+          isReturning: newDone === false ? (task.isReturning || 0) + 1 : task.isReturning,
+        };
+        await updateTask(activeUser.username, task.id, updatedTask);
+        const updatedTasks = activeUser.usertasks.map(t => t.id === task.id ? updatedTask : t);
+        setTasks(updatedTasks);
+        closeMenu();
+        showMessage({ message: "Vazifa statusi o'zgartirildi!", type: "success" });
+      } catch (e) {
+        showMessage({ message: String(e), type: "danger" });
+      }
+    };
 
   const editTask = (task: UserTask, initialView: boolean) => {
     navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });

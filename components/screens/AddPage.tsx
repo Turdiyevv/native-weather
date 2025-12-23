@@ -66,6 +66,7 @@ export default function AddPage({ navigation, route }: any) {
           description,
           deadline: deadline ? deadline.toISOString() : null,
           status: selected,
+          time: taskToEdit.time,
           isDeleted: isActive,
           files: attachments,
         });

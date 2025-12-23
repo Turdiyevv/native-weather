@@ -6,21 +6,23 @@ export default function Toggle({ value, onChange }: { value: boolean; onChange: 
   const { theme } = useTheme();
     return (
     <TouchableOpacity
-      style={[styles.container, value ? styles.on : styles.off, {backgroundColor: theme.card}]}
+      style={[styles.container, value ? styles.on : styles.off, {backgroundColor: theme.background, borderColor: theme.text}]}
       onPress={() => onChange(!value)}
       activeOpacity={0.8}
     >
-      <View style={[styles.dot, value ? styles.dotOn : styles.dotOff]} />
+      <View style={[styles.dot,{backgroundColor: theme.text}, value ? styles.dotOn : styles.dotOff]} />
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+      borderWidth: 2,
     width: 55,
     height: 28,
-    borderRadius: 20,
-    padding: 3,
+    borderRadius: 22,
+    paddingVertical: 3,
+    paddingHorizontal: 1,
     justifyContent: "center",
   },
   on: {
@@ -34,7 +36,6 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "white",
   },
   dotOn: {
     // extra style if needed

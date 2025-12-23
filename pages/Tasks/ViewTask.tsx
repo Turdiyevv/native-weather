@@ -42,10 +42,37 @@ const ViewPage: React.FC = () => {
         {/* Card */}
         {/*<Text>{JSON.stringify(taskToEdit)}</Text>*/}
         <View style={[styles.card, {backgroundColor: theme.card, shadowColor: theme.card}]}>
-          <Text style={[styles.title, {color: theme.text}]}>{taskToEdit.title}</Text>
-          <Text style={{color: theme.placeholder, fontSize: 12}}>{formatDateTime(taskToEdit.time)}</Text>
-
+          <View style={{flexDirection: "row",justifyContent: "space-between", alignItems:"center"}}>
+              <View>
+                  <Text style={[styles.title, {color: theme.text}]}>{taskToEdit.title}</Text>
+                  <View style={{flexDirection: "row"}}>
+                      <Text style={{color: theme.placeholder, fontSize: 12}}>{formatDateTime(taskToEdit.time)}</Text>
+                      { taskToEdit.isDeleted && (
+                          <Text
+                              style={{paddingHorizontal: 3, marginLeft: 3, color: theme.danger, borderColor: theme.danger, borderWidth: 1, borderRadius: 5, fontSize: 10}}
+                          >O'chirilgan</Text>
+                      )}
+                  </View>
+              </View>
+              {taskToEdit.isReturning && (
+                  <View style={styles.returnCount}>
+                      <Ionicons
+                        name="refresh-outline"
+                        size={32}
+                        color={theme.subText}
+                        style={styles.scale}
+                      />
+                      <Text style={[styles.returnCountText, {color: theme.text}]}>{taskToEdit.isReturning}</Text>
+                  </View>
+              )}
+          </View>
           <View style={[styles.divider, {backgroundColor: theme.border}]} />
+          <View style={{marginBottom: 10}}>
+            <Text style={[styles.label, {color: theme.placeholder}]}>Batafsil</Text>
+            <Text style={[styles.description, {color: theme.text}]}>{taskToEdit.description}</Text>
+          </View>
+          <InfoRow label="Kategoriya" value={taskToEdit?.done ? "Bajarilgan" : "Bajarilmagan"}/>
+          <InfoRow label="Deadline" value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "0000-00-00"}/>
           <Text style={{color: theme.placeholder}}>Status</Text>
           <View style={styles.selectsBox}>
             {options.map((option) => (
@@ -57,14 +84,6 @@ const ViewPage: React.FC = () => {
                 color={option.color}
               />
             ))}
-          </View>
-
-          <InfoRow label="Category" value={taskToEdit?.done ? "success" : "warning"}/>
-          <InfoRow label="Deadline" value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "0000-00-00"}/>
-
-          <View style={styles.descriptionBox}>
-            <Text style={[styles.label, {color: theme.placeholder}]}>Description</Text>
-            <Text style={[styles.description, {color: theme.text}]}>{taskToEdit.description}</Text>
           </View>
         </View>
 
@@ -91,18 +110,30 @@ const ViewPage: React.FC = () => {
 export default ViewPage;
 
 const styles = StyleSheet.create({
+  returnCount: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  returnCountText: {
+      fontWeight: "bold",
+     marginLeft: 4,
+      marginTop: 2,
+     position: "absolute",
+     fontSize: 11,
+  },
+    scale: {
+        top: -1,
+        transform: [{ scaleX: -1,  }, {rotate: "40deg"}],
+    },
   selectsBox: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 12,
     paddingHorizontal: 2
   },
   bar: { height: 35, width: "100%" },
   safe: {flex: 1},
-  descriptionBox: {
-    marginTop: 16,
-  },
   label: {
     fontSize: 12,
     marginBottom: 4,
@@ -114,6 +145,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
+    marginTop: 12,
     borderRadius: 16,
     padding: 16,
     shadowOpacity: 0.05,
