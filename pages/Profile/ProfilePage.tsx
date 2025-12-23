@@ -11,18 +11,18 @@ import {
     BackHandler,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import TextField from "../components/TextField";
+import TextField from "../../components/TextField";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./types/types";
+import { RootStackParamList } from "../types/types";
 import { showMessage } from "react-native-flash-message";
 import { Ionicons } from "@expo/vector-icons";
 
 // ⚡ Storage services
-import { getActiveUser, loadUsers, saveUsers } from "../service/storage";
-import {useTheme} from "../theme/ThemeContext";
+import { getActiveUser, loadUsers, saveUsers } from "../../service/storage";
+import {useTheme} from "../../theme/ThemeContext";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
-import Header from "../components/Header";
+import Header from "../../components/Header";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 

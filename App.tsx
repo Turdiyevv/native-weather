@@ -16,8 +16,8 @@ import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 
 import MainPage from "./pages/Tasks/Main";
 import AddPage from "./components/screens/AddPage";
-import ProfilePage from "./pages/ProfilePage";
-import { ProfileViewPage } from "./pages/ProfileViewPage";
+import ProfilePage from "./pages/Profile/ProfilePage";
+import { ProfileViewPage } from "./pages/Profile/ProfileViewPage";
 import ChatPage from "./pages/ChatPage";
 import SupportPage from "./pages/SupportPage";
 import Business from "./pages/Business/Business";
@@ -31,6 +31,8 @@ import {
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
 import ViewTask from "./pages/Tasks/ViewTask";
+import HomePage from "./pages/HomePage";
+import HabitsPage from "./pages/Habits/HabitsPage";
 
 enableScreens();
 
@@ -95,7 +97,7 @@ const AppNavigator = () => {
       if (activeUser.passwordCode) {
         setInitialRoute("LoginCodePage");
       } else {
-        setInitialRoute("MainPage");
+        setInitialRoute("HomePage");
       }
     } catch (e) {
       setInitialRoute("LoginPage");
@@ -118,11 +120,13 @@ const AppNavigator = () => {
             >
               <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
               <Stack.Screen name="LoginPage" component={LoginPage} />
+              <Stack.Screen name="HomePage" component={HomePage} />
               <Stack.Screen name="MainPage" component={MainPage} />
               <Stack.Screen name="ProfileView" component={ProfileViewPage} />
               <Stack.Screen name="ProfileEdit" component={ProfilePage} />
               <Stack.Screen name="Chat" component={ChatPage} />
               <Stack.Screen name="Support" component={SupportPage} />
+              <Stack.Screen name="Habits" component={HabitsPage} />
               <Stack.Screen name="Business" component={Business} />
               <Stack.Screen name="AddPage" component={AddPage} />
               <Stack.Screen name="ViewTask" component={ViewTask} />

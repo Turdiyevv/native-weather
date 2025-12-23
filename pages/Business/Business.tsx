@@ -25,7 +25,7 @@ export default function BackdropFilterExample() {
 
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate("MainPage");
+      navigation.goBack();
       return true;
     };
 

@@ -10,14 +10,16 @@ import {
     Platform,
     ScrollView, Linking, BackHandler,
 } from "react-native";
-import AdminIcon from "../assets/admin_icon.png";
+import AdminIcon from "../../assets/admin_icon.png";
 import {useNavigation} from "@react-navigation/native";
-import {RootStackParamList} from "./types/types";
+
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {useTheme} from "../theme/ThemeContext";
+import {useTheme} from "../../theme/ThemeContext";
+import {RootStackParamList} from "../types/types";
+
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Chat">;
-const ChatPage: React.FC = () => {
+const HabitsPage: React.FC = () => {
     const { theme } = useTheme();
   const [message, setMessage] = useState("");
   const navigation = useNavigation<SupportNav>();
@@ -49,7 +51,7 @@ const ChatPage: React.FC = () => {
         <View style={styles.header}>
           <Image source={AdminIcon} style={styles.icon} />
           <Text style={[styles.description, {color: theme.text}]}>
-            Bu yerda keyinchalik online media chat yaratiladi.
+            Bu odatlar bo'limi chiqadi.
           </Text>
         </View>
       </ScrollView>
@@ -57,7 +59,7 @@ const ChatPage: React.FC = () => {
   );
 };
 
-export default ChatPage;
+export default HabitsPage;
 
 const styles = StyleSheet.create({
   container: {

@@ -7,8 +7,10 @@ export type RootStackParamList = {
   AddPage: { task?: UserTask };
   ProfileView: undefined;
   ProfileEdit: undefined;
+  HomePage: undefined;
   Chat: undefined;
   Support: undefined;
+  Habits: undefined;
   Business: undefined;
   LoginCodePage: undefined;
   ViewTask: { task: UserTask };
