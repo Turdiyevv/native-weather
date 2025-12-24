@@ -24,6 +24,7 @@ import Business from "./pages/Business/Business";
 import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
 import IncomeAndExpenses from "./pages/Business/IncomeAndExpenses";
+import DescStyle from "./pages/Tasks/DescStyle";
 
 import { RootStackParamList } from "./pages/types/types";
 import {
@@ -131,6 +132,7 @@ const AppNavigator = () => {
               <Stack.Screen name="Business" component={Business} />
               <Stack.Screen name="AddPage" component={AddPage} />
               <Stack.Screen name="ViewTask" component={ViewTask} />
+              <Stack.Screen name="DescStyle" component={DescStyle} />
               <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
             </Stack.Navigator>
 

@@ -13,6 +13,7 @@ export type RootStackParamList = {
   Habits: undefined;
   Business: undefined;
   LoginCodePage: undefined;
+  DescStyle: { description: string };
   ViewTask: { task: UserTask };
   IncomeAndExpenses: {
     selectedDate: string;

@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    ScrollView, Vibration,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -51,6 +51,7 @@ const ViewPage: React.FC = () => {
       });
       navigation.goBack();
   };
+
   return (
     <SafeAreaView style={styles.safe}>
       {/* Header */}
@@ -88,7 +89,14 @@ const ViewPage: React.FC = () => {
           <View style={[styles.divider, {backgroundColor: theme.border}]} />
           <View style={{marginBottom: 10}}>
             <Text style={[styles.label, {color: theme.placeholder}]}>Batafsil</Text>
-            <Text style={[styles.description, {color: theme.text}]}>{taskToEdit.description}</Text>
+            <TouchableOpacity
+                delayLongPress={2000}
+                onLongPress={() => {
+                    Vibration.vibrate(30);
+                    navigation.navigate("DescStyle", {description: taskToEdit.description})
+                }}>
+                <Text style={[styles.description, {color: theme.text}]}>{taskToEdit.description}</Text>
+            </TouchableOpacity>
           </View>
           <InfoRow label="Kategoriya" value={taskToEdit?.done ? "Bajarilgan" : "Bajarilmagan"}/>
           <InfoRow label="Deadline" value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "0000-00-00"}/>
