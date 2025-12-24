@@ -17,6 +17,9 @@ import SingleCheckBox from "../../components/global/CheckBox";
 import {formatDateTime} from "../../utills/date";
 import Header from "../../components/global/Header";
 import {showMessage} from "react-native-flash-message";
+import ConfirmModal from "../../components/global/ConfirmModal";
+import {deleteTask, getActiveUser} from "../../service/storage";
+import {UserTask} from "../types/userTypes";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type ViewTaskRouteProp = RouteProp<RootStackParamList, "ViewTask">;
@@ -31,7 +34,23 @@ const ViewPage: React.FC = () => {
     {id: 3, text: "Og'ir", color: '#fb5151'},
   ];
   const [selected, setSelected] = useState<number | null>(taskToEdit ? taskToEdit.status : 1);
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const onDelete = async (task: UserTask) => {
+      const activeUser = await getActiveUser();
+      if (!activeUser) {
+        showMessage({
+          message: "Foydalanuvchi topilmadi!",
+          type: "danger",
+        });
+        return;
+      }
+      await deleteTask(activeUser.username, task.id);
+      showMessage({
+        message: "Vazifa butunlay o‘chirildi",
+        type: "success",
+      });
+      navigation.goBack();
+  };
   return (
     <SafeAreaView style={styles.safe}>
       {/* Header */}
@@ -89,6 +108,12 @@ const ViewPage: React.FC = () => {
 
         {/* Action button */}
         <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={[styles.button, {backgroundColor: theme.card}]}>
+          <Text style={[styles.buttonText, {color: theme.danger}]}>O'chirish</Text>
+          <Ionicons name={"trash"} size={16} color={theme.danger} />
+        </TouchableOpacity>
+        <TouchableOpacity
             onPress={() => {
               if (!taskToEdit.done && !taskToEdit.isDeleted) {
                 navigation.navigate("AddPage", {task: taskToEdit});
@@ -104,6 +129,16 @@ const ViewPage: React.FC = () => {
           <Ionicons name={"pencil"} size={16} color={theme.text} />
         </TouchableOpacity>
       </ScrollView>
+
+      <ConfirmModal
+        visible={modalVisible}
+        message="Siz bu vazifani butunlay o'chirmoqchimisiz ?"
+        onConfirm={async () => {
+          await onDelete(taskToEdit);
+          setModalVisible(false);
+        }}
+        onCancel={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
