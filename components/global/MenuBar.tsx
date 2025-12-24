@@ -2,8 +2,8 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { LeftMenuProps } from "../pages/types/types";
-import { useTheme } from "../theme/ThemeContext";
+import { LeftMenuProps } from "../../pages/types/types";
+import { useTheme } from "../../theme/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
@@ -26,7 +26,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             StyleSheet.absoluteFillObject,
             {
               backgroundColor: theme.bgsound,
-              opacity: 0.3,
+              // opacity: 0.3,
               borderRadius: 40,
             },
           ]}
@@ -45,7 +45,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
           >
             <Ionicons
               name={btn.icon as any}
-              size={btn.size || 26}
+              size={btn.size || 24}
               color={btn.color || theme.text}
             />
           </TouchableOpacity>
@@ -69,21 +69,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonBox: {
+    width: "100%",
     flexDirection: "row",
     gap: 15,
-    padding: 10,
+    padding: 6,
     borderRadius: 40,
-    overflow: "hidden", // 🔥 background layer tashqariga chiqmasin
   },
   sideButton: {
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
     borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.5,
     shadowRadius: 4,
   },
 });

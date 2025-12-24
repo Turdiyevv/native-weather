@@ -10,12 +10,12 @@ import {
   Vibration,
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
-import LeftMenu from "../../components/MenuBar";
+import LeftMenu from "../../components/global/MenuBar";
 import CustomHeader from "../../components/Task/CustomHeader";
 import { UserTask } from "../types/userTypes";
 import { getActiveUser, updateTask, softDeleteTask } from "../../service/storage";
 import TodoItem from "../../components/Task/TodoItem";
-import TaskContextMenu from "../../components/TaskContextMenu";
+import TaskContextMenu from "../../components/global/TaskContextMenu";
 import { useTheme } from "../../theme/ThemeContext";
 import AdminIcon from "../../assets/admin_icon.png";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -75,10 +75,34 @@ export default function MainPage({ navigation }: any) {
       }
     };
 
-  const editTask = (task: UserTask, initialView: boolean) => {
-    navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
-    closeMenu();
-  };
+    let startX = 0;
+    let startY = 0;
+    const handlePressIn = (e: any) => {
+      startX = e.nativeEvent.pageX;
+      startY = e.nativeEvent.pageY;
+    };
+    const editTask = (task: UserTask, initialView: boolean, e?: any) => {
+        console.log(e);
+      if (e) {
+        const dx = Math.abs(e.nativeEvent.pageX - startX);
+        const dy = Math.abs(e.nativeEvent.pageY - startY);
+        if (dx >= 5 || dy >= 5) return; // swipe bo‘lsa chiqmaydi
+      }
+      // event yo‘q yoki tap bo‘lsa
+      closeMenu();
+      setTimeout(() => {
+        navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
+      }, 0);
+    };
+
+
+  // const editTask = (task: UserTask, initialView: boolean) => {
+  //     closeMenu();
+  //     setTimeout(() => {
+  //       navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
+  //     }, 500);
+  // };
+
 
   const deleteTaskHandler = async (task: UserTask) => {
     try {
@@ -189,7 +213,8 @@ const onTabPress = (tab: TaskTab) => {
                     index={index}
                     isFirst={index === 0}
                     isLast={index === section.data.length - 1}
-                    onToggle={() => editTask(item, true)}
+                    onPressIn={handlePressIn}
+                    onPress={(e) => editTask(item, true, e)}
                     onLongPress={(y) => openMenu(item.id, y)}
                   />
                 )}
@@ -226,10 +251,10 @@ const onTabPress = (tab: TaskTab) => {
 
         <LeftMenu
           buttons={[
-            { icon: "list-outline", onPress: () => onTabPress("main"), size: 26, color: activeTab === "main" ? theme.primary : theme.text },
-            { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 26, color: activeTab === "done" ? theme.primary : theme.text },
-            { icon: "trash-outline", onPress: () => onTabPress("deleted"), size: 24, color: activeTab === "deleted" ? theme.primary : theme.text },
-            { icon: "calendar-outline", onPress: () => navigation.navigate("Business"), size: 24 },
+            { icon: "list-outline", onPress: () => onTabPress("main"), size: 24, color: activeTab === "main" ? theme.primary : theme.text },
+            { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 24, color: activeTab === "done" ? theme.primary : theme.text },
+            { icon: "trash-outline", onPress: () => onTabPress("deleted"), size: 22, color: activeTab === "deleted" ? theme.primary : theme.text },
+            { icon: "calendar-outline", onPress: () => navigation.navigate("Business"), size: 22 },
             { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto"},
           ]}
           containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}

@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "./ConfirmModal";
-import {UserTask} from "../pages/types/userTypes";
-import {useTheme} from "../theme/ThemeContext";
+import {UserTask} from "../../pages/types/userTypes";
+import {useTheme} from "../../theme/ThemeContext";
 
 interface Props {
   task: UserTask;

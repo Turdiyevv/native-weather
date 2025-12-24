@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import {ConfirmModalProps} from "../pages/types/types";
-import {useTheme} from "../theme/ThemeContext";
+import {ConfirmModalProps} from "../../pages/types/types";
+import {useTheme} from "../../theme/ThemeContext";
 
 export default function ConfirmModal({ visible, message, onConfirm, onCancel }: ConfirmModalProps) {
   const { theme } = useTheme();

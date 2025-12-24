@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from "react-native";
-import PasswordCodeInput from "../components/PasswordCodeInput";
+import PasswordCodeInput from "../components/global/PasswordCodeInput";
 import { useFocusEffect } from "@react-navigation/native";
-import ConfirmModal from "../components/ConfirmModal";
+import ConfirmModal from "../components/global/ConfirmModal";
 import { loadUsers, setActiveUser } from "../service/storage";
 import { User } from "./types/userTypes";
 import {useTheme} from "../theme/ThemeContext";

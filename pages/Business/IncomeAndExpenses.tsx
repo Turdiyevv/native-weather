@@ -18,7 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { RootStackParamList } from "../types/types";
 import { useTheme } from "../../theme/ThemeContext";
 import TodoItem from "../../components/Business/TodoItem";
-import TextField from "../../components/TextField";
+import TextField from "../../components/global/TextField";
 import { BusinessEntry } from "../types/userTypes";
 import {getActiveUser} from "../../service/storage";
 import {
@@ -30,7 +30,7 @@ import {
 import {formatSum} from "../../utills/utill";
 import BusinessContextMenu from "../../components/Business/BusinessContextMenu";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
-import Header from "../../components/Header";
+import Header from "../../components/global/Header";
 
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;

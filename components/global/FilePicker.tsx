@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import ImageViewing from "react-native-image-viewing";
-import { useTheme } from "../theme/ThemeContext";
+import { useTheme } from "../../theme/ThemeContext";
 
 export default function FilePickerComponent({
   onChange,

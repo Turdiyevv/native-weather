@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
-import {Checkbox} from "../pages/types/types"
-import {useTheme} from "../theme/ThemeContext";
+import {Checkbox} from "../../pages/types/types"
+import {useTheme} from "../../theme/ThemeContext";
 
 export default function SingleCheckBox({ label, value, onChange, color = "orange" }: Checkbox) {
     const { theme } = useTheme();

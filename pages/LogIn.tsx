@@ -10,8 +10,8 @@ import {
   BackHandler
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
-import TextField from "../components/TextField";
-import ConfirmModal from "../components/ConfirmModal";
+import TextField from "../components/global/TextField";
+import ConfirmModal from "../components/global/ConfirmModal";
 import { User, UserInfo } from "./types/userTypes";
 import {
   loadUsers,

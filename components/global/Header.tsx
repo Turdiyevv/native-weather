@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../pages/types/types";
-import { useTheme } from "../theme/ThemeContext";
+import { RootStackParamList } from "../../pages/types/types";
+import { useTheme } from "../../theme/ThemeContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

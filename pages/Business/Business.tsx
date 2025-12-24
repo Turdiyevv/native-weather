@@ -15,8 +15,8 @@ import {RootStackParamList} from "../types/types";
 import {useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
-import Calendar from "../../components/Calendar";
-import Header from "../../components/Header";
+import Calendar from "../../components/global/Calendar";
+import Header from "../../components/global/Header";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Business">;
 export default function BackdropFilterExample() {

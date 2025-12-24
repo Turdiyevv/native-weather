@@ -57,13 +57,16 @@ export interface TodoItemProps {
     isReturning?: number;
     status?: number;
     isDeleted?: boolean;
-    files?: []
+    files?: [];
   };
   index: number;
   isFirst: boolean;
   isLast: boolean;
-  onToggle: (item: object) => void;
+  onToggle?: (item: object) => void;
   onLongPress?: (y: number) => void;
+  onPress?: (e: any) => void;
+  onPressIn?: (e: any) => void;
+  onPressOut?: (e: any) => void;
 }
 export interface LeftMenuProps {
   buttons: {

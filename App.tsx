@@ -18,7 +18,7 @@ import MainPage from "./pages/Tasks/Main";
 import AddPage from "./components/screens/AddPage";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import { ProfileViewPage } from "./pages/Profile/ProfileViewPage";
-import ChatPage from "./pages/ChatPage";
+import ChatPage from "./pages/chats/ChatPage";
 import SupportPage from "./pages/SupportPage";
 import Business from "./pages/Business/Business";
 import LoginPage from "./pages/LogIn";
@@ -33,6 +33,8 @@ import {
 import ViewTask from "./pages/Tasks/ViewTask";
 import HomePage from "./pages/HomePage";
 import HabitsPage from "./pages/Habits/HabitsPage";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import SwipeDrawer from "./pages/Profile/SwipeDrawer";
 
 enableScreens();
 
@@ -97,7 +99,7 @@ const AppNavigator = () => {
       if (activeUser.passwordCode) {
         setInitialRoute("LoginCodePage");
       } else {
-        setInitialRoute("HomePage");
+        setInitialRoute("MainPage");
       }
     } catch (e) {
       setInitialRoute("LoginPage");
@@ -144,10 +146,14 @@ const AppNavigator = () => {
 
 /* 🔹 ENG TASHQI QAVAT */
 const App: React.FC = () => {
+    const [profileVisible, setProfileVisible] = React.useState(false);
   return (
-    <ThemeProvider>
-      <AppNavigator />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider>
+          <AppNavigator/>
+          <SwipeDrawer visible={profileVisible} onClose={() => setProfileVisible(false)}/>
+        </ThemeProvider>
+    </GestureHandlerRootView>
   );
 };
 

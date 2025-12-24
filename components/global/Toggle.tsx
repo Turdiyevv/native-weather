@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-import {useTheme} from "../theme/ThemeContext";
+import {useTheme} from "../../theme/ThemeContext";
 
 export default function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
   const { theme } = useTheme();

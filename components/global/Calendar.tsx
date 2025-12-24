@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useTheme } from "../theme/ThemeContext";
+import { useTheme } from "../../theme/ThemeContext";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../pages/types/types";
-import {getActiveUser} from "../service/storage";
+import { RootStackParamList } from "../../pages/types/types";
+import {getActiveUser} from "../../service/storage";
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

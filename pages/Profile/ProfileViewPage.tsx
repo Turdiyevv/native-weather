@@ -15,9 +15,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/types";
 import { logout } from "../../utills/LogOut";
 import { Ionicons } from "@expo/vector-icons";
-import ConfirmModal from "../../components/ConfirmModal";
+import ConfirmModal from "../../components/global/ConfirmModal";
 import { showMessage } from "react-native-flash-message";
-import PasswordCodeInput from "../../components/PasswordCodeInput";
+import PasswordCodeInput from "../../components/global/PasswordCodeInput";
 import {
   getActiveUser,
   deleteUser,
@@ -26,7 +26,7 @@ import {
 } from "../../service/storage";
 import { useTheme } from "../../theme/ThemeContext";
 import { exportTasksAsTxt } from "../../service/exportTasks";
-import Header from "../../components/Header";
+import Header from "../../components/global/Header";
 import ImageViewing from "react-native-image-viewing";
 
 const screenWidth = Dimensions.get("window").width;

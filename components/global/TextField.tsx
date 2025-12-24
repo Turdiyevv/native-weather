@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
-import { TextFieldProps } from "../pages/types/types";
-import { useTheme } from "../theme/ThemeContext";
+import { TextFieldProps } from "../../pages/types/types";
+import { useTheme } from "../../theme/ThemeContext";
 
 export default function TextField({
   label,

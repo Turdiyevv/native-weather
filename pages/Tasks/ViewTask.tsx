@@ -3,19 +3,19 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
 import InfoRow from "../../components/Task/InfoRow";
 import {useRoute, RouteProp, useNavigation} from "@react-navigation/native";
 import {RootStackParamList} from "../types/types";
-import SingleCheckBox from "../../components/CheckBox";
+import SingleCheckBox from "../../components/global/CheckBox";
 import {formatDateTime} from "../../utills/date";
-import Header from "../../components/Header";
+import Header from "../../components/global/Header";
 import {showMessage} from "react-native-flash-message";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

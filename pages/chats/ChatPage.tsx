@@ -10,11 +10,11 @@ import {
     Platform,
     ScrollView, Linking, BackHandler,
 } from "react-native";
-import AdminIcon from "../assets/admin_icon.png";
+import AdminIcon from "../../assets/admin_icon.png";
 import {useNavigation} from "@react-navigation/native";
-import {RootStackParamList} from "./types/types";
+import {RootStackParamList} from "../types/types";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {useTheme} from "../theme/ThemeContext";
+import {useTheme} from "../../theme/ThemeContext";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Chat">;
 const ChatPage: React.FC = () => {

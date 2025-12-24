@@ -7,18 +7,18 @@ import {
     Platform, BackHandler,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import TextField from "../../components/TextField";
+import TextField from "../global/TextField";
 import {showMessage} from "react-native-flash-message";
-import Toggle from "../Toggle";
-import SingleCheckBox from "../CheckBox";
-import FilePickerComponent from "../FilePicker";
+import Toggle from "../global/Toggle";
+import SingleCheckBox from "../global/CheckBox";
+import FilePickerComponent from "../global/FilePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import ConfirmModal from "../ConfirmModal";
+import ConfirmModal from "../global/ConfirmModal";
 import {UserTask} from "../../pages/types/userTypes";
 import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Header from "../Header";
+import Header from "../global/Header";
 
 
 export default function AddPage({ navigation, route }: any) {

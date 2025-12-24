@@ -4,7 +4,7 @@ import {Ionicons} from "@expo/vector-icons";
 import {TodoItemProps} from "../../pages/types/types";
 import {useTheme} from "../../theme/ThemeContext";
 
-export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast }: TodoItemProps) {
+export default function TodoItem({ item, onPressIn, onPress, onPressOut, onLongPress, isFirst, isLast }: TodoItemProps) {
 
     const { theme } = useTheme();
     const today = new Date();
@@ -42,15 +42,14 @@ export default function TodoItem({ item, onToggle, onLongPress, isFirst, isLast 
   return (
     <TouchableOpacity
       style={[
-        styles.item, {backgroundColor: theme.card, borderColor: theme.border},
+        styles.item, {backgroundColor: theme.card, borderColor: theme.background},
         isFirst && styles.firstBorder,
         isLast && styles.lastBorder,
       ]}
-      onPress={() => onToggle(item)}
-      onLongPress={(event: any) => {
-        const y = event.nativeEvent.pageY;
-        onLongPress && onLongPress(y);
-      }}
+      onPressIn={onPressIn}
+      onPress={onPress}
+      onPressOut={onPressOut}
+      onLongPress={(event) => onLongPress && onLongPress(event.nativeEvent.pageY)}
     >
         <View style={[
             styles.defaultItem, isFirst && styles.firstBorder, isLast && styles.lastBorder,
