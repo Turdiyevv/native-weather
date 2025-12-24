@@ -82,7 +82,6 @@ export default function MainPage({ navigation }: any) {
       startY = e.nativeEvent.pageY;
     };
     const editTask = (task: UserTask, initialView: boolean, e?: any) => {
-        console.log(e);
       if (e) {
         const dx = Math.abs(e.nativeEvent.pageX - startX);
         const dy = Math.abs(e.nativeEvent.pageY - startY);

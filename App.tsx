@@ -34,7 +34,6 @@ import ViewTask from "./pages/Tasks/ViewTask";
 import HomePage from "./pages/HomePage";
 import HabitsPage from "./pages/Habits/HabitsPage";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
-import SwipeDrawer from "./pages/Profile/SwipeDrawer";
 
 enableScreens();
 
@@ -143,15 +142,11 @@ const AppNavigator = () => {
     </>
   );
 };
-
-/* 🔹 ENG TASHQI QAVAT */
 const App: React.FC = () => {
-    const [profileVisible, setProfileVisible] = React.useState(false);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
         <ThemeProvider>
           <AppNavigator/>
-          <SwipeDrawer visible={profileVisible} onClose={() => setProfileVisible(false)}/>
         </ThemeProvider>
     </GestureHandlerRootView>
   );

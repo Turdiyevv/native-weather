@@ -20,7 +20,6 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
       ]}
     >
       <View style={styles.buttonBox}>
-        {/* 🔥 BACKGROUND LAYER (opacity faqat shu yerda) */}
         <View
           style={[
             StyleSheet.absoluteFillObject,
@@ -31,8 +30,6 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             },
           ]}
         />
-
-        {/* 🔥 CONTENT (opacity ta'sir qilmaydi) */}
         {buttons.map((btn, idx) => (
           <TouchableOpacity
             key={idx}
@@ -61,7 +58,7 @@ const styles = StyleSheet.create({
     position: "absolute", // 🔥 ENG MUHIM
     left: 10,
     right: 10,
-    height: 80,
+    height: 65,
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     backgroundColor: "rgba(18,18,18,0.001)",
