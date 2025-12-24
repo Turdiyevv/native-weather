@@ -106,28 +106,30 @@ const ViewPage: React.FC = () => {
           </View>
         </View>
 
-        {/* Action button */}
-        <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            style={[styles.button, {backgroundColor: theme.card}]}>
-          <Text style={[styles.buttonText, {color: theme.danger}]}>O'chirish</Text>
-          <Ionicons name={"trash"} size={16} color={theme.danger} />
-        </TouchableOpacity>
-        <TouchableOpacity
-            onPress={() => {
-              if (!taskToEdit.done && !taskToEdit.isDeleted) {
-                navigation.navigate("AddPage", {task: taskToEdit});
-              }else {
-                showMessage({
-                  message: "Tahrirlashni imkoni yo'q!",
-                  type: "danger",
-                });
-              }
-            }}
-            style={[styles.button, {backgroundColor: theme.card}]}>
-          <Text style={[styles.buttonText, {color: theme.text}]}>Tahrirlash</Text>
-          <Ionicons name={"pencil"} size={16} color={theme.text} />
-        </TouchableOpacity>
+        {/* Action buttons */}
+        <View style={{ flexDirection: "row", justifyContent: "flex-end", marginTop: 10}}>
+            <TouchableOpacity
+                onPress={() => setModalVisible(true)}
+                style={[styles.button, {backgroundColor: theme.card}]}>
+              <Text style={[styles.buttonText, {color: theme.danger}]}>O'chirish</Text>
+              <Ionicons name={"trash"} size={16} color={theme.danger} />
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => {
+                  if (!taskToEdit.done && !taskToEdit.isDeleted) {
+                    navigation.navigate("AddPage", {task: taskToEdit});
+                  }else {
+                    showMessage({
+                      message: "Tahrirlashni imkoni yo'q!",
+                      type: "danger",
+                    });
+                  }
+                }}
+                style={[styles.button, {backgroundColor: theme.card}]}>
+              <Text style={[styles.buttonText, {color: theme.text}]}>Tahrirlash</Text>
+              <Ionicons name={"pencil"} size={16} color={theme.text} />
+            </TouchableOpacity>
+        </View>
       </ScrollView>
 
       <ConfirmModal
@@ -204,19 +206,17 @@ const styles = StyleSheet.create({
 
   description: {
     fontSize: 14,
-    color: "#374151",
     lineHeight: 20,
   },
 
   button: {
+    marginLeft: 10,
     flexDirection: "row",
-    marginTop: 20,
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
     width: 120,
-    marginLeft: "auto"
   },
 
   buttonText: {

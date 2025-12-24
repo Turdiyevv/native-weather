@@ -10,13 +10,19 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface HeaderProps {
   title: string | any;
+  onBack?: () => void; // optional prop
 }
-const Header: React.FC<HeaderProps> = ({ title }) => {
+
+const Header: React.FC<HeaderProps> = ({ title, onBack }) => {
   const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
 
   const handleBack = () => {
-    navigation.goBack();
+    if (onBack) {
+      onBack();
+    } else {
+      navigation.goBack();
+    }
   };
 
   return (

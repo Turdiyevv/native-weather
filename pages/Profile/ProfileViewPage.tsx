@@ -83,35 +83,43 @@ const loadActiveUser = async () => {
 };
 
 // Page load va focus
-  useEffect(() => {
-    loadAllUsers();     // Barcha usersni yuklash
-    loadActiveUser();   // Active user
-    const unsubscribe = navigation.addListener("focus", () => {
+    useEffect(() => {
       loadAllUsers();
       loadActiveUser();
-    });
 
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainPage" }] }));
-      return true;
-    });
+      const unsubscribe = navigation.addListener("focus", () => {
+        loadAllUsers();
+        loadActiveUser();
+      });
+      // Hardware Back button ishlashi
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainPage" }],
+          })
+        );
+        return true; // eventni boshqa komponentga yubormaslik
+      });
 
-    return () => {
-      unsubscribe();
-      backHandler.remove();
+      return () => {
+        unsubscribe();
+        backHandler.remove();
+      };
+    }, []);
+
+    const switchActiveUser = async (username: string) => {
+      const selectedUser = users.find(u => u.username === username);
+      if (!selectedUser) return;
+      const activeUser = await getActiveUser();
+      if (activeUser.username == selectedUser.username) {return}
+      await setActiveUser(selectedUser.username);
+      await loadActiveUser();
+      showMessage({
+        message: `${username} foydalanuvchi aktiv qilindi`,
+        type: "success",
+      });
     };
-  }, []);
-  const switchActiveUser = async (username: string) => {
-    const selectedUser = users.find(u => u.username === username);
-    if (!selectedUser) return;
-    await saveUsers(users.map(u => u.username === username ? { ...u, active: true } : { ...u, active: false }));
-    await setActiveUser(selectedUser); // Storage.js da saqlash
-    await loadActiveUser();                   // Ma'lumotlarni qayta yuklash
-    showMessage({
-      message: `${username} foydalanuvchi aktiv qilindi`,
-      type: "success",
-    });
-  };
 
   useEffect(() => {
     loadActiveUser();
@@ -179,7 +187,10 @@ const loadActiveUser = async () => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.bar} />
-      <Header title={"Profil"} />
+      <Header
+        title={"Profil"}
+        onBack={() => navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainPage" }] }))}
+      />
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingTop: 20, marginHorizontal: 10, paddingBottom: 30 }}
@@ -234,17 +245,19 @@ const loadActiveUser = async () => {
 
         <View style={[styles.infoBox, { backgroundColor: theme.card }]}>
           <Text style={[styles.label, { color: theme.text, marginBottom: 10 }]}>Foydalanuvchilar:</Text>
-          {users.map((u) => (
-            <TouchableOpacity
-              key={u.username}
-              style={[styles.themeBtn, { backgroundColor: user?.username === u.username ? theme.success : theme.placeholder }]}
-              onPress={() => switchActiveUser(u.username)}
-            >
-              <Text style={{ color: theme.text }}>
-                {u.firstName} {u.lastName} @{u.username}
-              </Text>
-            </TouchableOpacity>
-          ))}
+            <View style={styles.themeBox}>
+              {users.map((u) => (
+                <TouchableOpacity
+                  key={u.username}
+                  style={[styles.themeBtn, { backgroundColor: user?.username === u.username ? theme.success : theme.placeholder }]}
+                  onPress={() => switchActiveUser(u.username)}
+                >
+                  <Text style={{ color: theme.text }}>
+                    {u.firstName} {u.lastName} @{u.username}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
         </View>
 
 
@@ -381,7 +394,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "bold" },
   username: { fontSize: 14, color: "#666" },
   themeBox: {
-    flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between", gap: 10,
+    flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-start", gap: 10,
   },
   themeBtn: {
     borderRadius: 5,
