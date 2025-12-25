@@ -244,6 +244,9 @@ const onTabPress = (tab: TaskTab) => {
               onDelete={deleteTaskHandler}
               modalVisible={modalVisible}
               setModalVisible={setModalVisible}
+              updateTasksState={(taskId: string, alarmDate: string, notificationId: string) => {
+                setTasks(prev => prev.map(t => t.id === taskId ? { ...t, alarmDate, notificationId } : t));
+              }}
             />
           );
         })()}

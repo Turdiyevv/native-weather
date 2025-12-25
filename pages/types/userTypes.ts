@@ -1,5 +1,5 @@
 export interface UserTask {
-    username: string;
+  username: string;
   id: string;
   title: string;
   description: string;
@@ -10,7 +10,7 @@ export interface UserTask {
   isDeleted?: boolean;
   files: any[];
   alarmDate?: Date | any;
-  notificationId?: string| any;
+  notificationId?: string;
   isReturning?: number;
   isReturningAt?: string | null;
 }

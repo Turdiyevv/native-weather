@@ -26,6 +26,7 @@ interface Props {
   onDelete: (task: UserTask) => void;
   modalVisible: boolean;
   setModalVisible: (v: boolean) => void;
+  updateTasksState: (taskId: string, alarmDate: string, notificationId: string) => void;
 }
 
 export default function TaskContextMenu({
@@ -39,6 +40,7 @@ export default function TaskContextMenu({
   onDelete,
   modalVisible,
   setModalVisible,
+  updateTasksState,
 }: Props) {
   const { theme } = useTheme();
   const [showPicker, setShowPicker] = React.useState(false);
@@ -66,24 +68,26 @@ export default function TaskContextMenu({
         if (task.notificationId) {
           await Notifications.cancelScheduledNotificationAsync(task.notificationId);
         }
-        const trigger = date;
+        const trigger = {
+          date,
+          type: 'time',
+          channelId: 'default',
+        };
         const notificationId = await Notifications.scheduleNotificationAsync({
           content: {
             title: "⏰ Vazifa eslatmasi",
             body: task.title || "Vaqt bo'ldi",
             sound: true,
           },
-            //@ts-ignore
-          trigger,
-          channelId: "default"
+          trigger
         });
-
         await updateTask(task.username, task.id, {
-          alarmDate: date,
+          alarmDate: date.toISOString(),
           notificationId,
         });
-
-        // 🔔 Toast/flash message
+        if (typeof updateTasksState === "function") {
+          updateTasksState(task.id, date.toISOString(), notificationId);
+        }
         showMessage({
           message: "Alarm saqlandi!",
           type: "success",
