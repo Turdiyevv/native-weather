@@ -282,22 +282,25 @@ const loadActiveUser = async () => {
           </View>
 
           <TouchableOpacity onPress={exportTasksAsTxt} style={{ padding: 10, marginTop: 10, backgroundColor: theme.primary, borderRadius: 8 }}>
-            <Text style={{ color: "#fff" }}>Tasklarni yuklab olish</Text>
+            <Text style={{ color: "#fff" }}>Vazifalarni yuklab olish</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={openPasswordBox}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>Oson kirish kodi</Text>
+            <Text style={[styles.loginCode, { color: theme.text }]}>• Oson kirish kodi</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Support")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>Biz haqimizda.</Text>
+            <Text style={[styles.loginCode, { color: theme.text }]}>• Biz haqimizda.</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>Chat bo'limi</Text>
+            <Text style={[styles.loginCode, { color: theme.text }]}>• Chat bo'limi</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Business")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>Beznis bo'limi</Text>
+            <Text style={[styles.loginCode, { color: theme.text }]}>• Beznis bo'limi</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Habits")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>Odatlar bo'limi</Text>
+            <Text style={[styles.loginCode, { color: theme.text }]}>• Odatlar bo'limi</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Habits")}>
+            <Text style={[styles.loginCode, { color: theme.text }]}>• Daromad</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={deleteAccount}>
             <Text style={[styles.deleteText, { color: theme.danger }]}>Hisobni butunlay o'chirish</Text>
@@ -440,7 +443,7 @@ const styles = StyleSheet.create({
   settings: { marginTop: 20 },
   settingsText: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginBottom: 8 },
   settingsTitle: { fontSize: 18, marginLeft: 3 },
-  loginCode: { color: "blue", fontSize: 17, textDecorationLine: "underline", marginTop: 10 },
+  loginCode: { color: "blue", fontSize: 17, marginTop: 10 },
   deleteText: { fontSize: 17, textDecorationLine: "underline", marginTop: 10 },
   closeBox: { color: "red", fontSize: 16, marginTop: 6, justifyContent: "center", marginHorizontal: "auto" },
 });
