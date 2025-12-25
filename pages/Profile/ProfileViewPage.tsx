@@ -296,6 +296,9 @@ const loadActiveUser = async () => {
           <TouchableOpacity onPress={() => navigation.navigate("Business")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>Beznis bo'limi</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Habits")}>
+            <Text style={[styles.loginCode, { color: theme.text }]}>Odatlar bo'limi</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={deleteAccount}>
             <Text style={[styles.deleteText, { color: theme.danger }]}>Hisobni butunlay o'chirish</Text>
           </TouchableOpacity>

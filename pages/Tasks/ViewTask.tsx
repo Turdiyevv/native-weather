@@ -91,7 +91,8 @@ const ViewPage: React.FC = () => {
           <View style={{marginBottom: 10}}>
             <Text style={[styles.label, {color: theme.placeholder}]}>Batafsil</Text>
             <TouchableOpacity
-                delayLongPress={2000}
+                activeOpacity={0.8}
+                delayLongPress={1800}
                 onLongPress={() => {
                     Vibration.vibrate(30);
                     navigation.navigate("DescStyle", {description: taskToEdit.description})
