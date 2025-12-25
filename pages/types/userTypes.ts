@@ -1,4 +1,5 @@
 export interface UserTask {
+    username: string;
   id: string;
   title: string;
   description: string;
@@ -8,6 +9,8 @@ export interface UserTask {
   status: number;
   isDeleted?: boolean;
   files: any[];
+  alarmDate?: Date | any;
+  notificationId?: string| any;
   isReturning?: number;
   isReturningAt?: string | null;
 }

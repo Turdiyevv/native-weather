@@ -8,8 +8,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "./ConfirmModal";
-import {UserTask} from "../../pages/types/userTypes";
-import {useTheme} from "../../theme/ThemeContext";
+import { UserTask } from "../../pages/types/userTypes";
+import { useTheme } from "../../theme/ThemeContext";
+import * as Notifications from "expo-notifications";
+import DateTimePickerModalComponent from "./DateTimePickerModalComponent";
+import {updateTask} from "../../service/storage";
+import {showMessage} from "react-native-flash-message";
 
 interface Props {
   task: UserTask;
@@ -23,6 +27,7 @@ interface Props {
   modalVisible: boolean;
   setModalVisible: (v: boolean) => void;
 }
+
 export default function TaskContextMenu({
   task,
   visible,
@@ -35,8 +40,9 @@ export default function TaskContextMenu({
   modalVisible,
   setModalVisible,
 }: Props) {
+  const { theme } = useTheme();
+  const [showPicker, setShowPicker] = React.useState(false);
 
-    const { theme } = useTheme();
   if (!visible) return null;
 
   const menuStyle: Animated.AnimatedProps<any> = {
@@ -55,6 +61,45 @@ export default function TaskContextMenu({
     overflow: "hidden",
   };
 
+    const scheduleAlarm = async (date: Date) => {
+      try {
+        if (task.notificationId) {
+          await Notifications.cancelScheduledNotificationAsync(task.notificationId);
+        }
+        const trigger = date;
+        const notificationId = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "⏰ Vazifa eslatmasi",
+            body: task.title || "Vaqt bo'ldi",
+            sound: true,
+          },
+            //@ts-ignore
+          trigger,
+          channelId: "default"
+        });
+
+        await updateTask(task.username, task.id, {
+          alarmDate: date,
+          notificationId,
+        });
+
+        // 🔔 Toast/flash message
+        showMessage({
+          message: "Alarm saqlandi!",
+          type: "success",
+          duration: 2000,
+        });
+      } catch (err) {
+        console.log("scheduleAlarm error:", err);
+        showMessage({
+          message: "Alarmni saqlashda xatolik yuz berdi",
+          type: "danger",
+          duration: 2000,
+        });
+      }
+    };
+
+
   return (
     <TouchableOpacity
       style={styles.menuOverlay}
@@ -62,21 +107,31 @@ export default function TaskContextMenu({
       onPress={onClose}
     >
       <Animated.View style={menuStyle}>
-        <View style={styles.menuButtonTitle}>
-          <Text style={styles.taskTitle}>
-            {task.title.length > 16
-              ? task.title.slice(0, 16) + "..."
-              : task.title}
-          </Text>
-          <Ionicons name="document-outline" size={20} color="gray" />
-        </View>
-
+        {/* Qo‘ng‘iroq */}
         <TouchableOpacity
-          style={[styles.menuButton, (!!task?.isDeleted || task.isReturning >=9) && { opacity: 0.4 }]}
-          onPress={() => onMarkDone(task)}
-          disabled={!!task?.isDeleted || (!!task.done && task.isReturning >=9)}
+          style={[
+            styles.menuButtonTitle,
+            { borderColor: theme.background },
+            !!task?.isDeleted && { opacity: 0.4 },
+          ]}
+          onPress={() => setShowPicker(true)}
+          disabled={!!task?.isDeleted}
         >
-          <Text style={[styles.menuText, {color: theme.text}]}>
+          <Text style={styles.taskTitle}>Qo‘ng‘iroq</Text>
+          <Ionicons name="time-outline" size={18} color={theme.text} />
+        </TouchableOpacity>
+
+        {/* Bajarildi / Qaytarish */}
+        <TouchableOpacity
+          style={[
+            styles.menuButton,
+            { borderColor: theme.background },
+            (!!task?.isDeleted || task.isReturning >= 9) && { opacity: 0.4 },
+          ]}
+          onPress={() => onMarkDone(task)}
+          disabled={!!task?.isDeleted || (!!task.done && task.isReturning >= 9)}
+        >
+          <Text style={[styles.menuText, { color: theme.text }]}>
             {task.done ? "Qaytarish" : "Bajarildi"}
           </Text>
           <Ionicons
@@ -86,35 +141,54 @@ export default function TaskContextMenu({
           />
         </TouchableOpacity>
 
+        {/* Tahrirlash */}
         <TouchableOpacity
-          style={[styles.menuButton, (!!task?.isDeleted|| !!task?.done) ? { opacity: 0.4 }:{}]}
+          style={[
+            styles.menuButton,
+            { borderColor: theme.background },
+            (!!task?.isDeleted || !!task?.done) ? { opacity: 0.4 } : {},
+          ]}
           onPress={() => onEdit(task)}
           disabled={!!task?.isDeleted || !!task?.done}
         >
-          <Text style={[styles.menuText, {color: theme.text}]}>Tahrirlash</Text>
+          <Text style={[styles.menuText, { color: theme.text }]}>Tahrirlash</Text>
           <Ionicons name="create-outline" size={20} color="blue" />
         </TouchableOpacity>
 
+        {/* O‘chirish */}
         <TouchableOpacity
           style={[styles.menuButtonDel, !!task?.isDeleted && { opacity: 0.4 }]}
           onPress={() => setModalVisible(true)}
           disabled={!!task?.isDeleted}
         >
-          <Text style={[styles.menuText, { color: "red" }]}>
-            O'chirish
-          </Text>
+          <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
           <Ionicons name="trash-outline" size={20} color="red" />
         </TouchableOpacity>
       </Animated.View>
 
+      {/* Confirm modal */}
       <ConfirmModal
         visible={modalVisible}
-        message="Ishonchingiz komilmi?"
+        message="Element arxivga tushuriladi. Ishonchingiz komilmi?"
         onConfirm={() => {
           onDelete(task);
           setModalVisible(false);
         }}
         onCancel={() => setModalVisible(false)}
+      />
+
+      {/* DateTime picker modal */}
+      <DateTimePickerModalComponent
+        isVisible={showPicker}
+        onConfirm={(date) => {
+          setShowPicker(false);
+          scheduleAlarm(date);
+          onClose();
+        }}
+        onCancel={() => {
+          setShowPicker(false);
+          onClose();
+        }}
       />
     </TouchableOpacity>
   );
@@ -135,7 +209,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#a8a6a6",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -147,13 +220,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#a8a6a6",
   },
   menuButtonDel: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingTop: 10,
+    paddingBottom: 3,
     paddingHorizontal: 15,
   },
   menuText: { fontSize: 16 },

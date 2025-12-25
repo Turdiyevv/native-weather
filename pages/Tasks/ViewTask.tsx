@@ -60,7 +60,8 @@ const ViewPage: React.FC = () => {
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Card */}
-        {/*<Text>{JSON.stringify(taskToEdit)}</Text>*/}
+        <Text style={{color: theme.text}}>{JSON.stringify("alarmDate: "+taskToEdit.alarmDate)}</Text>
+        <Text style={{color: theme.text}}>{JSON.stringify("notificationId: "+taskToEdit.notificationId)}</Text>
         <View style={[styles.card, {backgroundColor: theme.card, shadowColor: theme.card}]}>
           <View style={{flexDirection: "row",justifyContent: "space-between", alignItems:"center"}}>
               <View>

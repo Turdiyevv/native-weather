@@ -70,7 +70,10 @@ export const addTask = async (username: string, task: UserTask) => {
   const users = await loadUsers();
   const idx = users.findIndex((u) => u.username === username);
   if (idx === -1) return;
-  users[idx].usertasks.push(task);
+  users[idx].usertasks.push({
+    ...task,
+    alarmDate: task.alarmDate || null,
+  });
   await saveUsers(users);
 };
 export const updateTask = async (username: string, taskId: string, updated: Partial<UserTask>) => {

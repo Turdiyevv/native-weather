@@ -35,6 +35,8 @@ import ViewTask from "./pages/Tasks/ViewTask";
 import HomePage from "./pages/HomePage";
 import HabitsPage from "./pages/Habits/HabitsPage";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import * as Notifications from "expo-notifications";
+
 
 enableScreens();
 
@@ -60,6 +62,11 @@ const AppNavigator = () => {
         primary: theme.primary,
       },
   };
+  useEffect(() => {
+      (async () => {
+        await Notifications.requestPermissionsAsync();
+      })();
+  }, []);
 
   useEffect(() => {
     let lastState = AppState.currentState;
