@@ -7,7 +7,7 @@ export const themes = {
       text: "#2C2C2E",
       placeholder: "rgba(194,194,195,0.6)",
       subText: "#6E6E73",
-      primary: "#5E5CE6",
+      primary: "#0c7cdd",
       success: "#30B158",
       danger: "#E5533D",
       border: "#D1D1D6",

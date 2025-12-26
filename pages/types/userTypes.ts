@@ -9,7 +9,7 @@ export interface UserTask {
   status: number;
   isDeleted?: boolean;
   files: any[];
-  alarmDate?: Date | any;
+  alarmDate?: string | null;
   notificationId?: string;
   isReturning?: number;
   isReturningAt?: string | null;

@@ -19,6 +19,8 @@ import TaskContextMenu from "../../components/global/TaskContextMenu";
 import { useTheme } from "../../theme/ThemeContext";
 import AdminIcon from "../../assets/admin_icon.png";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as Notifications from "expo-notifications";
+
 export default function MainPage({ navigation }: any) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -55,7 +57,7 @@ export default function MainPage({ navigation }: any) {
     return unsubscribe;
   }, [navigation]);
 
-    const markDone = async (task: UserTask) => {
+  const markDone = async (task: UserTask) => {
       try {
         const activeUser = await getActiveUser();
         if (!activeUser) return;
@@ -73,15 +75,15 @@ export default function MainPage({ navigation }: any) {
       } catch (e) {
         showMessage({ message: String(e), type: "danger" });
       }
-    };
+  };
 
-    let startX = 0;
-    let startY = 0;
-    const handlePressIn = (e: any) => {
-      startX = e.nativeEvent.pageX;
-      startY = e.nativeEvent.pageY;
-    };
-    const editTask = (task: UserTask, initialView: boolean, e?: any) => {
+  let startX = 0;
+  let startY = 0;
+  const handlePressIn = (e: any) => {
+    startX = e.nativeEvent.pageX;
+    startY = e.nativeEvent.pageY;
+  };
+  const editTask = (task: UserTask, initialView: boolean, e?: any) => {
       if (e) {
         const dx = Math.abs(e.nativeEvent.pageX - startX);
         const dy = Math.abs(e.nativeEvent.pageY - startY);
@@ -94,15 +96,74 @@ export default function MainPage({ navigation }: any) {
       }, 0);
     };
 
-
-  // const editTask = (task: UserTask, initialView: boolean) => {
-  //     closeMenu();
-  //     setTimeout(() => {
-  //       navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
-  //     }, 500);
-  // };
-
-
+  const onSetAlarm = async (task: UserTask, date: Date) => {
+      try {
+        const activeUser = await getActiveUser();
+        if (!activeUser) return;
+        if (task.notificationId) {
+          await Notifications.cancelScheduledNotificationAsync(task.notificationId);
+        }
+        const trigger = {
+          type: "date",
+          date,
+        };
+        const notificationId = await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "⏰ Vazifa eslatmasi",
+            body: task.title || "Vaqt bo‘ldi",
+            sound: true,
+          },
+            //@ts-ignore
+          trigger,
+        });
+        await updateTask(activeUser.username, task.id, {
+          alarmDate: date.toISOString(),
+          notificationId,
+        });
+        setTasks(prev =>
+          prev.map(t =>
+            t.id === task.id
+              ? { ...t, alarmDate: date.toISOString(), notificationId }
+              : t
+          )
+        );
+        showMessage({ message: "Alarm saqlandi!", type: "success" });
+      } catch (e) {
+          console.log(e);
+        showMessage({ message: "Alarm xatosi", type: "danger" });
+      }
+  };
+  const onRemoveAlarm = async (task: UserTask) => {
+      try {
+        const activeUser = await getActiveUser();
+        if (!activeUser) return;
+        if (task.notificationId) {
+          await Notifications.cancelScheduledNotificationAsync(task.notificationId);
+        }
+        await updateTask(activeUser.username, task.id, {
+          alarmDate: null,
+          notificationId: null,
+        });
+        setTasks(prev =>
+          prev.map(t =>
+            t.id === task.id
+              ? { ...t, alarmDate: null, notificationId: null }
+              : t
+          )
+        );
+        closeMenu();
+        showMessage({
+          message: "Qo‘ng‘iroq o‘chirildi",
+          type: "success",
+        });
+      } catch (e) {
+        console.log(e);
+        showMessage({
+          message: "Qo‘ng‘iroqni o‘chirishda xato",
+          type: "danger",
+        });
+      }
+  };
   const deleteTaskHandler = async (task: UserTask) => {
     try {
       const activeUser = await getActiveUser();
@@ -134,7 +195,6 @@ export default function MainPage({ navigation }: any) {
     Animated.timing(menuAnim, { toValue: 0, duration: 150, useNativeDriver: false }).start(() => setSelectedTaskId(null));
   };
 
-  // Group tasks by date
   const groupedTasks = tasks
     .filter(t => {
       if (activeTab === "main") return !t.isDeleted && !t.done;
@@ -244,9 +304,8 @@ const onTabPress = (tab: TaskTab) => {
               onDelete={deleteTaskHandler}
               modalVisible={modalVisible}
               setModalVisible={setModalVisible}
-              updateTasksState={(taskId: string, alarmDate: string, notificationId: string) => {
-                setTasks(prev => prev.map(t => t.id === taskId ? { ...t, alarmDate, notificationId } : t));
-              }}
+              onSetAlarm={onSetAlarm}
+              onRemoveAlarm={onRemoveAlarm}
             />
           );
         })()}

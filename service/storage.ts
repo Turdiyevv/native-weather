@@ -71,8 +71,9 @@ export const addTask = async (username: string, task: UserTask) => {
   const idx = users.findIndex((u) => u.username === username);
   if (idx === -1) return;
   users[idx].usertasks.push({
-    ...task,
-    alarmDate: task.alarmDate || null,
+      ...task,
+      alarmDate: task.alarmDate ?? null,
+      notificationId: task.notificationId ?? null,
   });
   await saveUsers(users);
 };

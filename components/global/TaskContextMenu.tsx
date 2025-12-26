@@ -12,7 +12,6 @@ import { UserTask } from "../../pages/types/userTypes";
 import { useTheme } from "../../theme/ThemeContext";
 import * as Notifications from "expo-notifications";
 import DateTimePickerModalComponent from "./DateTimePickerModalComponent";
-import {updateTask} from "../../service/storage";
 import {showMessage} from "react-native-flash-message";
 
 interface Props {
@@ -26,7 +25,8 @@ interface Props {
   onDelete: (task: UserTask) => void;
   modalVisible: boolean;
   setModalVisible: (v: boolean) => void;
-  updateTasksState: (taskId: string, alarmDate: string, notificationId: string) => void;
+  onSetAlarm: (task: UserTask, date: Date) => void;
+  onRemoveAlarm: (task: UserTask) => void;
 }
 
 export default function TaskContextMenu({
@@ -40,7 +40,8 @@ export default function TaskContextMenu({
   onDelete,
   modalVisible,
   setModalVisible,
-  updateTasksState,
+  onSetAlarm,
+  onRemoveAlarm
 }: Props) {
   const { theme } = useTheme();
   const [showPicker, setShowPicker] = React.useState(false);
@@ -62,48 +63,6 @@ export default function TaskContextMenu({
     paddingVertical: 10,
     overflow: "hidden",
   };
-
-    const scheduleAlarm = async (date: Date) => {
-      try {
-        if (task.notificationId) {
-          await Notifications.cancelScheduledNotificationAsync(task.notificationId);
-        }
-        const trigger = {
-          date,
-          type: 'time',
-          channelId: 'default',
-        };
-        const notificationId = await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "⏰ Vazifa eslatmasi",
-            body: task.title || "Vaqt bo'ldi",
-            sound: true,
-          },
-          trigger
-        });
-        await updateTask(task.username, task.id, {
-          alarmDate: date.toISOString(),
-          notificationId,
-        });
-        if (typeof updateTasksState === "function") {
-          updateTasksState(task.id, date.toISOString(), notificationId);
-        }
-        showMessage({
-          message: "Alarm saqlandi!",
-          type: "success",
-          duration: 2000,
-        });
-      } catch (err) {
-        console.log("scheduleAlarm error:", err);
-        showMessage({
-          message: "Alarmni saqlashda xatolik yuz berdi",
-          type: "danger",
-          duration: 2000,
-        });
-      }
-    };
-
-
   return (
     <TouchableOpacity
       style={styles.menuOverlay}
@@ -118,10 +77,18 @@ export default function TaskContextMenu({
             { borderColor: theme.background },
             !!task?.isDeleted && { opacity: 0.4 },
           ]}
-          onPress={() => setShowPicker(true)}
+          onPress={() => {
+            if (task.alarmDate) {
+              onRemoveAlarm(task);
+            } else {
+              setShowPicker(true);
+            }
+          }}
           disabled={!!task?.isDeleted}
         >
-          <Text style={styles.taskTitle}>Qo‘ng‘iroq</Text>
+          <Text style={[styles.taskTitle, {color: !!task.alarmDate ? theme.text : theme.primary }]}>
+              {task.alarmDate ? "Qo'ng'iroqni o'chirish" : "Qo'ng'iroqni o'rnatish"}
+          </Text>
           <Ionicons name="time-outline" size={18} color={theme.text} />
         </TouchableOpacity>
 
@@ -183,16 +150,16 @@ export default function TaskContextMenu({
 
       {/* DateTime picker modal */}
       <DateTimePickerModalComponent
-        isVisible={showPicker}
-        onConfirm={(date) => {
-          setShowPicker(false);
-          scheduleAlarm(date);
-          onClose();
-        }}
-        onCancel={() => {
-          setShowPicker(false);
-          onClose();
-        }}
+          isVisible={showPicker}
+          onConfirm={(date) => {
+            setShowPicker(false);
+            onSetAlarm(task, date);
+            onClose();
+          }}
+          onCancel={() => {
+            setShowPicker(false);
+            onClose();
+          }}
       />
     </TouchableOpacity>
   );
@@ -207,7 +174,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "rgba(0,0,0,0.2)",
   },
-  taskTitle: { fontSize: 16, color: "#007AFF" },
+  taskTitle: { fontSize: 16 },
   menuButtonTitle: {
     paddingTop: 3,
     paddingBottom: 10,

@@ -60,8 +60,8 @@ const ViewPage: React.FC = () => {
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Card */}
-        <Text style={{color: theme.text}}>{JSON.stringify(taskToEdit.alarmDate)}</Text>
-        <Text style={{color: theme.text}}>{JSON.stringify(taskToEdit.notificationId)}</Text>
+        {/*<Text style={{color: theme.text}}>{JSON.stringify(taskToEdit.alarmDate)}</Text>*/}
+        {/*<Text style={{color: theme.text}}>{JSON.stringify(taskToEdit.notificationId)}</Text>*/}
         <View style={[styles.card, {backgroundColor: theme.card, shadowColor: theme.card}]}>
           <View style={{flexDirection: "row",justifyContent: "space-between", alignItems:"center"}}>
               <View>
@@ -101,7 +101,8 @@ const ViewPage: React.FC = () => {
             </TouchableOpacity>
           </View>
           <InfoRow label="Kategoriya" value={taskToEdit?.done ? "Bajarilgan" : "Bajarilmagan"}/>
-          <InfoRow label="Deadline" value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "0000-00-00"}/>
+          <InfoRow label="Deadline" value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "-"}/>
+          <InfoRow label="Qo'ng'iroq" value={taskToEdit.alarmDate ? formatDateTime(taskToEdit.alarmDate) : "-"}/>
           <Text style={{color: theme.placeholder}}>Status</Text>
           <View style={styles.selectsBox}>
             {options.map((option) => (

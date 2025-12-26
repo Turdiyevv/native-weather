@@ -59,6 +59,8 @@ export interface TodoItemProps {
     status?: number;
     isDeleted?: boolean;
     files?: [];
+    alarmDate?: Date | any;
+    notificationId?: string;
   };
   index: number;
   isFirst: boolean;

@@ -60,6 +60,7 @@ export default function TodoItem({ item, onPressIn, onPress, onPressOut, onLongP
         ]}>
             <View style={styles.titleContainer}>
                 <Text style={[styles.text, item.isDeleted && styles.doneText, {color: theme.text}]}>{displayTitle}</Text>
+                {/*<Text style={[styles.text, item.isDeleted && styles.doneText, {color: theme.text}]}>{JSON.stringify(item.alarmDate)}</Text>*/}
             <View style={styles.iconBox}>
               {item.isReturning && item.isReturning > 0 && (
                 <View style={styles.returnCount}>
