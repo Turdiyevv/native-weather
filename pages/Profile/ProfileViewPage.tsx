@@ -28,6 +28,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { exportTasksAsTxt } from "../../service/exportTasks";
 import Header from "../../components/global/Header";
 import ImageViewing from "react-native-image-viewing";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -185,8 +186,7 @@ const loadActiveUser = async () => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.bar} />
+    <SafeAreaView style={{ flex: 1 }}>
       <Header
         title={"Profil"}
         onBack={() => navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainPage" }] }))}
@@ -419,12 +419,11 @@ const loadActiveUser = async () => {
             </View>
           </View>
         </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { height: 35, width: "100%" },
   container: { flexDirection: "row", marginBottom: 10, },
   avatarBase: { backgroundColor: "white", height: 120, width: 120, borderRadius: 12, borderWidth: 2, borderColor: "gray" },
   container2: { alignItems: "flex-start", flex: 1, justifyContent: "flex-end", paddingLeft: 10 },

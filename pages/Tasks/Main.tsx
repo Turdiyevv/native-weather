@@ -18,7 +18,7 @@ import TodoItem from "../../components/Task/TodoItem";
 import TaskContextMenu from "../../components/global/TaskContextMenu";
 import { useTheme } from "../../theme/ThemeContext";
 import AdminIcon from "../../assets/admin_icon.png";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 
 export default function MainPage({ navigation }: any) {
@@ -245,8 +245,7 @@ const onTabPress = (tab: TaskTab) => {
 
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.bar} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
       <View style={[styles.containerLittle, { backgroundColor: theme.background }]}>
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
 
@@ -321,15 +320,13 @@ const onTabPress = (tab: TaskTab) => {
           containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   description: { fontSize: 16, textAlign: "center", marginTop: 15, color: "#555" },
   icon: { width: 200, height: 200, resizeMode: "contain" },
-  bar: { height: 35, width: "100%" },
-  container: { flex: 1 },
   containerLittle: { flex: 1, justifyContent: "flex-start", paddingHorizontal: 10 },
   sectionHeader: { fontSize: 11, fontWeight: "bold", marginVertical: 5 },
 });

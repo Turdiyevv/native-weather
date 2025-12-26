@@ -17,7 +17,7 @@ import ConfirmModal from "../global/ConfirmModal";
 import {UserTask} from "../../pages/types/userTypes";
 import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../global/Header";
 
 
@@ -102,23 +102,19 @@ export default function AddPage({ navigation, route }: any) {
   const handleDeleteConfirm = async () => {
       const activeUser = await getActiveUser();
       if (!activeUser || !taskToEdit) return;
-
       await softDeleteTask(activeUser.username, taskToEdit.id);
-
       showMessage({
         message: "Vazifa o‘chirildi!",
         type: "success",
       });
-
       setIsActive(true);
       setDeleteModalVisible(false);
       navigation.goBack();
   };
 
   return (
-      <View style={[{flex: 1}, {backgroundColor: theme.background}]}>
-          <View style={styles.bar} />
-          <Header title={""}/>
+      <SafeAreaView style={[{flex: 1}, {backgroundColor: theme.background}]}>
+          <Header title={taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
@@ -129,9 +125,6 @@ export default function AddPage({ navigation, route }: any) {
           extraHeight={100 + insets.bottom}
           keyboardShouldPersistTaps="handled"
         >
-            <Text style={[styles.title, {color: theme.text}]}>
-              {taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}
-            </Text>
             {/*<Text style={{color: theme.placeholder}}>{JSON.stringify(taskToEdit, null, 2)}</Text>*/}
 
             <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
@@ -219,12 +212,11 @@ export default function AddPage({ navigation, route }: any) {
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteModalVisible(false)}
         />
-      </View>
+      </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { height: 35, width: "100%" },
   selectsBox: {
     flexDirection: "row",
     alignItems: "center",

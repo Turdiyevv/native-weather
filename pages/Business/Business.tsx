@@ -17,6 +17,7 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
 import Calendar from "../../components/global/Calendar";
 import Header from "../../components/global/Header";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Business">;
 export default function BackdropFilterExample() {
@@ -39,33 +40,33 @@ export default function BackdropFilterExample() {
 
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, {backgroundColor:theme.background}]}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-    >
-      <View style={styles.bar} />
-      <Header title={"Beznis"}/>
-      {/*<ScrollView*/}
-      {/*  contentContainerStyle={styles.scrollContainer}*/}
-      {/*  keyboardShouldPersistTaps="handled"*/}
-      {/*>*/}
-        <View style={styles.header}>
-          <Image source={AdminIcon} style={styles.icon} />
-          <Text style={[styles.description, {color: theme.text}]}>
-            Bu yerda biznesingiz bo'yicha qulay hisobotlar yig'ishingiz mumkin.
-          </Text>
-        </View>
-      {/*</ScrollView>*/}
-        <View style={{marginHorizontal:20, marginBottom: 50}}>
-            <Calendar/>
-        </View>
-    </KeyboardAvoidingView>
+      <SafeAreaView style={{flex: 1}}>
+        <KeyboardAvoidingView
+          style={[styles.container, {backgroundColor:theme.background}]}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
+          <Header title={"Beznis"}/>
+          {/*<ScrollView*/}
+          {/*  contentContainerStyle={styles.scrollContainer}*/}
+          {/*  keyboardShouldPersistTaps="handled"*/}
+          {/*>*/}
+            <View style={styles.header}>
+              <Image source={AdminIcon} style={styles.icon} />
+              <Text style={[styles.description, {color: theme.text}]}>
+                Bu yerda biznesingiz bo'yicha qulay hisobotlar yig'ishingiz mumkin.
+              </Text>
+            </View>
+          {/*</ScrollView>*/}
+            <View style={{marginHorizontal:20, marginBottom: 50}}>
+                <Calendar/>
+            </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { height: 35, width: "100%" },
   container: {
     flex: 1,
   },

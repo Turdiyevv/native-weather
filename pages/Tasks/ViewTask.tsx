@@ -53,16 +53,13 @@ const ViewPage: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      {/* Header */}
-      <View style={styles.bar} />
+    <SafeAreaView style={{flex: 1}}>
       <Header title={"ELement"}/>
-
       <ScrollView contentContainerStyle={styles.content}>
         {/* Card */}
         {/*<Text style={{color: theme.text}}>{JSON.stringify(taskToEdit.alarmDate)}</Text>*/}
         {/*<Text style={{color: theme.text}}>{JSON.stringify(taskToEdit.notificationId)}</Text>*/}
-        <View style={[styles.card, {backgroundColor: theme.card, shadowColor: theme.card}]}>
+        <View style={[styles.card, {backgroundColor: theme.card, shadowColor: "black"}]}>
           <View style={{flexDirection: "row",justifyContent: "space-between", alignItems:"center"}}>
               <View>
                   <Text style={[styles.title, {color: theme.text}]}>{taskToEdit.title}</Text>
@@ -180,18 +177,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 2
   },
-  bar: { height: 35, width: "100%" },
-  safe: {flex: 1},
   label: {
     fontSize: 12,
     marginBottom: 4,
   },
-
-
   content: {
     padding: 16,
   },
-
   card: {
     marginTop: 12,
     borderRadius: 16,
@@ -210,16 +202,13 @@ const styles = StyleSheet.create({
     height: 1,
     marginVertical: 12,
   },
-
   row: {
     marginBottom: 12,
   },
-
   description: {
     fontSize: 14,
     lineHeight: 20,
   },
-
   button: {
     marginLeft: 10,
     flexDirection: "row",
@@ -229,7 +218,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 120,
   },
-
   buttonText: {
     marginRight: 5,
     fontSize: 16,

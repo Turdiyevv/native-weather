@@ -29,7 +29,7 @@ import {
 } from "../../service/business";
 import {formatSum} from "../../utills/utill";
 import BusinessContextMenu from "../../components/Business/BusinessContextMenu";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
 
 
@@ -199,144 +199,144 @@ export default function Business({ route }: Props) {
 
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: theme.background }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-    >
-      <View style={styles.bar} />
-      <Header title={dateStr}/>
-      <View style={styles.container}>
-        <View style={styles.content2}>
-          <Text style={[styles.mainTitle, { color: theme.success }]}>
-            {formatSum(allIncome)}
-          </Text>
-          <Text style={[styles.mainTitle2, { color: summa > 0 ? theme.success : summa < 0 ? theme.danger : theme.text }]}>
-              {summa > 0 ? "+" : summa < 0 ? "" : "" }{formatSum(summa)}
-          </Text>
-          <Text style={[styles.mainTitle, { color: theme.danger }]}>
-            {formatSum(allExpenses)}
-          </Text>
-        </View>
-
-        <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: keyboardOpen ? 20 : 20 + insets.bottom,
-            }}
+      <SafeAreaView>
+        <KeyboardAvoidingView
+          style={{ flex: 1, backgroundColor: theme.background }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
         >
-            {/*<Text>{JSON.stringify(entries, null, 2)}</Text>*/}
-          {entries.map((item, index) => (
-            <TodoItem
-              key={item.id}
-              {...item}
-              index={index}
-              listLength={entries.length}
-              onLongPress={() => openMenu(item)}
-            />
-          ))}
-        </ScrollView>
+          <Header title={dateStr}/>
+          <View style={styles.container}>
+            <View style={styles.content2}>
+              <Text style={[styles.mainTitle, { color: theme.success }]}>
+                {formatSum(allIncome)}
+              </Text>
+              <Text style={[styles.mainTitle2, { color: summa > 0 ? theme.success : summa < 0 ? theme.danger : theme.text }]}>
+                  {summa > 0 ? "+" : summa < 0 ? "" : "" }{formatSum(summa)}
+              </Text>
+              <Text style={[styles.mainTitle, { color: theme.danger }]}>
+                {formatSum(allExpenses)}
+              </Text>
+            </View>
 
-          {selectedEntry && (
-              <BusinessContextMenu
-                entry={selectedEntry}
-                visible={modalVisible}
-                menuAnim={menuAnim}
-                onClose={closeMenu}
-                onEdit={(entry) => {
-                  setEditingEntry(entry);
-                  setAmount(String(entry.total));
-                  setComment(entry.title);
-                  setIsExpense(entry.status);
-                  setShowForm(true);
-                  closeMenu();
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingBottom: keyboardOpen ? 20 : 20 + insets.bottom,
                 }}
-                onDelete={async (entry) => {
-                  const user = await getActiveUser();
-                  if (!user) return;
-                  await deleteBusinessEntry(user.username, dateStr, entry.id);
-                  const list = await getBusinessEntriesByDate(user.username, dateStr);
-                  setEntries(list);
-                  calculateTotals(list);
-                  closeMenu();
-                }}
-              />
-          )}
-
-        <View style={{ paddingBottom: keyboardOpen ? 0 : insets.bottom }}>
-          <View style={styles.exchangeBar}>
-            <TouchableOpacity
-              onPress={() => {
-                setIsExpense(false);
-                setShowForm(true);
-              }}
-              style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
             >
-              <View style={styles.exchangeContent}>
-                <Text style={{ color: theme.text }}>Kirim</Text>
-                <Ionicons name="trending-down-outline" size={24} color="#50C878" style={styles.scale} />
-              </View>
-            </TouchableOpacity>
+                {/*<Text>{JSON.stringify(entries, null, 2)}</Text>*/}
+              {entries.map((item, index) => (
+                <TodoItem
+                  key={item.id}
+                  {...item}
+                  index={index}
+                  listLength={entries.length}
+                  onLongPress={() => openMenu(item)}
+                />
+              ))}
+            </ScrollView>
 
-            <TouchableOpacity
-              onPress={() => {
-                setIsExpense(true);
-                setShowForm(true);
-              }}
-              style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
-            >
-              <View style={styles.exchangeContent}>
-                <Text style={{ color: theme.text }}>Chiqim</Text>
-                <Ionicons name="trending-up-outline" size={24} color="#EB4C42" />
-              </View>
-            </TouchableOpacity>
-          </View>
+              {selectedEntry && (
+                  <BusinessContextMenu
+                    entry={selectedEntry}
+                    visible={modalVisible}
+                    menuAnim={menuAnim}
+                    onClose={closeMenu}
+                    onEdit={(entry) => {
+                      setEditingEntry(entry);
+                      setAmount(String(entry.total));
+                      setComment(entry.title);
+                      setIsExpense(entry.status);
+                      setShowForm(true);
+                      closeMenu();
+                    }}
+                    onDelete={async (entry) => {
+                      const user = await getActiveUser();
+                      if (!user) return;
+                      await deleteBusinessEntry(user.username, dateStr, entry.id);
+                      const list = await getBusinessEntriesByDate(user.username, dateStr);
+                      setEntries(list);
+                      calculateTotals(list);
+                      closeMenu();
+                    }}
+                  />
+              )}
 
-          {showForm && (
-            <View style={[styles.formContainer, { backgroundColor: theme.card }]}>
-              <View style={styles.formHeader}>
-                <Text style={{ color: theme.text }}>
-                  {isExpense ? "Chiqim" : "Kirim"}
-                </Text>
-                <TouchableOpacity onPress={dismissForm}>
-                  <Ionicons name="close-circle" size={24} color={theme.text} />
+            <View style={{ paddingBottom: keyboardOpen ? 0 : insets.bottom }}>
+              <View style={styles.exchangeBar}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsExpense(false);
+                    setShowForm(true);
+                  }}
+                  style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
+                >
+                  <View style={styles.exchangeContent}>
+                    <Text style={{ color: theme.text }}>Kirim</Text>
+                    <Ionicons name="trending-down-outline" size={24} color="#50C878" style={styles.scale} />
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsExpense(true);
+                    setShowForm(true);
+                  }}
+                  style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
+                >
+                  <View style={styles.exchangeContent}>
+                    <Text style={{ color: theme.text }}>Chiqim</Text>
+                    <Ionicons name="trending-up-outline" size={24} color="#EB4C42" />
+                  </View>
                 </TouchableOpacity>
               </View>
 
-              <TextField
-                label="Summa"
-                value={amount}
-                onChangeText={setAmount}
-                keyboardType="numeric"
-                sumFormat={true}
-                required
-              />
+              {showForm && (
+                <View style={[styles.formContainer, { backgroundColor: theme.card }]}>
+                  <View style={styles.formHeader}>
+                    <Text style={{ color: theme.text }}>
+                      {isExpense ? "Chiqim" : "Kirim"}
+                    </Text>
+                    <TouchableOpacity onPress={dismissForm}>
+                      <Ionicons name="close-circle" size={24} color={theme.text} />
+                    </TouchableOpacity>
+                  </View>
 
-              <TextField
-                label="Izoh"
-                value={comment}
-                onChangeText={setComment}
-              />
+                  <TextField
+                    label="Summa"
+                    value={amount}
+                    onChangeText={setAmount}
+                    keyboardType="numeric"
+                    sumFormat={true}
+                    required
+                  />
 
-              <TouchableOpacity
-                style={[
-                  styles.saveBtn,
-                  { backgroundColor: isExpense ? "#EB4C42" : "#50C878" },
-                ]}
-                onPress={onSave}
-              >
-                <Text style={styles.saveText}>Saqlash</Text>
-              </TouchableOpacity>
+                  <TextField
+                    label="Izoh"
+                    value={comment}
+                    onChangeText={setComment}
+                  />
+
+                  <TouchableOpacity
+                    style={[
+                      styles.saveBtn,
+                      { backgroundColor: isExpense ? "#EB4C42" : "#50C878" },
+                    ]}
+                    onPress={onSave}
+                  >
+                    <Text style={styles.saveText}>Saqlash</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
-          )}
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { height: 35, width: "100%" },
   exchangeContent: {
     flexDirection: "row",
     alignItems: "center",

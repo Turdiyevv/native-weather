@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Header from "../../components/global/Header";
 import { RootStackParamList } from "../types/types";
 import Star from "../../components/Task/Star";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 type DescRouteProp = RouteProp<RootStackParamList, "DescStyle">;
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "DescStyle">;
@@ -16,26 +17,25 @@ const DescStyle: React.FC = () => {
   const description = route.params.description;
 
   return (
-      <View style={styles.background}>
-        {/*<ImageBackground*/}
-        {/*   source={require("../../assets/background2.jpg")}  background rasmi yo‘li*/}
-        {/*   style={styles.background}*/}
-        {/*   resizeMode="cover"*/}
-        {/* >*/}
-           {Array.from({ length: 50 }).map((_, i) => (
-                <Star key={i} />
-           ))}
-          <View style={[styles.bar, {backgroundColor: theme.background}]} />
-          <Header title={"Elementni ko'rish"} />
-          <View style={styles.textContainer}>
-              <View style={[styles.textSmContainer, {backgroundColor: theme.background}]}>
-                  <Text style={[styles.text, { color: theme.text }]}>{description}</Text>
-                  <Text style={[styles.textLink, { color: theme.placeholder }]}>@turdiyevline</Text>
+      <SafeAreaView style={{flex: 1}}>
+          <View style={styles.background}>
+            {/*<ImageBackground*/}
+            {/*   source={require("../../assets/background2.jpg")}  background rasmi yo‘li*/}
+            {/*   style={styles.background}*/}
+            {/*   resizeMode="cover"*/}
+            {/* >*/}
+               {Array.from({ length: 50 }).map((_, i) => (
+                    <Star key={i} />
+               ))}
+              <Header title={"Elementni ko'rish"} />
+              <View style={styles.textContainer}>
+                  <View style={[styles.textSmContainer, {backgroundColor: theme.background}]}>
+                      <Text style={[styles.text, { color: theme.text }]}>{description}</Text>
+                      <Text style={[styles.textLink, { color: theme.placeholder }]}>@turdiyevline</Text>
+                  </View>
               </View>
-          </View>
-
-
-    </View>    // </ImageBackground>
+        </View>
+      </SafeAreaView>
   );
 };
 
@@ -46,10 +46,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-  },
-  bar: {
-    height: 35,
-    width: "100%",
   },
   textContainer: {
       flex: 1,

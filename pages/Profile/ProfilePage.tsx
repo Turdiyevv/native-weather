@@ -21,7 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 // ⚡ Storage services
 import { getActiveUser, loadUsers, saveUsers } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
+import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
@@ -157,78 +157,78 @@ export default function ProfilePage() {
   };
 
   return (
-    <KeyboardAvoidingView
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      style={{ flex: 1, backgroundColor: theme.background }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={styles.bar} />
-      <Header title={"Tahrirlash"}/>
-      <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[styles.container, {backgroundColor: theme.background, paddingBottom: 20 + insets.bottom}]}>
-        <View style={styles.picBox}>
-          <TouchableOpacity onPress={chooseAvatar} style={styles.picBoxCH}>
-            <Image
-              source={{ uri: avatar || placeholderImage }}
-              style={[styles.avatar, {backgroundColor: theme.card}]}
-            />
-            <Text style={[styles.changeText, {color: theme.text}]}>Rasmni o‘zgartirish</Text>
+      <SafeAreaView style={{flex: 1}}>
+        <KeyboardAvoidingView
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+          style={{ flex: 1, backgroundColor: theme.background }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <Header title={"Tahrirlash"}/>
+          <ScrollView
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={[styles.container, {backgroundColor: theme.background, paddingBottom: 20 + insets.bottom}]}>
+            <View style={styles.picBox}>
+              <TouchableOpacity onPress={chooseAvatar} style={styles.picBoxCH}>
+                <Image
+                  source={{ uri: avatar || placeholderImage }}
+                  style={[styles.avatar, {backgroundColor: theme.card}]}
+                />
+                <Text style={[styles.changeText, {color: theme.text}]}>Rasmni o‘zgartirish</Text>
 
-            {avatar ? (
-              <TouchableOpacity onPress={deleteAvatar} style={styles.trash}>
-                <Ionicons name="trash-outline" size={24} color="red" />
+                {avatar ? (
+                  <TouchableOpacity onPress={deleteAvatar} style={styles.trash}>
+                    <Ionicons name="trash-outline" size={24} color="red" />
+                  </TouchableOpacity>
+                ) : null}
               </TouchableOpacity>
-            ) : null}
-          </TouchableOpacity>
-        </View>
+            </View>
 
-        <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
-          <TextField
-            label="Ism"
-            value={firstName}
-            onChangeText={setFirstName}
-            placeholder="Ism"
-          />
-          <TextField
-            label="Familiya"
-            value={lastName}
-            onChangeText={setLastName}
-            placeholder="Familiya"
-          />
-          <TextField
-            label="Telefon raqam"
-            value={phone}
-            onChangeText={setPhone}
-            placeholder="+998..."
-            keyboardType="phone-pad"
-          />
-          <TextField
-            label="Faoliyat turi"
-            value={job}
-            onChangeText={setJob}
-            placeholder="Faoliyat turi"
-          />
-          <TextField
-            label="Izoh"
-            value={description}
-            minHeight={100}
-            onChangeText={setDescription}
-            placeholder="Izoh..."
-            multiline
-          />
-        </View>
+            <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
+              <TextField
+                label="Ism"
+                value={firstName}
+                onChangeText={setFirstName}
+                placeholder="Ism"
+              />
+              <TextField
+                label="Familiya"
+                value={lastName}
+                onChangeText={setLastName}
+                placeholder="Familiya"
+              />
+              <TextField
+                label="Telefon raqam"
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="+998..."
+                keyboardType="phone-pad"
+              />
+              <TextField
+                label="Faoliyat turi"
+                value={job}
+                onChangeText={setJob}
+                placeholder="Faoliyat turi"
+              />
+              <TextField
+                label="Izoh"
+                value={description}
+                minHeight={100}
+                onChangeText={setDescription}
+                placeholder="Izoh..."
+                multiline
+              />
+            </View>
 
-        <TouchableOpacity style={[styles.saveButton, {backgroundColor: theme.primary}]} onPress={saveProfile}>
-          <Text style={[styles.saveText, {color: "#fff"}]}>Saqlash</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <TouchableOpacity style={[styles.saveButton, {backgroundColor: theme.primary}]} onPress={saveProfile}>
+              <Text style={[styles.saveText, {color: "#fff"}]}>Saqlash</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  bar: { height: 35, width: "100%" },
   picBox: {
     alignItems: "center",
     justifyContent: "flex-end",
