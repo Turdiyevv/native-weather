@@ -1,5 +1,4 @@
 export interface UserTask {
-  username: string;
   id: string;
   title: string;
   description: string;

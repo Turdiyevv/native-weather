@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Animated,
-  Dimensions,
-  BackHandler,
-  Image
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    ScrollView,
+    Animated,
+    Dimensions,
+    BackHandler,
+    Image, Vibration, Modal
 } from "react-native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -45,7 +45,7 @@ export function ProfileViewPage() {
   const [statusColor, setStatusColor] = useState("");
   const [passwordBoxVisible, setPasswordBoxVisible] = useState(false);
   const [borderStyle, setBorderStyle] = useState({});
-  const { setTheme } = useTheme();
+  const { setTheme, themeName } = useTheme();
 
   const [files, setFiles] = useState<any[]>([]);
   const [previewIndex, setPreviewIndex] = useState<number>(0);
@@ -217,43 +217,56 @@ const loadActiveUser = async () => {
           </View>
         </View>
         <View style={[styles.infoBox, { backgroundColor: theme.card }]}>
+          <View style={styles.settingsText}>
+            <Ionicons name="person-outline" size={20} color={theme.text} />
+            <Text style={[styles.settingsTitle, { color: theme.text }]}>Profil</Text>
+          </View>
+          <Text style={[styles.label, { color: theme.placeholder }]}>Telefon:</Text>
+          <Text style={[styles.value, { color: theme.text }]}>{user?.phone}</Text>
+          <Text style={[styles.label, { color: theme.placeholder }]}>Faoliyat:</Text>
+          <Text style={[styles.value, { color: theme.text }]}>{user?.job}</Text>
+          <Text style={[styles.label, { color: theme.placeholder }]}>Izoh:</Text>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            delayLongPress={1800}
+            onLongPress={() => {
+                Vibration.vibrate(30);
+                navigation.navigate("DescStyle", {description: user.description})
+            }}>
+            <Text style={[styles.value, { color: theme.text }]}>{user?.description}</Text>
+          </TouchableOpacity>
           <View style={styles.btns}>
             <TouchableOpacity
-              style={[styles.editButton, { backgroundColor: theme.success }]}
+              style={[styles.editButton, { backgroundColor: theme.border }]}
               onPress={() => navigation.navigate("ProfileEdit")}
             >
-              <Text style={[styles.editText, { color: theme.border }]}>Tahrirlash</Text>
-              <Ionicons name="pencil" size={16} color={theme.border} />
+              <Text style={[styles.editText, { color: theme.primary }]}>Tahrirlash</Text>
+              <Ionicons name="pencil" size={16} color={theme.primary} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.outButton, { backgroundColor: theme.danger }]}
+              style={[styles.outButton, { backgroundColor: theme.border }]}
               onPress={() => setModalVisible(true)}
             >
-              <Text style={[styles.outText, { color: theme.border }]}>Chiqish</Text>
-              <Ionicons name="log-out" size={20} color={theme.border} />
+              <Text style={[styles.outText, { color: theme.danger }]}>Chiqish</Text>
+              <Ionicons name="log-out" size={20} color={theme.danger} />
             </TouchableOpacity>
           </View>
-          <Text style={[styles.label, { color: theme.text }]}>Telefon:</Text>
-          <Text style={[styles.value, { color: theme.text }]}>{user?.phone}</Text>
-
-          <Text style={[styles.label, { color: theme.text }]}>Faoliyat:</Text>
-          <Text style={[styles.value, { color: theme.text }]}>{user?.job}</Text>
-
-          <Text style={[styles.label, { color: theme.text }]}>Izoh:</Text>
-          <Text style={[styles.value, { color: theme.text }]}>{user?.description}</Text>
         </View>
 
         <View style={[styles.infoBox, { backgroundColor: theme.card }]}>
-          <Text style={[styles.label, { color: theme.text, marginBottom: 10 }]}>Foydalanuvchilar:</Text>
+          <View style={styles.settingsText}>
+            <Ionicons name="people-outline" size={20} color={theme.text} />
+            <Text style={[styles.settingsTitle, { color: theme.text }]}>Foydalanuvchilar</Text>
+          </View>
             <View style={styles.themeBox}>
               {users.map((u) => (
                 <TouchableOpacity
                   key={u.username}
-                  style={[styles.themeBtn, { backgroundColor: user?.username === u.username ? theme.success : theme.placeholder }]}
+                  style={[styles.themeBtn, {backgroundColor: theme.border}, { borderColor: user?.username === u.username ? theme.success : theme.placeholder }]}
                   onPress={() => switchActiveUser(u.username)}
                 >
                   <Text style={{ color: theme.text }}>
-                    {u.firstName} {u.lastName} @{u.username}
+                     @{u.username}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -263,33 +276,18 @@ const loadActiveUser = async () => {
 
         <View style={[styles.infoBox, { backgroundColor: theme.card }]}>
           <View style={styles.settingsText}>
-            <Ionicons name="settings" size={20} color={theme.text} />
+            <Ionicons name="settings-outline" size={20} color={theme.text} />
             <Text style={[styles.settingsTitle, { color: theme.text }]}>Sozlamalar</Text>
           </View>
-          <View style={styles.themeBox}>
-            <TouchableOpacity style={[styles.themeBtn, { backgroundColor: theme.placeholder }]} onPress={() => setTheme("dark")}>
-              <Text style={{ color: theme.text }}>Tungi</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.themeBtn, { backgroundColor: theme.placeholder }]} onPress={() => setTheme("light")}>
-              <Text style={{ color: theme.text }}>Kunduzgi</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.themeBtn, { backgroundColor: theme.placeholder }]} onPress={() => setTheme("blue")}>
-              <Text style={{ color: theme.text }}>Ko'k</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.themeBtn, { backgroundColor: theme.placeholder }]} onPress={() => setTheme("orange")}>
-              <Text style={{ color: theme.text }}>Mandarin</Text>
-            </TouchableOpacity>
-          </View>
 
-          <TouchableOpacity onPress={exportTasksAsTxt} style={{ padding: 10, marginTop: 10, backgroundColor: theme.primary, borderRadius: 8 }}>
-            <Text style={{ color: "#fff" }}>Vazifalarni yuklab olish</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={openPasswordBox}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>• Oson kirish kodi</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Support")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>• Biz haqimizda.</Text>
-          </TouchableOpacity>
+          <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+              <TouchableOpacity onPress={openPasswordBox}>
+                <Text style={[styles.loginCode, { color: theme.text }]}>• Oson kirish kodi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={removePasswordCode}>
+                <Text style={styles.deleteText}>Kodni o‘chirish</Text>
+              </TouchableOpacity>
+          </View>
           <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>• Chat bo'limi</Text>
           </TouchableOpacity>
@@ -302,61 +300,40 @@ const loadActiveUser = async () => {
           <TouchableOpacity onPress={() => navigation.navigate("Habits")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>• Daromad</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={deleteAccount}>
-            <Text style={[styles.deleteText, { color: theme.danger }]}>Hisobni butunlay o'chirish</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Support")}>
+            <Text style={[styles.loginCode, { color: theme.text }]}>• Biz haqimizda.</Text>
           </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={removePasswordCode}>
-          <Text style={styles.deleteCode}>🗑 Kodni o‘chirish</Text>
-        </TouchableOpacity>
-        {passwordBoxVisible && (
-          <View style={styles.infoBox}>
-            <PasswordCodeInput
-              onComplete={async (code) => {
-                setPasswordCode(code);
-                const activeUser = await getActiveUser();
-                if (!activeUser) return;
-                const users = await loadUsers();
-                const isTaken = users.some(
-                  u => u.username !== activeUser.username && u.passwordCode === code
-                );
-                if (isTaken) {
-                  setStatusTitle("⚠ Allaqachon egallangan");
-                  setBorderStyle({ borderColor: "orange" });
-                  setStatusColor("orange");
-                  setTimeout(() => {
-                    setBorderStyle({});
-                    setStatusTitle("");
-                    setStatusColor("");
-                  }, 1000);
-                  return;
-                }
-                const updatedUsers = users.map(u =>
-                  u.username === activeUser.username
-                    ? { ...u, passwordCode: code }
-                    : u
-                );
-                await saveUsers(updatedUsers);
-                setStatusTitle("✔ Tasdiqlandi");
-                setBorderStyle({ borderColor: "green" });
-                setStatusColor("green");
-                setTimeout(() => {
-                  setBorderStyle({});
-                  setStatusTitle("");
-                  setStatusColor("");
-                  openPasswordBox();
-                }, 1000);
-              }}
-              title={statusTitle}
-              color={statusColor}
-              autoSubmit={false}
-              borderStyle={borderStyle}
-            />
-            <TouchableOpacity onPress={openPasswordBox}>
-              <Text style={styles.closeBox}>Yopish ⛔️</Text>
+
+          <View style={styles.themeBox}>
+            <TouchableOpacity
+                style={[styles.themeBtn, { backgroundColor: theme.border }, {borderColor: themeName === "dark" ? theme.success : "transparent"}]}
+                onPress={() => setTheme("dark")}>
+              <Text style={{ color: theme.text }}>Tungi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.themeBtn, { backgroundColor: theme.border }, {borderColor: themeName === "light" ? theme.success : "transparent"}]}
+                onPress={() => setTheme("light")}>
+              <Text style={{ color: theme.text }}>Kunduzgi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.themeBtn, { backgroundColor: theme.border }, {borderColor: themeName === "blue" ? theme.success : "transparent"}]}
+                onPress={() => setTheme("blue")}>
+              <Text style={{ color: theme.text }}>Ko'k</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.themeBtn, { backgroundColor: theme.border }, {borderColor: themeName === "orange" ? theme.success : "transparent"}]}
+                onPress={() => setTheme("orange")}>
+              <Text style={{ color: theme.text }}>Mandarin</Text>
             </TouchableOpacity>
           </View>
-        )}
+
+          <TouchableOpacity onPress={exportTasksAsTxt} style={[ styles.download, { borderColor: theme.primary}]}>
+            <Text style={{ color: theme.primary }}>Vazifalarni yuklab olish</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={deleteAccount}>
+            <Text style={[styles.deleteText]}><Text style={{marginRight: 5}}>•</Text>Hisobni butunlay o'chirish</Text>
+          </TouchableOpacity>
+        </View>
         <ConfirmModal
           visible={modalVisible}
           message="Ishonchingiz komilmi?"
@@ -381,6 +358,67 @@ const loadActiveUser = async () => {
         swipeToCloseEnabled
         doubleTapToZoomEnabled
       />
+        <Modal
+          visible={passwordBoxVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setPasswordBoxVisible(false)}
+        >
+          <View style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.8)",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 20
+          }}>
+            <View style={[styles.infoBox, { width: "100%", backgroundColor: theme.bgsound, borderRadius: 12 }]}>
+              <PasswordCodeInput
+                onComplete={async (code) => {
+                    setPasswordCode(code);
+                    const activeUser = await getActiveUser();
+                    if (!activeUser) return;
+                    const users = await loadUsers();
+                    const isTaken = users.some(
+                      u => u.username !== activeUser.username && u.passwordCode === code
+                    );
+                    if (isTaken) {
+                      setStatusTitle("⚠ Allaqachon egallangan");
+                      setBorderStyle({ borderColor: "orange" });
+                      setStatusColor("orange");
+                      setTimeout(() => {
+                        setBorderStyle({});
+                        setStatusTitle("");
+                        setStatusColor("");
+                      }, 1000);
+                      return;
+                    }
+                    const updatedUsers = users.map(u =>
+                      u.username === activeUser.username
+                        ? { ...u, passwordCode: code }
+                        : u
+                    );
+                    await saveUsers(updatedUsers);
+                    setStatusTitle("✔ Tasdiqlandi");
+                    setBorderStyle({ borderColor: "green" });
+                    setStatusColor("green");
+                    setTimeout(() => {
+                      setBorderStyle({});
+                      setStatusTitle("");
+                      setStatusColor("");
+                      openPasswordBox();
+                    }, 1000);
+                }}
+                title={statusTitle}
+                color={statusColor}
+                autoSubmit={false}
+                borderStyle={borderStyle}
+              />
+              <TouchableOpacity style={{marginTop: 20}} onPress={() => setPasswordBoxVisible(false)}>
+                <Text style={styles.closeBox}>Yopish</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
     </View>
   );
 }
@@ -390,19 +428,13 @@ const styles = StyleSheet.create({
   container: { flexDirection: "row", marginBottom: 10, },
   avatarBase: { backgroundColor: "white", height: 120, width: 120, borderRadius: 12, borderWidth: 2, borderColor: "gray" },
   container2: { alignItems: "flex-start", flex: 1, justifyContent: "flex-end", paddingLeft: 10 },
-
-  deleteCode: {
-    marginTop: 10,
-    color: "red",
-    textAlign: "center",
-    fontWeight: "600",
-  },
   title: { fontSize: 20, fontWeight: "bold" },
   username: { fontSize: 14, color: "#666" },
   themeBox: {
-    flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-start", gap: 10,
+    flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-start", gap: 10, marginTop: 10
   },
   themeBtn: {
+    borderBottomWidth: 2,
     borderRadius: 5,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -411,11 +443,12 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 15,
     borderRadius: 12,
-    marginBottom: 30
+    marginBottom: 10
   },
   label: { fontSize: 16, fontWeight: "bold", marginTop: 10 },
   value: { fontSize: 16, color: "#333" },
   btns: {
+    marginTop: 10,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -441,9 +474,10 @@ const styles = StyleSheet.create({
   editText: { fontSize: 14 },
   outText: { fontSize: 14 },
   settings: { marginTop: 20 },
+  download: {paddingHorizontal: 10, paddingVertical: 5, marginTop: 10, borderWidth: 1,  borderRadius: 8},
   settingsText: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginBottom: 8 },
-  settingsTitle: { fontSize: 18, marginLeft: 3 },
-  loginCode: { color: "blue", fontSize: 17, marginTop: 10 },
-  deleteText: { fontSize: 17, textDecorationLine: "underline", marginTop: 10 },
-  closeBox: { color: "red", fontSize: 16, marginTop: 6, justifyContent: "center", marginHorizontal: "auto" },
+  settingsTitle: { fontSize: 16, marginLeft: 3 },
+  loginCode: { color: "blue", fontSize: 15, marginTop: 10 },
+  deleteText: {fontWeight: 600, textDecorationLine: "underline", marginTop: 10, color: "red" },
+  closeBox: { color: "red", fontSize: 16, justifyContent: "center", marginHorizontal: "auto" },
 });

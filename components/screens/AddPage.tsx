@@ -84,6 +84,8 @@ export default function AddPage({ navigation, route }: any) {
           status: selected,
           isDeleted: isActive,
           files: attachments,
+          alarmDate: null,
+          notificationId: null
         };
 
         await addTask(activeUser.username, newTask);

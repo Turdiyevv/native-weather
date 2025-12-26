@@ -69,27 +69,40 @@ const AppNavigator = () => {
   }, []);
 
   useEffect(() => {
-    let lastState = AppState.currentState;
+      const subscription = AppState.addEventListener("change", async (nextState) => {
+        if (global.filePickerOpen) return;
+        // background / inactive → vaqtni saqlaymiz
+        if (nextState === "background" || nextState === "inactive") {
+          lastTimeRef.current = Date.now();
+        }
+        // app qayta active bo‘lganda
+        if (nextState === "active") {
+          const diff = Date.now() - lastTimeRef.current;
 
-    const sub = AppState.addEventListener("change", async (nextState) => {
-      if (global.filePickerOpen) return;
-      if (nextState === "background" || nextState === "inactive") {
-        lastTimeRef.current = Date.now();
-      }
-      if (lastState !== "active" && nextState === "active") {
-        const diff = Date.now() - lastTimeRef.current;
-        if (diff > 10000) { // 10 sekunddan ko'p background bo'lsa
-          const activeUserStr = await AsyncStorage.getItem("activeUser");
-          const activeUser = activeUserStr ? JSON.parse(activeUserStr) : null;
-          if (activeUser?.passwordCode) {
-            navigationRef.current?.navigate("LoginCodePage");
+          if (diff > 10000) { // 10 sekunddan oshsa
+            try {
+              const activeUsername = await AsyncStorage.getItem("activeUser");
+              const usersStr = await AsyncStorage.getItem("users");
+
+              if (!activeUsername || !usersStr) return;
+
+              const users = JSON.parse(usersStr);
+              const activeUser = users.find(
+                (u: any) => u.username === activeUsername
+              );
+
+              if (activeUser?.passwordCode) {
+                navigationRef.current?.navigate("LoginCodePage");
+              }
+            } catch (err) {
+              console.log("AppState lock error:", err);
+            }
           }
         }
-      }
-      lastState = nextState;
-    });
-    return () => sub.remove();
-  }, []);
+      });
+      return () => subscription.remove();
+    }, []);
+
   useEffect(() => {
   (async () => {
     try {
@@ -97,12 +110,10 @@ const AppNavigator = () => {
       const usersStr = await AsyncStorage.getItem("users");
       const users = usersStr ? JSON.parse(usersStr) : [];
       const activeUser = users.find((u: any) => u.username === activeUsername);
-
       if (!activeUser) {
         setInitialRoute("LoginPage");
         return;
       }
-
       if (activeUser.passwordCode) {
         setInitialRoute("LoginCodePage");
       } else {
