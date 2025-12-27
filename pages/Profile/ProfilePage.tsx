@@ -5,10 +5,9 @@ import {
     Image,
     StyleSheet,
     TouchableOpacity,
-    KeyboardAvoidingView,
     Platform,
     ScrollView,
-    BackHandler,
+    BackHandler, Keyboard,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import TextField from "../../components/global/TextField";
@@ -23,6 +22,7 @@ import { getActiveUser, loadUsers, saveUsers } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 
@@ -36,25 +36,32 @@ export default function ProfilePage() {
   const [job, setJob] = useState("");
   const [description, setDescription] = useState("");
   const [avatar, setAvatar] = useState("");
-
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const placeholderImage = "https://via.placeholder.com/150";
 
-  // 🔙 Telefon ortga tugmasi
+  useEffect(() => {
+      const showSub = Keyboard.addListener("keyboardDidShow", e => {
+        setKeyboardHeight(e.endCoordinates.height);
+      });
+      const hideSub = Keyboard.addListener("keyboardDidHide", () => {
+        setKeyboardHeight(0);
+      });
+      return () => {
+        showSub.remove();
+        hideSub.remove();
+      };
+  }, []);
   useEffect(() => {
     const backAction = () => {
       navigation.navigate("ProfileView");
       return true;
     };
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-
     return () => backHandler.remove();
   }, []);
-
-  // 📌 Profilni yuklash — **storage.ts** orqali
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -79,7 +86,6 @@ export default function ProfilePage() {
 
     loadProfile();
   }, []);
-
   const chooseAvatar = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
@@ -88,13 +94,11 @@ export default function ProfilePage() {
     }
     try {
       global.filePickerOpen = true;
-
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         quality: 0.7,
       });
-
       if (!result.canceled) {
         setAvatar(result.assets[0].uri);
       }
@@ -102,7 +106,6 @@ export default function ProfilePage() {
       global.filePickerOpen = false;
     }
   };
-
   const deleteAvatar = () => {
     setAvatar("");
     showMessage({
@@ -110,14 +113,11 @@ export default function ProfilePage() {
       type: "info",
     });
   };
-
   const saveProfile = async () => {
     try {
       const active = await getActiveUser();
       if (!active) return;
-
       const users = await loadUsers();
-
       // yangi userinfo
       const updatedUser = {
         ...active,
@@ -134,14 +134,11 @@ export default function ProfilePage() {
       const updatedUsers = users.map((u) =>
         u.username === active.username ? updatedUser : u
       );
-
       await saveUsers(updatedUsers);
-
       showMessage({
         message: "Ma'lumot saqlandi!",
         type: "success",
       });
-
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -155,19 +152,21 @@ export default function ProfilePage() {
       });
     }
   };
-
   return (
       <SafeAreaView style={{flex: 1}}>
           <Header title={"Tahrirlash"}/>
-        <KeyboardAvoidingView
-            // keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-          style={{ flex: 1, backgroundColor: theme.background }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        <KeyboardAwareScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 5,
+          paddingHorizontal: 10 }}
+          enableOnAndroid={true}
+          extraScrollHeight={keyboardHeight + 110 + insets.bottom}
+          // extraHeight={keyboardHeight + 100 + insets.bottom}
+          keyboardShouldPersistTaps="handled"
         >
-          <ScrollView
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={[styles.container, {backgroundColor: theme.background}]}>
-            <View style={styles.picBox}>
+            <View>
               <TouchableOpacity onPress={chooseAvatar} style={styles.picBoxCH}>
                 <Image
                   source={{ uri: avatar || placeholderImage }}
@@ -182,7 +181,6 @@ export default function ProfilePage() {
                 ) : null}
               </TouchableOpacity>
             </View>
-
             <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
               <TextField
                 label="Ism"
@@ -218,21 +216,15 @@ export default function ProfilePage() {
                 multiline
               />
             </View>
-
             <TouchableOpacity style={[styles.saveButton, {backgroundColor: theme.primary}]} onPress={saveProfile}>
               <Text style={[styles.saveText, {color: "#fff"}]}>Saqlash</Text>
             </TouchableOpacity>
-          </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  picBox: {
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
   picBoxCH: {
     position: "relative",
     borderRadius: 12,
@@ -247,12 +239,8 @@ const styles = StyleSheet.create({
     padding: 4,
     marginBottom: 11,
   },
-  container: {
-    flexGrow: 1,
-    justifyContent: "flex-end",
-    padding: 10,
-  },
   containerInputs: {
+    marginTop:20,
     borderRadius: 10,
     padding: 10,
   },

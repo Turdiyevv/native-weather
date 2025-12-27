@@ -200,11 +200,11 @@ export default function Business({ route }: Props) {
 
   return (
       <SafeAreaView style={{flex: 1}}>
+        <Header title={dateStr}/>
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: theme.background }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <Header title={dateStr}/>
           <View style={styles.container}>
             <View style={styles.content2}>
               <Text style={[styles.mainTitle, { color: theme.success }]}>
@@ -217,7 +217,6 @@ export default function Business({ route }: Props) {
                 {formatSum(allExpenses)}
               </Text>
             </View>
-
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ borderRadius: 12}}
@@ -233,7 +232,6 @@ export default function Business({ route }: Props) {
                 />
               ))}
             </ScrollView>
-
               {selectedEntry && (
                   <BusinessContextMenu
                     entry={selectedEntry}
@@ -259,7 +257,6 @@ export default function Business({ route }: Props) {
                     }}
                   />
               )}
-
             <View>
               <View style={styles.exchangeBar}>
                 <TouchableOpacity
@@ -342,13 +339,13 @@ const styles = StyleSheet.create({
   scale: {
     transform: [{ scaleX: -1 }],
   },
-  container: { flex: 1, paddingHorizontal: 20 },
+  container: { flex: 1, paddingHorizontal: 10 },
   content2: { flexDirection: "row", flexWrap: "wrap", paddingVertical: 10, alignItems: "center", justifyContent: "space-between", },
   mainTitle: { fontSize: 12, textAlign: "center", fontWeight: "bold" },
   mainTitle2: { fontSize: 12, textAlign: "center", alignItems: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },
   exchangeBar: { flexDirection: "row", height: 50, marginVertical: 10 },
   exchangeBtn: { flex: 1, borderRadius: 10, marginHorizontal: 4, alignItems: "center", justifyContent: "center" },
-  formContainer: { padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
+  formContainer: { padding: 10, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   formHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
   saveBtn: { padding: 15, borderRadius: 12, alignItems: "center", marginTop: 10 },
   saveText: { color: "#fff", fontWeight: "bold", fontSize: 16 },

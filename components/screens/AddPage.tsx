@@ -120,13 +120,12 @@ export default function AddPage({ navigation, route }: any) {
           contentContainerStyle={{
           flexGrow: 1,
           paddingBottom: 5,
-          justifyContent: "flex-end", paddingTop: 40, paddingHorizontal: 10 }}
+          justifyContent: "flex-end", paddingHorizontal: 10 }}
           enableOnAndroid={true}
           extraHeight={100 + insets.bottom}
           keyboardShouldPersistTaps="handled"
         >
             {/*<Text style={{color: theme.placeholder}}>{JSON.stringify(taskToEdit, null, 2)}</Text>*/}
-
             <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
               <TextField
                 label="Vazifa"
@@ -154,14 +153,12 @@ export default function AddPage({ navigation, route }: any) {
                 ))}
               </View>
             </View>
-
             <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
               <FilePickerComponent
                   onChange={setAttachments}
                   initialFiles={taskToEdit ? taskToEdit.files : []}
               />
             </View>
-
             <View style={styles.deadlineContainer}>
               <TouchableOpacity
                 style={[styles.dateButton, {backgroundColor: theme.card}]}
@@ -193,19 +190,16 @@ export default function AddPage({ navigation, route }: any) {
                 }}
               />
             )}
-
             {taskToEdit && !taskToEdit.isDeleted &&(
                 <View style={[styles.row, {marginBottom:10}]}>
                   <Toggle value={isActive} onChange={modalVisible} />
                   <Text style={{marginLeft: 10, color: "#fb5151"}}>O'chirish</Text>
                 </View>
             )}
-
             <TouchableOpacity style={[styles.addButton, {backgroundColor: theme.primary}]} onPress={saveTask}>
               <Text style={[styles.addText, {color: "#fff"}]}>{taskToEdit ? "Saqlash" : "Qo‘shish"}</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
-
         <ConfirmModal
           visible={deleteModalVisible}
           message="Hisobni butunlay o‘chirmoqchimisiz?"

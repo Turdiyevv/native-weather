@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
       shadowOffset: { width: 0, height: 6 },
       shadowOpacity: 0.5,
       shadowRadius: 10,
-      elevation: 60,
-    },
+      elevation: 40,
+  },
     text: {
       fontSize: 16,
       lineHeight: 30,

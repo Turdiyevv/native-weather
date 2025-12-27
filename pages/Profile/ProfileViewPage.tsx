@@ -162,19 +162,28 @@ const loadActiveUser = async () => {
   }
 
   const removePasswordCode = async () => {
-    const activeUser = await getActiveUser();
-    if (!activeUser) return;
-    const users = await loadUsers();
-    const updatedUsers = users.map(u =>
-      u.username === activeUser.username
-        ? { ...u, passwordCode: null }
-        : u
-    );
-    await saveUsers(updatedUsers);
-    showMessage({
-      message: "Tezkor kod o‘chirildi!",
-      type: "success",
-    });
+      const activeUser = await getActiveUser();
+      if (!activeUser) return;
+      const users = await loadUsers();
+      const currentUser = users.find(u => u.username === activeUser.username);
+      if (!currentUser) return;
+      if (!currentUser.passwordCode) {
+        showMessage({
+          message: "Tezkor kod mavjud emas!",
+          type: "warning",
+        });
+        return;
+      }
+      const updatedUsers = users.map(u =>
+        u.username === activeUser.username
+          ? { ...u, passwordCode: null }
+          : u
+      );
+      await saveUsers(updatedUsers);
+      showMessage({
+        message: "Tezkor kod o‘chirildi!",
+        type: "success",
+      });
   };
 
   const openPreview = (uri: string) => {
@@ -331,7 +340,7 @@ const loadActiveUser = async () => {
             <Text style={{ color: theme.primary }}>Vazifalarni yuklab olish</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={deleteAccount} style={{marginTop: 10}}>
-            <Text style={{color: theme.danger}}><Text>• </Text>Hisobni butunlay o'chirish</Text>
+            <Text style={{color: theme.danger, fontWeight: "bold"}}><Text>• </Text>Hisobni butunlay o'chirish</Text>
           </TouchableOpacity>
         </View>
         <ConfirmModal
@@ -414,7 +423,7 @@ const loadActiveUser = async () => {
                 borderStyle={borderStyle}
               />
               <TouchableOpacity style={{marginTop: 20}} onPress={() => setPasswordBoxVisible(false)}>
-                <Text style={styles.closeBox}>Yopish</Text>
+                <Text style={[styles.closeBox, {color: theme.danger}]}>Yopish</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -478,5 +487,5 @@ const styles = StyleSheet.create({
   settingsTitle: { fontSize: 16, marginLeft: 3 },
   loginCode: { color: "blue", fontSize: 15, marginTop: 10 },
   deleteText: {fontWeight: 600, textDecorationLine: "underline", marginTop: 10 },
-  closeBox: { color: "red", fontSize: 16, justifyContent: "center", marginHorizontal: "auto" },
+  closeBox: { fontSize: 16, justifyContent: "center", marginHorizontal: "auto" },
 });
