@@ -248,7 +248,6 @@ const onTabPress = (tab: TaskTab) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
       <View style={[styles.containerLittle, { backgroundColor: theme.background }]}>
         <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
-
         {hasTasks ? (
           <Animated.View
               style={{
@@ -258,8 +257,8 @@ const onTabPress = (tab: TaskTab) => {
               }}
             >
               <SectionList
-                contentContainerStyle={{ paddingBottom: BOTTOM_BAR_HEIGHT + insets.bottom + 16 }}
-                style={{ marginBottom: 40, borderRadius: 12 }}
+                contentContainerStyle={{ paddingBottom: BOTTOM_BAR_HEIGHT }}
+                style={{ marginBottom: 30, borderRadius: 12 }}
                 sections={groupedTasks}
                 keyExtractor={(item) => item.id}
                 renderSectionHeader={({ section }) => (
@@ -311,11 +310,11 @@ const onTabPress = (tab: TaskTab) => {
 
         <LeftMenu
           buttons={[
-            { icon: "list-outline", onPress: () => onTabPress("main"), size: 24, color: activeTab === "main" ? "#fff" : theme.background },
-            { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 24, color: activeTab === "done" ? "#fff" : theme.background },
-            { icon: "trash-outline", onPress: () => onTabPress("deleted"), size: 22, color: activeTab === "deleted" ? "#fff" : theme.background },
-            { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 22, color: theme.background },
-            { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto", color: theme.background},
+            { icon: "list-outline", onPress: () => onTabPress("main"), size: 24, color: activeTab === "main" ? "#fff" : "transparent" },
+            { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 24, color: activeTab === "done" ? "#fff" : "transparent" },
+            { icon: "trash-outline", onPress: () => onTabPress("deleted"), size: 22, color: activeTab === "deleted" ? "#fff" : "transparent" },
+            { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 22, color: "transparent" },
+            { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto", color: "transparent"},
           ]}
           containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}
         />

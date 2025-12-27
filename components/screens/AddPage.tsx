@@ -119,7 +119,7 @@ export default function AddPage({ navigation, route }: any) {
           style={{ flex: 1 }}
           contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: 30 + insets.bottom,
+          paddingBottom: 5,
           justifyContent: "flex-end", paddingTop: 40, paddingHorizontal: 10 }}
           enableOnAndroid={true}
           extraHeight={100 + insets.bottom}

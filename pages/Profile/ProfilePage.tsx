@@ -158,15 +158,15 @@ export default function ProfilePage() {
 
   return (
       <SafeAreaView style={{flex: 1}}>
+          <Header title={"Tahrirlash"}/>
         <KeyboardAvoidingView
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+            // keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
           style={{ flex: 1, backgroundColor: theme.background }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <Header title={"Tahrirlash"}/>
           <ScrollView
               keyboardShouldPersistTaps="handled"
-              contentContainerStyle={[styles.container, {backgroundColor: theme.background, paddingBottom: 20 + insets.bottom}]}>
+              contentContainerStyle={[styles.container, {backgroundColor: theme.background}]}>
             <View style={styles.picBox}>
               <TouchableOpacity onPress={chooseAvatar} style={styles.picBoxCH}>
                 <Image

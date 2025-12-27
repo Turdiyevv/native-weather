@@ -193,7 +193,7 @@ const loadActiveUser = async () => {
       />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingTop: 20, marginHorizontal: 10, paddingBottom: 30 }}
+        contentContainerStyle={{ paddingTop: 20, marginHorizontal: 10 }}
         showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View>
@@ -285,7 +285,7 @@ const loadActiveUser = async () => {
                 <Text style={[styles.loginCode, { color: theme.text }]}>• Oson kirish kodi</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={removePasswordCode}>
-                <Text style={styles.deleteText}>Kodni o‘chirish</Text>
+                <Text style={[styles.deleteText, {color: theme.danger}]}>Kodni o‘chirish</Text>
               </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
@@ -330,8 +330,8 @@ const loadActiveUser = async () => {
           <TouchableOpacity onPress={exportTasksAsTxt} style={[ styles.download, { borderColor: theme.primary}]}>
             <Text style={{ color: theme.primary }}>Vazifalarni yuklab olish</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={deleteAccount}>
-            <Text style={[styles.deleteText]}><Text style={{marginRight: 5}}>•</Text>Hisobni butunlay o'chirish</Text>
+          <TouchableOpacity onPress={deleteAccount} style={{marginTop: 10}}>
+            <Text style={{color: theme.danger}}><Text>• </Text>Hisobni butunlay o'chirish</Text>
           </TouchableOpacity>
         </View>
         <ConfirmModal
@@ -477,6 +477,6 @@ const styles = StyleSheet.create({
   settingsText: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginBottom: 8 },
   settingsTitle: { fontSize: 16, marginLeft: 3 },
   loginCode: { color: "blue", fontSize: 15, marginTop: 10 },
-  deleteText: {fontWeight: 600, textDecorationLine: "underline", marginTop: 10, color: "red" },
+  deleteText: {fontWeight: 600, textDecorationLine: "underline", marginTop: 10 },
   closeBox: { color: "red", fontSize: 16, justifyContent: "center", marginHorizontal: "auto" },
 });

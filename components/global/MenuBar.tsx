@@ -15,7 +15,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
       style={[
         styles.wrapper,
         {
-          bottom: insets.bottom,
+          bottom: 10,
         },
       ]}
     >
@@ -35,7 +35,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             key={idx}
             style={[
               styles.sideButton,
-              { backgroundColor: theme.bgsound },
+              { backgroundColor: theme.bgsound, borderColor: btn.color, borderWidth: 1 },
               btn.marginLeft ? { marginLeft: btn.marginLeft } : null,
             ]}
             onPress={btn.onPress}
@@ -43,7 +43,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             <Ionicons
               name={btn.icon as any}
               size={btn.size || 24}
-              color={btn.color || theme.text}
+              color={theme.text}
             />
           </TouchableOpacity>
         ))}
@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
     position: "absolute", // 🔥 ENG MUHIM
     left: 10,
     right: 10,
-    height: 65,
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     backgroundColor: "rgba(18,18,18,0.001)",

@@ -199,11 +199,10 @@ export default function Business({ route }: Props) {
 
 
   return (
-      <SafeAreaView>
+      <SafeAreaView style={{flex: 1}}>
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: theme.background }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
         >
           <Header title={dateStr}/>
           <View style={styles.container}>
@@ -221,9 +220,7 @@ export default function Business({ route }: Props) {
 
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                  paddingBottom: keyboardOpen ? 20 : 20 + insets.bottom,
-                }}
+                contentContainerStyle={{ borderRadius: 12}}
             >
                 {/*<Text>{JSON.stringify(entries, null, 2)}</Text>*/}
               {entries.map((item, index) => (
@@ -263,7 +260,7 @@ export default function Business({ route }: Props) {
                   />
               )}
 
-            <View style={{ paddingBottom: keyboardOpen ? 0 : insets.bottom }}>
+            <View>
               <View style={styles.exchangeBar}>
                 <TouchableOpacity
                   onPress={() => {
@@ -349,7 +346,7 @@ const styles = StyleSheet.create({
   content2: { flexDirection: "row", flexWrap: "wrap", paddingVertical: 10, alignItems: "center", justifyContent: "space-between", },
   mainTitle: { fontSize: 12, textAlign: "center", fontWeight: "bold" },
   mainTitle2: { fontSize: 12, textAlign: "center", alignItems: "center", fontWeight: "bold", backgroundColor: "#1b2f42", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 7 },
-  exchangeBar: { flexDirection: "row", height: 50, marginTop: 10, marginBottom: 24 },
+  exchangeBar: { flexDirection: "row", height: 50, marginVertical: 10 },
   exchangeBtn: { flex: 1, borderRadius: 10, marginHorizontal: 4, alignItems: "center", justifyContent: "center" },
   formContainer: { padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20 },
   formHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
