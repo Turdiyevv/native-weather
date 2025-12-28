@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {BusinessItem, User, UserInfo, UserTask} from "../pages/types/userTypes";
+import { User, UserInfo, UserTask} from "../pages/types/userTypes";
 import {ThemeName} from "../theme/theme";
 
 export const loadUsers = async (): Promise<User[]> => {

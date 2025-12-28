@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Chat: undefined;
   Support: undefined;
   Habits: undefined;
+  AddHabit: undefined;
   Business: undefined;
   LoginCodePage: undefined;
   DescStyle: { description: string };

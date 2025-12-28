@@ -37,6 +37,15 @@ export interface BusinessItem {
   calendar: BusinessEntry[];
 }
 
+export type HabitStatus = 0 | 1 | 2;
+export interface Habit {
+  id: string;
+  name: string;
+  durationDays: number;
+  notificationTime: string;
+  status: HabitStatus;
+  createdAt: string;
+}
 export interface User {
   username: string;
   password: string;
@@ -44,6 +53,7 @@ export interface User {
   userinfo: UserInfo;
   usertasks: UserTask[];
   business?: BusinessItem[];
+  habits?: Habit[];
 }
 export interface CustomHeaderProps {
   firstName?: string;

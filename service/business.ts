@@ -5,10 +5,6 @@ export const generateId = () =>
 import { BusinessItem, BusinessEntry, User } from "../pages/types/userTypes";
 import { loadUsers, saveUsers } from "./storage";
 
-/**
- * 📌 Kun uchun BusinessItem olib keladi
- * bo‘lmasa — yaratadi
- */
 export const getOrCreateBusinessByDate = async (
   username: string,
   date: string // masalan: "2025-12-18"
@@ -36,9 +32,6 @@ export const getOrCreateBusinessByDate = async (
   return item;
 };
 
-/**
- * ➕ BusinessEntry qo‘shish
- */
 export const addBusinessEntry = async (
   username: string,
   date: string,
@@ -73,9 +66,6 @@ export const addBusinessEntry = async (
   await saveUsers(users);
 };
 
-/**
- * ✏️ BusinessEntry update
- */
 export const updateBusinessEntry = async (
   username: string,
   date: string,
@@ -96,9 +86,6 @@ export const updateBusinessEntry = async (
   await saveUsers(users);
 };
 
-/**
- * ❌ BusinessEntry ochirish
- */
 export const deleteBusinessEntry = async (
   username: string,
   date: string,
@@ -116,9 +103,6 @@ export const deleteBusinessEntry = async (
   await saveUsers(users);
 };
 
-/**
- * 📖 Kun bo‘yicha barcha entrylar
- */
 export const getBusinessEntriesByDate = async (
   username: string,
   date: string

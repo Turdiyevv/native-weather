@@ -34,6 +34,7 @@ import {
 import ViewTask from "./pages/Tasks/ViewTask";
 import HomePage from "./pages/HomePage";
 import HabitsPage from "./pages/Habits/HabitsPage";
+import AddHabit from "./pages/Habits/AddHabit";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import * as Notifications from "expo-notifications";
 
@@ -147,6 +148,7 @@ const AppNavigator = () => {
               <Stack.Screen name="Chat" component={ChatPage} />
               <Stack.Screen name="Support" component={SupportPage} />
               <Stack.Screen name="Habits" component={HabitsPage} />
+              <Stack.Screen name="AddHabit" component={AddHabit} />
               <Stack.Screen name="Business" component={Business} />
               <Stack.Screen name="AddPage" component={AddPage} />
               <Stack.Screen name="ViewTask" component={ViewTask} />

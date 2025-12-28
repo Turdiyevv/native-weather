@@ -29,24 +29,22 @@ export default function BackdropFilterExample() {
       navigation.goBack();
       return true;
     };
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-
     return () => backHandler.remove();
   }, []);
 
 
   return (
       <SafeAreaView style={{flex: 1}}>
+          <Header title={"Beznis"}/>
         <KeyboardAvoidingView
           style={[styles.container, {backgroundColor:theme.background}]}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
         >
-          <Header title={"Beznis"}/>
           {/*<ScrollView*/}
           {/*  contentContainerStyle={styles.scrollContainer}*/}
           {/*  keyboardShouldPersistTaps="handled"*/}

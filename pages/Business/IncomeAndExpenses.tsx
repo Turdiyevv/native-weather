@@ -144,9 +144,7 @@ export default function Business({ route }: Props) {
     const loadData = async () => {
       const user = await getActiveUser();
       if (!user) return;
-      // BusinessItem yo‘q bo‘lsa yaratadi
       await getOrCreateBusinessByDate(user.username, dateStr);
-      // Shu kun entrylarini olib keladi
       const list = await getBusinessEntriesByDate(
         user.username,
         dateStr
