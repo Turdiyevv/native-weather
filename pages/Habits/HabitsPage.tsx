@@ -8,7 +8,7 @@ import {
   ScrollView,
   BackHandler,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -52,6 +52,11 @@ const HabitsPage: React.FC = () => {
       }
   };
 
+  useFocusEffect(
+      React.useCallback(() => {
+        loadHabits();
+      }, [])
+  );
   /* 🔙 Back handler */
   useEffect(() => {
     const backAction = () => {
@@ -204,15 +209,16 @@ const HabitsPage: React.FC = () => {
                             padding:5,
                             width: "100%",
                         }}>
-                          {habit.habitDays.map(day => (
+                          {habit.habitDays.map((day, index) => (
                             <View key={day.id} style={{
                                 marginBottom: 6,
                                 flexDirection: "row",
                                 justifyContent: "space-between"
                             }}>
-                              <Text style={{ color: theme.text, fontSize: 12 }}>
-                                {day.date}
-                              </Text>
+                                <View style={{flexDirection: "row"}}>
+                                    <Text style={{ color: theme.placeholder, fontSize: 12, marginRight: 4 }}>{index +1}</Text>
+                                    <Text style={{ color: theme.text, fontSize: 12 }}>{day.date}</Text>
+                                </View>
                                 <View style={{flexDirection: "row", alignItems: "center"}}>
                                   <Text style={{ color: theme.text, fontSize: 12 }}>
                                     {day.status === 0 ? "Kutilmoqda" : day.status === 1 ? "Bajarildi" : "Qoldirildi"}

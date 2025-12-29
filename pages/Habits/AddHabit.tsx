@@ -17,6 +17,7 @@ import { RootStackParamList } from "../types/types";
 import { useTheme } from "../../theme/ThemeContext";
 import { addHabit } from "../../service/habits";
 import { getActiveUser } from "../../service/storage";
+import {showMessage} from "react-native-flash-message";
 
 type AddHabitNav = NativeStackNavigationProp<
   RootStackParamList,
@@ -42,12 +43,17 @@ const AddHabitPage: React.FC = () => {
 
   const saveHabit = async () => {
     if (!name.trim()) {
-      Alert.alert("Xato", "Odat nomini kiriting");
+      showMessage({
+        message: "Odat nomini kiriting !",
+        type: "warning",
+      });
       return;
     }
     const days = Number(durationDays);
-    if (!Number.isInteger(days) || days <= 0) {
-      Alert.alert("Xato", "Davomiylik (kun) noto‘g‘ri");
+    if (!Number.isInteger(days) || days <= 0) {showMessage({
+        message: "Davomiylik (kun) noto‘g‘ri !",
+        type: "warning",
+      });
       return;
     }
     const user = await getActiveUser();
