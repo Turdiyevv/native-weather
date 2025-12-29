@@ -37,14 +37,20 @@ export interface BusinessItem {
   calendar: BusinessEntry[];
 }
 
-export type HabitStatus = 0 | 1 | 2;
+export type HabitStatus = 0 | 1 | 2; // 0 - pending, 1 - done, 2 - skipped
+export interface HabitDay {
+  id: string;
+  habitId: string;
+  date: string;
+  notificationTime: string;
+  status: HabitStatus;
+}
 export interface Habit {
   id: string;
   name: string;
   durationDays: number;
-  notificationTime: string;
-  status: HabitStatus;
   createdAt: string;
+  habitDays: HabitDay[];
 }
 export interface User {
   username: string;

@@ -1,60 +1,133 @@
-import {loadUsers, saveUsers} from "./storage";
-import {Habit, HabitStatus} from "../pages/types/userTypes";
-import {generateId} from "./business";
+import { loadUsers, saveUsers } from "./storage";
+import { Habit, HabitDay, HabitStatus } from "../pages/types/userTypes";
+import { generateId } from "./business";
 
-export const getHabits = async (
-  username: string
-): Promise<Habit[]> => {
+/* ===================== GET ===================== */
+
+export const getHabits = async (username: string): Promise<Habit[]> => {
   const users = await loadUsers();
   const user = users.find(u => u.username === username);
-  if (!user) return [];
-  return user.habits || [];
+  return user?.habits || [];
 };
+
+export const getHabitDays = async (
+  username: string,
+  habitId: string
+): Promise<HabitDay[]> => {
+  const users = await loadUsers();
+  const user = users.find(u => u.username === username);
+  const habit = user?.habits?.find(h => h.id === habitId);
+  return habit?.habitDays || [];
+};
+
+/* ===================== ADD ===================== */
+
 export const addHabit = async (
   username: string,
-  habit: Omit<Habit, "id" | "status" | "createdAt">
+  data: {
+    name: string;
+    durationDays: number;
+    notificationTime: string;
+  }
 ) => {
   const users = await loadUsers();
   const userIndex = users.findIndex(u => u.username === username);
   if (userIndex === -1) return;
-  const habits = users[userIndex].habits || [];
+
+  const createdAt = new Date().toISOString();
+
+  const habitDays: HabitDay[] = [];
+
+  for (let i = 0; i < data.durationDays; i++) {
+    const date = new Date(createdAt);
+    date.setDate(date.getDate() + i);
+
+    habitDays.push({
+      id: generateId(),
+      habitId: "", // keyin to‘ldiriladi
+      date: date.toISOString().split("T")[0],
+      notificationTime: data.notificationTime,
+      status: 0,
+    });
+  }
+
+  const habitId = generateId();
+
   const newHabit: Habit = {
-    id: generateId(),
-    name: habit.name,
-    durationDays: habit.durationDays,
-    notificationTime: habit.notificationTime,
-    status: 0,
-    createdAt: new Date().toISOString(),
+    id: habitId,
+    name: data.name,
+    durationDays: data.durationDays,
+    createdAt,
+    habitDays: habitDays.map(d => ({
+      ...d,
+      habitId,
+    })),
   };
-  habits.push(newHabit);
-  users[userIndex].habits = habits;
+
+  users[userIndex].habits = [
+    ...(users[userIndex].habits || []),
+    newHabit,
+  ];
+
   await saveUsers(users);
 };
+
+/* ===================== UPDATE HABIT ===================== */
+
 export const updateHabit = async (
   username: string,
   habitId: string,
-  updated: Partial<Habit>
+  updated: Partial<Omit<Habit, "habitDays">>
 ) => {
   const users = await loadUsers();
   const userIndex = users.findIndex(u => u.username === username);
   if (userIndex === -1) return;
-  const habits = users[userIndex].habits || [];
-  users[userIndex].habits = habits.map(h =>
+
+  users[userIndex].habits = (users[userIndex].habits || []).map(h =>
     h.id === habitId ? { ...h, ...updated } : h
   );
+
   await saveUsers(users);
 };
-export const updateHabitStatus = async (
+
+/* ===================== UPDATE DAY STATUS ===================== */
+
+export const updateHabitDayStatus = async (
   username: string,
   habitId: string,
+  habitDayId: string,
   status: HabitStatus
 ) => {
   const users = await loadUsers();
   const userIndex = users.findIndex(u => u.username === username);
   if (userIndex === -1) return;
-  const habits = users[userIndex].habits || [];
-  users[userIndex].habits = habits.map(h =>
-    h.id === habitId ? { ...h, status } : h
-  );
+
+  users[userIndex].habits = (users[userIndex].habits || []).map(habit => {
+    if (habit.id !== habitId) return habit;
+
+    return {
+      ...habit,
+      habitDays: habit.habitDays.map(day =>
+        day.id === habitDayId ? { ...day, status } : day
+      ),
+    };
+  });
+
+  await saveUsers(users);
+};
+
+/* ===================== DELETE ===================== */
+
+export const deleteHabit = async (
+  username: string,
+  habitId: string
+) => {
+  const users = await loadUsers();
+  const userIndex = users.findIndex(u => u.username === username);
+  if (userIndex === -1) return;
+
+  users[userIndex].habits =
+    (users[userIndex].habits || []).filter(h => h.id !== habitId);
+
   await saveUsers(users);
 };

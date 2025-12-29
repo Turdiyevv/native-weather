@@ -162,7 +162,7 @@ export default function ProfilePage() {
           paddingBottom: 5,
           paddingHorizontal: 10 }}
           enableOnAndroid={true}
-          extraScrollHeight={keyboardHeight + 110 + insets.bottom}
+          extraScrollHeight={keyboardHeight + 160 + insets.bottom}
           // extraHeight={keyboardHeight + 100 + insets.bottom}
           keyboardShouldPersistTaps="handled"
         >

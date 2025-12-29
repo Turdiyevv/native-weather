@@ -25,7 +25,7 @@ export const themes = {
       text: "#E6E6E8",
       placeholder: "rgba(150,150,155,0.55)",
       subText: "#9A9AA0",
-      primary: "#6161f8",
+      primary: "#2196F3",
       success: "#4ECB8F",
       danger: "#ed3928",
       border: "#2C2C2E",

@@ -37,6 +37,7 @@ import HabitsPage from "./pages/Habits/HabitsPage";
 import AddHabit from "./pages/Habits/AddHabit";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import * as Notifications from "expo-notifications";
+import Earnings from "./pages/Earnings/Earnings";
 
 
 enableScreens();
@@ -150,6 +151,7 @@ const AppNavigator = () => {
               <Stack.Screen name="Habits" component={HabitsPage} />
               <Stack.Screen name="AddHabit" component={AddHabit} />
               <Stack.Screen name="Business" component={Business} />
+              <Stack.Screen name="Earnings" component={Earnings} />
               <Stack.Screen name="AddPage" component={AddPage} />
               <Stack.Screen name="ViewTask" component={ViewTask} />
               <Stack.Screen name="DescStyle" component={DescStyle} />

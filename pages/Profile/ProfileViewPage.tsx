@@ -306,7 +306,7 @@ const loadActiveUser = async () => {
           <TouchableOpacity onPress={() => navigation.navigate("Habits")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>• Odatlar bo'limi</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Habits")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Earnings")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>• Daromad</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Support")}>

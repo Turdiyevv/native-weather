@@ -9,13 +9,14 @@ import {
   KeyboardAvoidingView,
   Alert,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { RootStackParamList } from "../types/types";
 import { useTheme } from "../../theme/ThemeContext";
-import {addHabit} from "../../service/habits";
-import {getActiveUser} from "../../service/storage";
+import { addHabit } from "../../service/habits";
+import { getActiveUser } from "../../service/storage";
 
 type AddHabitNav = NativeStackNavigationProp<
   RootStackParamList,
@@ -25,10 +26,19 @@ type AddHabitNav = NativeStackNavigationProp<
 const AddHabitPage: React.FC = () => {
   const { theme } = useTheme();
   const navigation = useNavigation<AddHabitNav>();
+
   const [name, setName] = useState("");
   const [durationDays, setDurationDays] = useState("");
-  const [notificationTime, setNotificationTime] = useState("08:00");
+  const [time, setTime] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  /* ⏰ HH:MM format */
+  const formatTime = (date: Date) => {
+    const h = String(date.getHours()).padStart(2, "0");
+    const m = String(date.getMinutes()).padStart(2, "0");
+    return `${h}:${m}`;
+  };
 
   const saveHabit = async () => {
     if (!name.trim()) {
@@ -36,7 +46,7 @@ const AddHabitPage: React.FC = () => {
       return;
     }
     const days = Number(durationDays);
-    if (!days || days <= 0) {
+    if (!Number.isInteger(days) || days <= 0) {
       Alert.alert("Xato", "Davomiylik (kun) noto‘g‘ri");
       return;
     }
@@ -46,8 +56,9 @@ const AddHabitPage: React.FC = () => {
     await addHabit(user.username, {
       name: name.trim(),
       durationDays: days,
-      notificationTime,
+      notificationTime: formatTime(time),
     });
+
     setSaving(false);
     navigation.goBack();
   };
@@ -58,6 +69,7 @@ const AddHabitPage: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.form}>
+        {/* NAME */}
         <Text style={[styles.label, { color: theme.text }]}>
           Odat nomi
         </Text>
@@ -69,6 +81,7 @@ const AddHabitPage: React.FC = () => {
           style={[styles.input, { color: theme.text }]}
         />
 
+        {/* DAYS */}
         <Text style={[styles.label, { color: theme.text }]}>
           Necha kun davom etadi
         </Text>
@@ -81,16 +94,34 @@ const AddHabitPage: React.FC = () => {
           style={[styles.input, { color: theme.text }]}
         />
 
+        {/* TIME PICKER */}
         <Text style={[styles.label, { color: theme.text }]}>
           Bildirishnoma vaqti
         </Text>
-        <TextInput
-          value={notificationTime}
-          onChangeText={setNotificationTime}
-          placeholder="08:00"
-          style={[styles.input, { color: theme.text }]}
-        />
 
+        <TouchableOpacity
+          style={[styles.timeBtn, {borderColor: theme.border}]}
+          onPress={() => setShowPicker(true)}
+        >
+          <Text style={{color: theme.text }}>
+            ⏰ {formatTime(time)}
+          </Text>
+        </TouchableOpacity>
+
+        {showPicker && (
+          <DateTimePicker
+            value={time}
+            mode="time"
+            is24Hour
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={(_, selectedDate) => {
+              setShowPicker(false);
+              if (selectedDate) setTime(selectedDate);
+            }}
+          />
+        )}
+
+        {/* SAVE */}
         <TouchableOpacity
           style={[
             styles.saveBtn,
@@ -116,7 +147,15 @@ const AddHabitPage: React.FC = () => {
 };
 
 export default AddHabitPage;
+
+
 const styles = StyleSheet.create({
+  timeBtn: {
+      borderWidth: 1,
+      borderRadius: 8,
+      padding: 12,
+      justifyContent: "center",
+  },
   container: { flex: 1 },
   form: { padding: 20 },
 

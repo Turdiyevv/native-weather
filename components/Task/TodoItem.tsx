@@ -80,15 +80,15 @@ export default function TodoItem({ item, onPressIn, onPress, onPressOut, onLongP
                     color="#4CAF50"
                     style={{marginLeft:1}}
                   />
-                )}
-                {(item.isDeleted && !item.done || deadlineColor === "#fa5d5d") && (
+              )}
+              {(item.isDeleted && !item.done || deadlineColor === "#fa5d5d") && (
                   <Ionicons
                     name="alert-circle"
                     size={22}
                     color="grey"
                     style={{marginLeft:1}}
                   />
-                )}
+              )}
               {item.isDeleted &&(
                 <Ionicons
                   name="trash-outline"

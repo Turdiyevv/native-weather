@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {
   View,
   Text,
@@ -7,27 +7,52 @@ import {
   Image,
   ScrollView,
   BackHandler,
-  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { useTheme } from "../../theme/ThemeContext";
 import { RootStackParamList } from "../types/types";
 import AdminIcon from "../../assets/admin_icon.png";
-import {Habit} from "../types/userTypes";
-import {getHabits, updateHabitStatus} from "../../service/habits";
+import { Habit } from "../types/userTypes";
+import {
+  getHabits,
+  updateHabitDayStatus,
+} from "../../service/habits";
 import Header from "../../components/global/Header";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {getActiveUser} from "../../service/storage";
+import { getActiveUser } from "../../service/storage";
+import { Animated, Pressable } from "react-native";
+import {Ionicons} from "@expo/vector-icons";
 
 type HabitsNav = NativeStackNavigationProp<RootStackParamList, "Habits">;
+
 const HabitsPage: React.FC = () => {
   const { theme } = useTheme();
   const navigation = useNavigation<HabitsNav>();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔙 Back handler
+  const [openedHabitId, setOpenedHabitId] = useState<string | null>(null);
+  const scaleAnim = useRef(new Animated.Value(0)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+
+  const toggleHabitView = (habitId: string) => {
+      if (openedHabitId === habitId) {
+        Animated.parallel([
+          Animated.timing(scaleAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
+          Animated.timing(opacityAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
+        ]).start(() => setOpenedHabitId(null));
+      } else {
+        setOpenedHabitId(habitId);
+        Animated.parallel([
+          Animated.timing(scaleAnim, { toValue: 1, duration: 250, useNativeDriver: true }),
+          Animated.timing(opacityAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
+        ]).start();
+      }
+  };
+
+  /* 🔙 Back handler */
   useEffect(() => {
     const backAction = () => {
       navigation.goBack();
@@ -40,7 +65,7 @@ const HabitsPage: React.FC = () => {
     return () => backHandler.remove();
   }, []);
 
-  // 📦 Load habits
+  /* 📦 Load habits */
   const loadHabits = async () => {
     setLoading(true);
     const user = await getActiveUser();
@@ -49,32 +74,37 @@ const HabitsPage: React.FC = () => {
     setHabits(data);
     setLoading(false);
   };
+
   useEffect(() => {
     loadHabits();
   }, []);
 
-  // 🔄 Status change
+  /* 📅 Bugungi kun */
+  const today = new Date().toISOString().split("T")[0];
+
+  /* 🔄 Status change (BUGUNGI KUN UCHUN) */
   const changeStatus = async (
     habitId: string,
+    habitDayId: string,
     status: 1 | 2
   ) => {
     const user = await getActiveUser();
     if (!user) return;
-    await updateHabitStatus(user.username, habitId, status);
+    await updateHabitDayStatus(
+      user.username,
+      habitId,
+      habitDayId,
+      status
+    );
     loadHabits();
   };
 
-  // if (loading) {
-  //   return (
-  //     <View style={[styles.center, { backgroundColor: theme.background }]}>
-  //       <ActivityIndicator size="large" />
-  //     </View>
-  //   );
-  // }
-
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Header title={"Odatlar"}/>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
+      <Header title="Odatlar" />
+
       <ScrollView contentContainerStyle={styles.scroll}>
         {habits.length === 0 || loading ? (
           <View style={styles.empty}>
@@ -84,34 +114,148 @@ const HabitsPage: React.FC = () => {
             </Text>
           </View>
         ) : (
-          habits.map(habit => (
-            <View key={habit.id} style={[styles.card, {backgroundColor: theme.card}]}>
-              <Text style={[styles.name, {color: theme.text}]}>{habit.name}</Text>
-              <Text style={styles.meta}>
-                {habit.durationDays} kun • ⏰ {habit.notificationTime}
-              </Text>
+          habits.map(habit => {
+            const todayDay = habit?.habitDays?.find(
+              d => d.date === today
+            );
 
-              <View style={styles.actions}>
-                <TouchableOpacity
-                  style={[styles.btn, styles.done]}
-                  onPress={() => changeStatus(habit.id, 1)}
-                >
-                  <Text style={styles.btnText}>Bajarildi</Text>
-                </TouchableOpacity>
+            return (
+              <View
+                key={habit.id}
+                style={[styles.card, { backgroundColor: theme.card }]}
+              >
+                <Text style={[styles.name, { color: theme.text }]}>
+                  {habit.name}
+                </Text>
+                <Text style={styles.meta}>
+                  {habit.durationDays} kun
+                  {todayDay && ` • ⏰ ${todayDay.notificationTime}`}
+                </Text>
 
-                <TouchableOpacity
-                  style={[styles.btn, styles.skip]}
-                  onPress={() => changeStatus(habit.id, 2)}
-                >
-                  <Text style={styles.btnText}>Qoldirildi</Text>
-                </TouchableOpacity>
+                {todayDay ? (
+                  <>
+                    <View style={styles.actions}>
+                      <TouchableOpacity
+                        style={[styles.btn, styles.done]}
+                        onPress={() => changeStatus(habit.id, todayDay.id, 1)}
+                      >
+                        <Text style={styles.btnText}>Bajarildi</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.btn, styles.skip]}
+                        onPress={() => changeStatus(habit.id, todayDay.id, 2)}
+                      >
+                        <Text style={styles.btnText}>Qoldirildi</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center"}}>
+                          <Text style={[styles.status, { color: theme.text }]}>
+                            Bugun: {todayDay.status === 0 ? "Kutilmoqda" : todayDay.status === 1 ? "Bajarildi" : "Qoldirildi"}
+                          </Text>
+                          {todayDay.status === 0 && (
+                              <Ionicons
+                                name="alert-circle-outline"
+                                size={15}
+                                color="grey"
+                                style={{marginLeft:1}}
+                              />
+                          )}
+                          {todayDay.status === 1 && (
+                              <Ionicons
+                                name="checkmark-circle-outline"
+                                size={15}
+                                color="#4CAF50"
+                                style={{marginLeft:1}}
+                              />
+                          )}
+                          {todayDay.status === 2 && (
+                              <Ionicons
+                                name="close-circle-outline"
+                                size={15}
+                                color="red"
+                                style={{marginLeft:1}}
+                              />
+                          )}
+                        </View>
+
+                      <TouchableOpacity onPress={() => toggleHabitView(habit.id)}>
+                        <Text style={[styles.status, { color: theme.primary }]}>Ko‘rish</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    {openedHabitId === habit.id && (
+                      <Animated.View
+                        style={[
+                          styles.animatedBox,
+                          {
+                            opacity: opacityAnim,
+                            transform: [{ scaleY: scaleAnim }],
+                              borderRadius: 4,
+                              backgroundColor: theme.card,
+                          },
+                        ]}
+                      >
+                        <ScrollView style={{
+                            borderWidth: 1,
+                            borderColor: theme.placeholder,
+                            borderRadius: 6,
+                            padding:5,
+                            width: "100%",
+                        }}>
+                          {habit.habitDays.map(day => (
+                            <View key={day.id} style={{
+                                marginBottom: 6,
+                                flexDirection: "row",
+                                justifyContent: "space-between"
+                            }}>
+                              <Text style={{ color: theme.text, fontSize: 12 }}>
+                                {day.date}
+                              </Text>
+                                <View style={{flexDirection: "row", alignItems: "center"}}>
+                                  <Text style={{ color: theme.text, fontSize: 12 }}>
+                                    {day.status === 0 ? "Kutilmoqda" : day.status === 1 ? "Bajarildi" : "Qoldirildi"}
+                                  </Text>
+                                    {day.status === 0 && (
+                                          <Ionicons
+                                            name="alert-circle-outline"
+                                            size={15}
+                                            color="grey"
+                                            style={{marginLeft:1}}
+                                          />
+                                    )}
+                                    {day.status === 1 && (
+                                          <Ionicons
+                                            name="checkmark-circle-outline"
+                                            size={15}
+                                            color="#4CAF50"
+                                            style={{marginLeft:1}}
+                                          />
+                                    )}
+                                    {day.status === 2 && (
+                                          <Ionicons
+                                            name="close-circle-outline"
+                                            size={15}
+                                            color="red"
+                                            style={{marginLeft:1}}
+                                          />
+                                    )}
+                                </View>
+                            </View>
+                          ))}
+                        </ScrollView>
+                      </Animated.View>
+                    )}
+                  </>
+                ) : (
+                  <Text style={[styles.status, { color: theme.text }]}>
+                    Bu habit muddati tugagan
+                  </Text>
+                )}
               </View>
-
-              <Text style={[styles.status, {color: theme.text}]}>
-                Status: {habit.status}
-              </Text>
-            </View>
-          ))
+            );
+          })
         )}
       </ScrollView>
 
@@ -127,9 +271,17 @@ const HabitsPage: React.FC = () => {
 };
 
 export default HabitsPage;
+
 const styles = StyleSheet.create({
+  animatedBox: {
+      marginTop: 10,
+      borderRadius: 10,
+      overflow: "hidden",
+      elevation: 4,
+      transformOrigin: "bottom", // pastdan ochilishi uchun
+  },
   container: { flex: 1 },
-  scroll: { padding: 16 },
+  scroll: { padding: 10 },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
 
   empty: { alignItems: "center", marginTop: 100 },
@@ -157,7 +309,7 @@ const styles = StyleSheet.create({
   skip: { backgroundColor: "#FF9800" },
   btnText: { color: "#fff", fontWeight: "600" },
 
-  status: { marginTop: 8, fontSize: 13 },
+  status: {fontSize: 13 },
 
   addBtn: {
     backgroundColor: "#2196F3",
