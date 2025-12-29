@@ -1,13 +1,29 @@
-import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, {useEffect} from "react";
+import {View, Text, StyleSheet, Image, BackHandler} from "react-native";
 import { useTheme } from "../../theme/ThemeContext";
 import Header from "../../components/global/Header";
 import AdminIcon from "../../assets/admin_icon.png";
-import {SafeAreaView} from "react-native-safe-area-context"; // placeholder icon
+import {SafeAreaView} from "react-native-safe-area-context";
+import {useNavigation} from "@react-navigation/native";
+import {RootStackParamList} from "../types/types";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack"; // placeholder icon
 
+type EarningsNav = NativeStackNavigationProp<RootStackParamList, "Habits">;
 const Earnings: React.FC = () => {
   const { theme } = useTheme();
+  const navigation = useNavigation<EarningsNav>();
 
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+    return () => backHandler.remove();
+  }, []);
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <Header title="Earnings" />
