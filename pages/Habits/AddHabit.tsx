@@ -18,6 +18,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { addHabit } from "../../service/habits";
 import { getActiveUser } from "../../service/storage";
 import {showMessage} from "react-native-flash-message";
+import {scheduleHabitDayNotification} from "../../service/notification";
 
 type AddHabitNav = NativeStackNavigationProp<
   RootStackParamList,
@@ -42,31 +43,37 @@ const AddHabitPage: React.FC = () => {
   };
 
   const saveHabit = async () => {
-    if (!name.trim()) {
-      showMessage({
-        message: "Odat nomini kiriting !",
-        type: "warning",
-      });
-      return;
-    }
-    const days = Number(durationDays);
-    if (!Number.isInteger(days) || days <= 0) {showMessage({
-        message: "Davomiylik (kun) noto‘g‘ri !",
-        type: "warning",
-      });
-      return;
-    }
-    const user = await getActiveUser();
-    if (!user) return;
-    setSaving(true);
-    await addHabit(user.username, {
-      name: name.trim(),
-      durationDays: days,
-      notificationTime: formatTime(time),
-    });
+      if (!name.trim()) {
+        showMessage({ message: "Odat nomini kiriting !", type: "warning" });
+        return;
+      }
 
-    setSaving(false);
-    navigation.goBack();
+      const days = Number(durationDays);
+      if (!Number.isInteger(days) || days <= 0) {
+        showMessage({ message: "Davomiylik (kun) noto‘g‘ri !", type: "warning" });
+        return;
+      }
+
+      const user = await getActiveUser();
+      if (!user) return;
+
+      setSaving(true);
+
+      const habit = await addHabit(user.username, {
+        name: name.trim(),
+        durationDays: days,
+        notificationTime: formatTime(time),
+      });
+
+      // 🔔 NOTIFICATIONLARNI SHU YERDA QO‘YAMIZ
+      if (habit) {
+        for (const day of habit.habitDays) {
+          await scheduleHabitDayNotification(habit.name, day);
+        }
+      }
+
+      setSaving(false);
+      navigation.goBack();
   };
 
   return (

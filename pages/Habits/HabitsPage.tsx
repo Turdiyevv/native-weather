@@ -109,7 +109,6 @@ const HabitsPage: React.FC = () => {
       style={[styles.container, { backgroundColor: theme.background }]}
     >
       <Header title="Odatlar" />
-
       <ScrollView contentContainerStyle={styles.scroll}>
         {habits.length === 0 || loading ? (
           <View style={styles.empty}>
@@ -197,7 +196,7 @@ const HabitsPage: React.FC = () => {
                           {
                             opacity: opacityAnim,
                             transform: [{ scaleY: scaleAnim }],
-                              borderRadius: 4,
+                              borderRadius: 6,
                               backgroundColor: theme.card,
                           },
                         ]}
@@ -220,7 +219,7 @@ const HabitsPage: React.FC = () => {
                                     <Text style={{ color: theme.text, fontSize: 12 }}>{day.date}</Text>
                                 </View>
                                 <View style={{flexDirection: "row", alignItems: "center"}}>
-                                  <Text style={{ color: theme.text, fontSize: 12 }}>
+                                  <Text style={{ color: day.status===1 ? "green": day.status===2 ? "red" : theme.text, fontSize: 12 }}>
                                     {day.status === 0 ? "Kutilmoqda" : day.status === 1 ? "Bajarildi" : "Qoldirildi"}
                                   </Text>
                                     {day.status === 0 && (
@@ -256,7 +255,7 @@ const HabitsPage: React.FC = () => {
                   </>
                 ) : (
                   <Text style={[styles.status, { color: theme.text }]}>
-                    Bu habit muddati tugagan
+                    Muddati tugagan.
                   </Text>
                 )}
               </View>
@@ -270,7 +269,7 @@ const HabitsPage: React.FC = () => {
         style={styles.addBtn}
         onPress={() => navigation.navigate("AddHabit")}
       >
-        <Text style={styles.addText}>+ Yangi odat</Text>
+        <Text style={styles.addText}>Yangi qo'shish</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -320,6 +319,7 @@ const styles = StyleSheet.create({
   addBtn: {
     backgroundColor: "#2196F3",
     padding: 15,
+    marginBottom: 10,
     borderRadius: 12,
     marginHorizontal: 10,
     alignItems: "center",

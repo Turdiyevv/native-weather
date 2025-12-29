@@ -29,12 +29,13 @@ export const addHabit = async (
     durationDays: number;
     notificationTime: string;
   }
-) => {
+): Promise<Habit | null> => {
   const users = await loadUsers();
   const userIndex = users.findIndex(u => u.username === username);
-  if (userIndex === -1) return;
+  if (userIndex === -1) return null;
 
   const createdAt = new Date().toISOString();
+  const habitId = generateId();
 
   const habitDays: HabitDay[] = [];
 
@@ -44,24 +45,19 @@ export const addHabit = async (
 
     habitDays.push({
       id: generateId(),
-      habitId: "", // keyin to‘ldiriladi
+      habitId,
       date: date.toISOString().split("T")[0],
       notificationTime: data.notificationTime,
       status: 0,
     });
   }
 
-  const habitId = generateId();
-
   const newHabit: Habit = {
     id: habitId,
     name: data.name,
     durationDays: data.durationDays,
     createdAt,
-    habitDays: habitDays.map(d => ({
-      ...d,
-      habitId,
-    })),
+    habitDays,
   };
 
   users[userIndex].habits = [
@@ -70,6 +66,8 @@ export const addHabit = async (
   ];
 
   await saveUsers(users);
+
+  return newHabit; // 🔥 MUHIM
 };
 
 /* ===================== UPDATE HABIT ===================== */
