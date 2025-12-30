@@ -52,6 +52,13 @@ export const deleteUser = async (username: string) => {
   const users = await loadUsers();
   const filtered = users.filter((u) => u.username !== username);
   await saveUsers(filtered);
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    const userKeys = keys.filter(key => key.startsWith(username + "_"));
+    await AsyncStorage.multiRemove(userKeys);
+  } catch (error) {
+    console.log("Ma'lumotlarni o'chirish xatosi:", error);
+  }
 };
 export const updateUserInfo = async (username: string, newInfo: Partial<UserInfo>) => {
   const users = await loadUsers();

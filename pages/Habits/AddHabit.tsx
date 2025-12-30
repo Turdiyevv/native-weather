@@ -18,7 +18,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { addHabit } from "../../service/habits";
 import { getActiveUser } from "../../service/storage";
 import {showMessage} from "react-native-flash-message";
-import {scheduleHabitDayNotification} from "../../service/notification";
+import {ensureNotificationPermission, scheduleHabitDayNotification} from "../../service/notification";
 
 type AddHabitNav = NativeStackNavigationProp<
   RootStackParamList,
@@ -42,39 +42,59 @@ const AddHabitPage: React.FC = () => {
     return `${h}:${m}`;
   };
 
-  const saveHabit = async () => {
-      if (!name.trim()) {
-        showMessage({ message: "Odat nomini kiriting !", type: "warning" });
-        return;
+const saveHabit = async () => {
+  try {
+    if (!name.trim()) {
+      showMessage({ message: "Odat nomini kiriting !", type: "warning" });
+      return;
+    }
+
+    const days = Number(durationDays);
+    if (!Number.isInteger(days) || days <= 0) {
+      showMessage({ message: "Davomiylik noto‘g‘ri !", type: "warning" });
+      return;
+    }
+
+    const user = await getActiveUser();
+    if (!user) return;
+
+    setSaving(true);
+
+    const habit = await addHabit(user.username, {
+      name: name.trim(),
+      durationDays: days,
+      notificationTime: formatTime(time),
+    });
+
+    if (habit) {
+      const allowed = await ensureNotificationPermission();
+
+      if (!allowed) {
+        showMessage({
+          message: "Bildirishnoma ruxsati berilmadi",
+          type: "warning",
+        });
+      } else {
+        // 🔔 Notificationlarni parallel qo‘yamiz
+        Promise.all(
+          habit.habitDays.map(day =>
+            scheduleHabitDayNotification(habit.name, day)
+          )
+        ).catch(err => {
+          console.log("NOTIFICATION BATCH ERROR:", err);
+        });
       }
+    }
 
-      const days = Number(durationDays);
-      if (!Number.isInteger(days) || days <= 0) {
-        showMessage({ message: "Davomiylik (kun) noto‘g‘ri !", type: "warning" });
-        return;
-      }
+    navigation.goBack();
+  } catch (e) {
+    console.log("SAVE HABIT ERROR:", e);
+    showMessage({ message: "Xatolik yuz berdi", type: "danger" });
+  } finally {
+    setSaving(false);
+  }
+};
 
-      const user = await getActiveUser();
-      if (!user) return;
-
-      setSaving(true);
-
-      const habit = await addHabit(user.username, {
-        name: name.trim(),
-        durationDays: days,
-        notificationTime: formatTime(time),
-      });
-
-      // 🔔 NOTIFICATIONLARNI SHU YERDA QO‘YAMIZ
-      if (habit) {
-        for (const day of habit.habitDays) {
-          await scheduleHabitDayNotification(habit.name, day);
-        }
-      }
-
-      setSaving(false);
-      navigation.goBack();
-  };
 
   return (
     <KeyboardAvoidingView
