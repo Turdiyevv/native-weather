@@ -127,10 +127,7 @@ export default function TodoItem({ item, onPressIn, onPress, onPressOut, onLongP
 }
 const screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
-    scale: {
-        top: -1,
-        transform: [{scaleX: -1,}, {rotate: "40deg"}],
-    },
+    scale: {top: -1, transform: [{scaleX: -1,}, {rotate: "40deg"}]},
     firstBorder: {
         borderTopLeftRadius: 12,
         borderTopEndRadius: 12,
@@ -141,9 +138,7 @@ const styles = StyleSheet.create({
         borderBottomEndRadius: 12,
         borderBottomWidth: 0,
     },
-  deleted: {
-    backgroundColor: "#e1e0e0",
-  },
+  deleted: {backgroundColor: "#e1e0e0"},
   returningBorder: {
     borderLeftWidth: 1,
     borderRightWidth: 1,
@@ -156,46 +151,16 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 0,
   },
-  item: {
-    borderTopWidth: 2,
-    height: 64,
-  },
-  defaultItem:{
-    flexDirection: "column",
-    justifyContent: "space-between",
-    padding: 12,
-    height: "100%",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  titleContainer2: {
-    flexDirection: "row",
-      alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  iconBox:{
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  text: { fontSize: 18 },
+  item: {marginBottom: 2, /*borderTopWidth: 2,*/ height: 64,},
+  defaultItem:{flexDirection: "column", justifyContent: "space-between", padding: 12, height: "100%"},
+  titleContainer: {flexDirection: "row", alignItems: "center", justifyContent: "space-between"},
+  titleContainer2: {flexDirection: "row", alignItems: "center", justifyContent: "flex-start"},
+  iconBox:{flexDirection: "row", alignItems: "center"},
+  text: { fontSize: 15 },
   doneText: { textDecorationLine: "line-through", color: "gray" },
-  returnCount: {
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  returnCountText: {
-     marginLeft: 3,
-     position: "absolute",
-     fontSize: 11,
-  },
-  draft: {
-    position: "absolute",
-    top: -4,
-  },
+  returnCount: {position: "relative", justifyContent: "center", alignItems: "center"},
+  returnCountText: {marginLeft: 3, position: "absolute", fontSize: 11},
+  draft: {position: "absolute", top: -4},
   deadline: { fontSize: 14, marginTop: 0 },
   deadlineBox: { height: 14, marginTop: 0 },
   timeContainer: {marginLeft: "auto" },

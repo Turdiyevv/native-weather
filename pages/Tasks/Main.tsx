@@ -310,10 +310,10 @@ const onTabPress = (tab: TaskTab) => {
 
         <LeftMenu
           buttons={[
+            // { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 22, color: "transparent" },
             { icon: "list-outline", onPress: () => onTabPress("main"), size: 24, color: activeTab === "main" ? "#fff" : "transparent" },
             { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 24, color: activeTab === "done" ? "#fff" : "transparent" },
             { icon: "trash-outline", onPress: () => onTabPress("deleted"), size: 22, color: activeTab === "deleted" ? "#fff" : "transparent" },
-            { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 22, color: "transparent" },
             { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto", color: "transparent"},
           ]}
           containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}

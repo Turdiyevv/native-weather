@@ -27,7 +27,7 @@ export const scheduleHabitDayNotification = async (
   habitName: string,
   habitDay: {
     id: string;
-    date: string;            // YYYY-MM-DD
+    date: string;             // YYYY-MM-DD
     notificationTime: string; // HH:mm
     status: number;
   }
@@ -35,19 +35,30 @@ export const scheduleHabitDayNotification = async (
   try {
     if (habitDay.status !== 0) return null;
 
-    const [year, month, day] = habitDay.date.split("-").map(Number);
-    const [hour, minute] = habitDay.notificationTime.split(":").map(Number);
+    const [hour, minute] = habitDay.notificationTime
+      .split(":")
+      .map(Number);
 
-    const triggerDate = new Date(year, month - 1, day, hour, minute);
+    // 📅 Sana
+    const triggerDate = new Date(habitDay.date);
+    triggerDate.setHours(hour);
+    triggerDate.setMinutes(minute);
+    triggerDate.setSeconds(0);
+    triggerDate.setMilliseconds(0);
 
-    if (triggerDate.getTime() <= Date.now()) return null;
+    // ❗ O‘tmishda bo‘lsa qo‘ymaymiz
+    if (triggerDate.getTime() <= Date.now()) {
+      return null;
+    }
 
     const id = await Notifications.scheduleNotificationAsync({
       content: {
         title: "⏰ Odat vaqti",
         body: habitName,
         sound: "default",
-        data: { habitDayId: habitDay.id },
+        data: {
+          habitDayId: habitDay.id,
+        },
       },
         //@ts-ignore
       trigger: triggerDate,
@@ -59,3 +70,4 @@ export const scheduleHabitDayNotification = async (
     return null;
   }
 };
+
