@@ -17,13 +17,15 @@ import { RootStackParamList } from "../types/types";
 import AdminIcon from "../../assets/admin_icon.png";
 import { Habit } from "../types/userTypes";
 import {
-  getHabits,
-  updateHabitDayStatus,
+    deleteHabit,
+    getHabits,
+    updateHabitDayStatus,
 } from "../../service/habits";
 import Header from "../../components/global/Header";
 import { getActiveUser } from "../../service/storage";
 import { Animated, Pressable } from "react-native";
 import {Ionicons} from "@expo/vector-icons";
+import ConfirmModal from "../../components/global/ConfirmModal";
 
 type HabitsNav = NativeStackNavigationProp<RootStackParamList, "Habits">;
 
@@ -32,6 +34,8 @@ const HabitsPage: React.FC = () => {
   const navigation = useNavigation<HabitsNav>();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
 
   const [openedHabitId, setOpenedHabitId] = useState<string | null>(null);
   const scaleAnim = useRef(new Animated.Value(0)).current;
@@ -84,6 +88,15 @@ const HabitsPage: React.FC = () => {
     loadHabits();
   }, []);
 
+  const onDelete = async () => {
+      if (!selectedHabitId) return;
+      const user = await getActiveUser();
+      if (!user) return;
+      await deleteHabit(user.username, selectedHabitId);
+      setSelectedHabitId(null);
+      setModalVisible(false);
+      await loadHabits();
+  };
   /* 📅 Bugungi kun */
   const today = new Date().toISOString().split("T")[0];
 
@@ -128,9 +141,16 @@ const HabitsPage: React.FC = () => {
                 key={habit.id}
                 style={[styles.card, { backgroundColor: theme.card }]}
               >
-                <Text style={[styles.name, { color: theme.text }]}>
-                  {habit.name}
-                </Text>
+                <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                    <Text style={[styles.name, { color: theme.text }]}>{habit.name}</Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setSelectedHabitId(habit.id);
+                        setModalVisible(true);
+                      }}>
+                        <Text style={[styles.meta, { color: theme.danger }]}>O'chirish</Text>
+                    </TouchableOpacity>
+                </View>
                 <Text style={styles.meta}>
                   {habit.durationDays} kun
                   {todayDay && ` • ⏰ ${todayDay.notificationTime}`}
@@ -262,6 +282,15 @@ const HabitsPage: React.FC = () => {
             );
           })
         )}
+                  <ConfirmModal
+                    visible={modalVisible}
+                    message="Element arxivga tushuriladi. Ishonchingiz komilmi?"
+                    onConfirm={onDelete}
+                    onCancel={() => {
+                        setModalVisible(false);
+                        setSelectedHabitId(null);
+                    }}
+                  />
       </ScrollView>
 
       {/* ➕ Add Habit */}

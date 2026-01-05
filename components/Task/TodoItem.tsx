@@ -132,13 +132,13 @@ const styles = StyleSheet.create({
         transform: [{scaleX: -1,}, {rotate: "40deg"}],
     },
     firstBorder: {
-        borderTopLeftRadius: 10,
-        borderTopEndRadius: 10,
+        borderTopLeftRadius: 12,
+        borderTopEndRadius: 12,
         borderTopWidth: 0,
     },
     lastBorder: {
-        borderBottomLeftRadius: 10,
-        borderBottomEndRadius: 10,
+        borderBottomLeftRadius: 12,
+        borderBottomEndRadius: 12,
         borderBottomWidth: 0,
     },
   deleted: {
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   item: {
-    borderTopWidth: 1,
+    borderTopWidth: 2,
     height: 64,
   },
   defaultItem:{

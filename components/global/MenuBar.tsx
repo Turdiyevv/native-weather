@@ -43,7 +43,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             <Ionicons
               name={btn.icon as any}
               size={btn.size || 24}
-              color={theme.text}
+              color={"#fff"}
             />
           </TouchableOpacity>
         ))}
