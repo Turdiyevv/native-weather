@@ -127,10 +127,10 @@ export default function MainPage({ navigation }: any) {
               : t
           )
         );
-        showMessage({ message: "Alarm saqlandi!", type: "success" });
+        showMessage({ message: "Bildirishnoma saqlandi!", type: "success" });
       } catch (e) {
           console.log(e);
-        showMessage({ message: "Alarm xatosi", type: "danger" });
+        showMessage({ message: "Bildirishnoma xatosi", type: "danger" });
       }
   };
   const onRemoveAlarm = async (task: UserTask) => {
