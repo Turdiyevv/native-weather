@@ -1,73 +1,54 @@
 import * as Notifications from "expo-notifications";
 
-/* 🔔 GLOBAL HANDLER (1 marta) */
-Notifications.setNotificationHandler({
-  handleNotification: async (): Promise<Notifications.NotificationBehavior> => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
-/* ✅ PERMISSION */
-export const ensureNotificationPermission = async (): Promise<boolean> => {
-  const settings = await Notifications.getPermissionsAsync();
-
-  if (settings.status !== Notifications.PermissionStatus.GRANTED) {
-    const req = await Notifications.requestPermissionsAsync();
-    return req.status === Notifications.PermissionStatus.GRANTED;
-  }
-  return true;
+type HabitDay = {
+  id: string;
+  date: string;             // YYYY-MM-DD
+  notificationTime: string; // HH:mm
+  status: number;
 };
 
-/* ⏰ SCHEDULE — MANA YETISHMAYOTGAN QISM */
 export const scheduleHabitDayNotification = async (
   habitName: string,
-  habitDay: {
-    id: string;
-    date: string;             // YYYY-MM-DD
-    notificationTime: string; // HH:mm
-    status: number;
-  }
+  habitDay: HabitDay
 ): Promise<string | null> => {
   try {
+    // faqat bajarilmagan kunlar
     if (habitDay.status !== 0) return null;
 
     const [hour, minute] = habitDay.notificationTime
       .split(":")
       .map(Number);
 
-    // 📅 Sana
     const triggerDate = new Date(habitDay.date);
-    triggerDate.setHours(hour);
-    triggerDate.setMinutes(minute);
-    triggerDate.setSeconds(0);
-    triggerDate.setMilliseconds(0);
+    triggerDate.setHours(hour, minute, 0, 0);
 
-    // ❗ O‘tmishda bo‘lsa qo‘ymaymiz
+    // ❗ O‘tmish bo‘lsa qo‘ymaymiz
     if (triggerDate.getTime() <= Date.now()) {
       return null;
     }
 
-    const id = await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "⏰ Odat vaqti",
-        body: habitName,
-        sound: "default",
-        data: {
-          habitDayId: habitDay.id,
-        },
-      },
-        //@ts-ignore
-      trigger: triggerDate,
-    });
+    const trigger = {
+      type: "date",
+      date: triggerDate,
+    };
 
-    return id;
+    const notificationId =
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "⏰ Odat vaqti",
+          body: habitName,
+          sound: true,
+          data: {
+            habitDayId: habitDay.id,
+          },
+        },
+        //@ts-ignore
+        trigger,
+      });
+
+    return notificationId;
   } catch (e) {
-    console.log("NOTIFICATION ERROR:", e);
+    console.log("HABIT NOTIFICATION ERROR:", e);
     return null;
   }
 };
-

@@ -18,7 +18,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { addHabit } from "../../service/habits";
 import { getActiveUser } from "../../service/storage";
 import {showMessage} from "react-native-flash-message";
-import {ensureNotificationPermission, scheduleHabitDayNotification} from "../../service/notification";
+import { scheduleHabitDayNotification} from "../../service/notification";
 
 type AddHabitNav = NativeStackNavigationProp<
   RootStackParamList,
@@ -67,23 +67,11 @@ const saveHabit = async () => {
     });
 
     if (habit) {
-      const allowed = await ensureNotificationPermission();
-
-      if (!allowed) {
-        showMessage({
-          message: "Bildirishnoma ruxsati berilmadi",
-          type: "warning",
-        });
-      } else {
-        // 🔔 Notificationlarni parallel qo‘yamiz
-        Promise.all(
+        await Promise.all(
           habit.habitDays.map(day =>
             scheduleHabitDayNotification(habit.name, day)
           )
-        ).catch(err => {
-          console.log("NOTIFICATION BATCH ERROR:", err);
-        });
-      }
+        );
     }
 
     navigation.goBack();
