@@ -28,7 +28,6 @@ export default function FilePickerComponent({
 
   const pickDocuments = async () => {
     try {
-      global.filePickerOpen = true;
       const result = await DocumentPicker.getDocumentAsync({ multiple: true });
       if (result.assets) {
         const selected = result.assets.map(file => ({
@@ -66,7 +65,11 @@ export default function FilePickerComponent({
       <View style={styles.btnRow}>
         <TouchableOpacity
           style={[styles.btn, { backgroundColor: theme.border }]}
-          onPress={pickDocuments}
+          onPress={() => {
+              global.filePickerOpen = true;
+              global.ignoreNextAppState = true;
+              pickDocuments();
+          }}
           disabled={disabled}
         >
           <Text style={[styles.btnText, { color: theme.text }]}>

@@ -298,7 +298,7 @@ const loadActiveUser = async () => {
               </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>• Chat bo'limi</Text>
+            <Text style={[styles.loginCode, { color: theme.placeholder }]}>• Chat bo'limi</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Business")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>• Beznis bo'limi</Text>
@@ -307,7 +307,7 @@ const loadActiveUser = async () => {
             <Text style={[styles.loginCode, { color: theme.text }]}>• Odatlar bo'limi</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Earnings")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>• Daromad</Text>
+            <Text style={[styles.loginCode, { color: theme.placeholder }]}>• Daromad</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Support")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>• Biz haqimizda.</Text>

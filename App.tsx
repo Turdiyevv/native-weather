@@ -72,7 +72,15 @@ const AppNavigator = () => {
 
   useEffect(() => {
       const subscription = AppState.addEventListener("change", async (nextState) => {
-        if (global.filePickerOpen) return;
+
+          // 🔥 FILE PICKER GUARD
+        if (global.filePickerOpen || global.ignoreNextAppState) {
+          if (nextState === "active") {
+              global.ignoreNextAppState = false;
+              lastTimeRef.current = Date.now(); // 🔥 RESET TIMER
+          }
+          return;
+        }
         // background / inactive → vaqtni saqlaymiz
         if (nextState === "background" || nextState === "inactive") {
           lastTimeRef.current = Date.now();

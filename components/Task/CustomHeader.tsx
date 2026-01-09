@@ -65,7 +65,7 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
         {avatar ? (
           <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
         ) : (
-          <Ionicons name="person-circle-outline" size={52} color="#555" />
+          <Ionicons name="person-circle-outline" size={52} color={theme.placeholder} />
         )}
       </TouchableOpacity>
     </View>
@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+      width: "100%",
     paddingHorizontal: 4,
     height: 60,
     // backgroundColor: "#f5f5f5",

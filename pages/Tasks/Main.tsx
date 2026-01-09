@@ -251,14 +251,14 @@ const onTabPress = (tab: TaskTab) => {
         {hasTasks ? (
           <Animated.View
               style={{
-                flex: 1,
+                flex: 1, width: "100%",
                 transform: [{ translateX: listAnim }],
                 opacity: listOpacity,
               }}
             >
               <SectionList
                 contentContainerStyle={{ paddingBottom: BOTTOM_BAR_HEIGHT }}
-                style={{ marginBottom: 30, borderRadius: 12 }}
+                style={{ marginBottom: 15, borderRadius: 12 }}
                 sections={groupedTasks}
                 keyExtractor={(item) => item.id}
                 renderSectionHeader={({ section }) => (
@@ -307,17 +307,30 @@ const onTabPress = (tab: TaskTab) => {
             />
           );
         })()}
-
-        <LeftMenu
-          buttons={[
-            { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 22, color: "transparent" },
-            { icon: "list-outline", onPress: () => onTabPress("main"), size: 24, color: activeTab === "main" ? "#fff" : "transparent" },
-            { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 24, color: activeTab === "done" ? "#fff" : "transparent" },
-            { icon: "trash-outline", onPress: () => onTabPress("deleted"), size: 22, color: activeTab === "deleted" ? "#fff" : "transparent" },
-            { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), marginLeft: "auto", color: "transparent"},
-          ]}
-          containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}
-        />
+          <View
+              style={[
+                styles.wrapper,
+                {
+                  bottom: 10,
+                },
+              ]}
+          >
+            <LeftMenu
+              buttons={[
+                { icon: "list-outline", onPress: () => onTabPress("main"), size: 20, color: activeTab === "main" ? "#fff" : "transparent" },
+                { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 20, color: activeTab === "done" ? "#fff" : "transparent" },
+                { icon: "archive-outline", onPress: () => onTabPress("deleted"), size: 20, color: activeTab === "deleted" ? "#fff" : "transparent" }
+              ]}
+              containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}
+            />
+            <LeftMenu
+              buttons={[
+                { icon: "create-outline", onPress: () => navigation.navigate("AddPage"), size: 20, marginLeft: "auto", color: "transparent"},
+                { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 20, color: "transparent" },
+              ]}
+              containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}
+            />
+          </View>
       </View>
     </SafeAreaView>
   );
@@ -326,6 +339,16 @@ const onTabPress = (tab: TaskTab) => {
 const styles = StyleSheet.create({
   description: { fontSize: 16, textAlign: "center", marginTop: 15, color: "#555" },
   icon: { width: 200, height: 200, resizeMode: "contain" },
-  containerLittle: { flex: 1, justifyContent: "flex-start", paddingHorizontal: 10 },
+  containerLittle: { flex: 1, justifyContent: "flex-start", alignItems: "center", paddingHorizontal: 10 },
   sectionHeader: { fontSize: 11, fontWeight: "bold", marginVertical: 5 },
+  wrapper: {
+      flexDirection: "row",
+      width: "100%",
+    position: "absolute",
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
+    backgroundColor: "rgba(18,18,18,0.001)",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
 });

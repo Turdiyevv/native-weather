@@ -132,8 +132,8 @@ export default function TaskContextMenu({
           onPress={() => setModalVisible(true)}
           disabled={!!task?.isDeleted}
         >
-          <Text style={[styles.menuText, { color: "red" }]}>O'chirish</Text>
-          <Ionicons name="trash-outline" size={20} color="red" />
+          <Text style={[styles.menuText, { color: "red" }]}>Arxivlash</Text>
+          <Ionicons name="archive-outline" size={20} color="red" />
         </TouchableOpacity>
       </Animated.View>
 

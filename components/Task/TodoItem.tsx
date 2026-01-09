@@ -41,6 +41,7 @@ export default function TodoItem({ item, onPressIn, onPress, onPressOut, onLongP
 
   return (
     <TouchableOpacity
+        activeOpacity={0.7}
       style={[
         styles.item, {backgroundColor: theme.card, borderColor: theme.background},
         isFirst && styles.firstBorder,
