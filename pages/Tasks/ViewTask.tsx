@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    ScrollView, Vibration,
+    ScrollView, Vibration, Image
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,6 +20,7 @@ import {showMessage} from "react-native-flash-message";
 import ConfirmModal from "../../components/global/ConfirmModal";
 import {deleteTask, getActiveUser} from "../../service/storage";
 import {UserTask} from "../types/userTypes";
+import ImageViewing from "react-native-image-viewing";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type ViewTaskRouteProp = RouteProp<RootStackParamList, "ViewTask">;
@@ -52,7 +53,23 @@ const ViewPage: React.FC = () => {
       navigation.goBack();
   };
 
-  return (
+  const images =
+  taskToEdit?.files
+    ?.filter(file => file.type?.includes("image"))
+    .map(file => ({
+      uri: file.uri,
+    })) || [];
+  const [previewIndex, setPreviewIndex] = useState<number>(0);
+  const [viewerVisible, setViewerVisible] = useState(false);
+  const openPreview = (uri: string) => {
+      const index = images.findIndex(img => img.uri === uri);
+      if (index >= 0) {
+        setPreviewIndex(index);
+        setViewerVisible(true);
+      }
+  };
+  // @ts-ignore
+    return (
     <SafeAreaView style={{flex: 1}}>
       <Header title={"ELement"}/>
       <ScrollView contentContainerStyle={styles.content}>
@@ -112,6 +129,33 @@ const ViewPage: React.FC = () => {
               />
             ))}
           </View>
+          <View>
+              <ScrollView horizontal style={{ marginTop: 15 }}>
+                  {taskToEdit.files?.map((file, i) => (
+                    <View key={i} style={styles.fileBox}>
+                      {file.type?.includes("image") ? (
+                        <TouchableOpacity onPress={() => openPreview(file.uri)}>
+                          <Image source={{ uri: file.uri }}
+                                 style={{width: 90, height: 90, borderRadius: 8}}
+                          />
+                        </TouchableOpacity>
+                      ) : (
+                        <View style={styles.fileName}>
+                          <Text numberOfLines={2}>{file.name}</Text>
+                        </View>
+                      )}
+                    </View>
+                  ))}
+              </ScrollView>
+              <ImageViewing
+                  images={images}
+                  imageIndex={previewIndex}
+                  visible={viewerVisible}
+                  onRequestClose={() => setViewerVisible(false)}
+                  swipeToCloseEnabled
+                  doubleTapToZoomEnabled
+              />
+          </View>
         </View>
 
         {/* Action buttons */}
@@ -155,6 +199,18 @@ const ViewPage: React.FC = () => {
 export default ViewPage;
 
 const styles = StyleSheet.create({
+  fileBox: {
+    position: "relative",
+    marginRight: 12,
+    marginVertical: 5,
+  },
+  fileName: {
+    width: 90,
+    height: 90,
+    backgroundColor: "#ddd",
+    padding: 5,
+    borderRadius: 8,
+  },
   returnCount: {
     position: "relative",
     justifyContent: "center",

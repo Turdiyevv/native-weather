@@ -58,9 +58,11 @@ export default function TodoItem({ item, onPressIn, onPress, onPressOut, onLongP
                 styles.done : null,
             item.isDeleted && {backgroundColor: theme.deleted}
         ]}>
-            <View style={styles.titleContainer}>
+          <View style={styles.titleContainer}>
+              <View style={{flexDirection: "row", alignItems: "center"}}>
+                {item.files?.length > 0 && (<Ionicons name={"document"} color={"orange"} size={16} />)}
                 <Text style={[styles.text, item.isDeleted && styles.doneText, {color: theme.text}]}>{displayTitle}</Text>
-                {/*<Text style={[styles.text, item.isDeleted && styles.doneText, {color: theme.text}]}>{JSON.stringify(item.alarmDate)}</Text>*/}
+              </View>
             <View style={styles.iconBox}>
               {item.isReturning && item.isReturning > 0 && (
                 <View style={styles.returnCount}>
