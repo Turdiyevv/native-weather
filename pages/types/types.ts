@@ -1,9 +1,11 @@
 import {KeyboardTypeOptions} from "react-native";
 import {UserTask} from "./userTypes";
+import {NavigatorScreenParams} from "@react-navigation/native";
 
 export type RootStackParamList = {
   LoginPage: undefined;
   MainPage: undefined;
+  TopTabs: NavigatorScreenParams<TopTabsParamList>;
   AddPage: { task?: UserTask };
   ProfileView: undefined;
   ProfileEdit: undefined;
@@ -21,6 +23,11 @@ export type RootStackParamList = {
     selectedDate: string;
     businessId: string;
   };
+};
+export type TopTabsParamList = {
+  Tasks: undefined;
+  DoneTask: undefined;
+  DeleteTask: undefined;
 };
 export interface Checkbox {
   label?: string;

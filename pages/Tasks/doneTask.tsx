@@ -21,7 +21,7 @@ import AdminIcon from "../../assets/admin_icon.png";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 
-export default function MainPage({ navigation }: any) {
+export default function DoneTask({ navigation }: any) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
   const [tasks, setTasks] = useState<UserTask[]>([]);
@@ -196,12 +196,7 @@ export default function MainPage({ navigation }: any) {
   };
 
   const groupedTasks = tasks
-    .filter(t => {
-      if (activeTab === "main") return !t.isDeleted && !t.done;
-      // if (activeTab === "done") return t.done;
-      // if (activeTab === "deleted") return t.isDeleted;
-      return true;
-    })
+    .filter(t => {return t.done})
     .slice()
     .reverse()
     .reduce((acc: any[], task) => {
@@ -246,6 +241,7 @@ const onTabPress = (tab: TaskTab) => {
 
   return (
       <View style={[styles.containerLittle, { backgroundColor: theme.background }]}>
+        {/*<CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />*/}
         {hasTasks ? (
           <Animated.View
               style={{
@@ -255,8 +251,8 @@ const onTabPress = (tab: TaskTab) => {
               }}
             >
               <SectionList
-                contentContainerStyle={{ }}
-                style={{ marginVertical: 2,  borderRadius: 12 }}
+                contentContainerStyle={{ paddingBottom: BOTTOM_BAR_HEIGHT }}
+                style={{ marginBottom: 15, borderRadius: 12 }}
                 sections={groupedTasks}
                 keyExtractor={(item) => item.id}
                 renderSectionHeader={({ section }) => (
@@ -305,6 +301,30 @@ const onTabPress = (tab: TaskTab) => {
             />
           );
         })()}
+          {/*<View*/}
+          {/*    style={[*/}
+          {/*      styles.wrapper,*/}
+          {/*      {*/}
+          {/*        bottom: 10,*/}
+          {/*      },*/}
+          {/*    ]}*/}
+          {/*>*/}
+          {/*  <LeftMenu*/}
+          {/*    buttons={[*/}
+          {/*      { icon: "list-outline", onPress: () => onTabPress("main"), size: 20, color: activeTab === "main" ? "#fff" : "transparent" },*/}
+          {/*      { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 20, color: activeTab === "done" ? "#fff" : "transparent" },*/}
+          {/*      { icon: "archive-outline", onPress: () => onTabPress("deleted"), size: 20, color: activeTab === "deleted" ? "#fff" : "transparent" }*/}
+          {/*    ]}*/}
+          {/*    containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}*/}
+          {/*  />*/}
+          {/*  <LeftMenu*/}
+          {/*    buttons={[*/}
+          {/*      { icon: "create-outline", onPress: () => navigation.navigate("AddPage"), size: 20, marginLeft: "auto", color: "transparent"},*/}
+          {/*      { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 20, color: "transparent" },*/}
+          {/*    ]}*/}
+          {/*    containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}*/}
+          {/*  />*/}
+          {/*</View>*/}
       </View>
   );
 }

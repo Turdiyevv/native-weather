@@ -92,7 +92,7 @@ export default function LoginPage({ navigation }: any) {
 
     // 🔹 Muvaffaqiyatli kirish
     await setActiveUser(existingUser!.username);
-    navigation.replace("MainPage");
+    navigation.replace("TopTabs");
 
     showMessage({
       message: "Muvaffaqiyatli kirish!",
@@ -174,7 +174,7 @@ export default function LoginPage({ navigation }: any) {
 
             setUserCount(users.length + 1);
 
-            navigation.replace("MainPage");
+            navigation.replace("TopTabs");
 
             showMessage({
               message: "Yangi user yaratildi!",

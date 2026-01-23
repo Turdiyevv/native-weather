@@ -38,7 +38,7 @@ export default function DashboardPage() {
 
         <TouchableOpacity
           style={styles.action}
-          onPress={() => navigation.navigate("MainPage")}
+          onPress={() => navigation.navigate("TopTabs")}
         >
           <Text style={[styles.actionText, {color: "#27AE60"}]}>Vazifalarga o‘tish</Text>
           <Ionicons name="arrow-forward" size={16} color="#27AE60" />

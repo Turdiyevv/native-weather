@@ -47,7 +47,7 @@ export default function LoginCodePage({ navigation }: any) {
           setResetCode(true);
           setStatusTitle("");
           setStatusColor("");
-          navigation.replace("MainPage");
+          navigation.replace("TopTabs");
         }, 600);
       } else {
         setStatusTitle("✖ Tasdiqlanmadi");

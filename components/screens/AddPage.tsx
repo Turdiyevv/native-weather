@@ -42,7 +42,7 @@ export default function AddPage({ navigation, route }: any) {
   ];
   useEffect(() => {
       const backAction = () => {
-          navigation.navigate("MainPage"); // har doim MainPage ga qaytadi
+          navigation.navigate("TopTabs"); // har doim TopTabs ga qaytadi
           return true; // default behaviorni to‘xtatadi
         };
       const backHandler = BackHandler.addEventListener(
@@ -95,7 +95,7 @@ export default function AddPage({ navigation, route }: any) {
         message: "Muvaffaqiyatli saqlandi!",
         type: "success",
       });
-      navigation.navigate("MainPage");
+      navigation.navigate("TopTabs");
     };
 
   const modalVisible=() => {setDeleteModalVisible(true)}

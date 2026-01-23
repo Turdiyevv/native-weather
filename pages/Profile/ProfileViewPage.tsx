@@ -97,7 +97,7 @@ const loadActiveUser = async () => {
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: "MainPage" }],
+            routes: [{ name: "TopTabs" }],
           })
         );
         return true; // eventni boshqa komponentga yubormaslik
@@ -130,7 +130,7 @@ const loadActiveUser = async () => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "MainPage" }],
+          routes: [{ name: "TopTabs" }],
         })
       );
       return true;
@@ -198,7 +198,7 @@ const loadActiveUser = async () => {
     <SafeAreaView style={{ flex: 1 }}>
       <Header
         title={"Profil"}
-        onBack={() => navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainPage" }] }))}
+        onBack={() => navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "TopTabs" }] }))}
       />
       <ScrollView
         style={{ flex: 1 }}
