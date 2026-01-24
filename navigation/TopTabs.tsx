@@ -68,6 +68,7 @@ export default function TopTabs({navigation}: any) {
 }
 const styles = StyleSheet.create({
   wrapper: {
+      marginHorizontal:5,
       flexDirection: "row",
       width: "100%",
     // position: "absolute",

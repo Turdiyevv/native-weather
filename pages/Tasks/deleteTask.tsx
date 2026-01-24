@@ -7,36 +7,25 @@ import {
   Animated,
   Image,
   Easing,
-  Vibration,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
-import LeftMenu from "../../components/global/MenuBar";
-import CustomHeader from "../../components/Task/CustomHeader";
 import { UserTask } from "../types/userTypes";
 import { getActiveUser, updateTask, softDeleteTask } from "../../service/storage";
 import TodoItem from "../../components/Task/TodoItem";
-import TaskContextMenu from "../../components/global/TaskContextMenu";
 import { useTheme } from "../../theme/ThemeContext";
 import AdminIcon from "../../assets/admin_icon.png";
-import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 
 export default function DeleteTask({ navigation }: any) {
   const { theme } = useTheme();
-  const insets = useSafeAreaInsets();
   const [tasks, setTasks] = useState<UserTask[]>([]);
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
-  const [menuDirection, setMenuDirection] = useState<"top" | "bottom">("bottom");
-  const [modalVisible, setModalVisible] = useState(false);
+  const [openMenuTaskId, setOpenMenuTaskId] = useState<string | null>(null);
 
   type TaskTab = "main" | "done" | "deleted";
   const [activeTab, setActiveTab] = useState<TaskTab>("main");
-  const menuAnim = useRef(new Animated.Value(0)).current;
   const listAnim = useRef(new Animated.Value(0)).current;
-  const listOpacity = useRef(new Animated.Value(10)).current;
-  const MENU_HEIGHT = 200;
-  const BOTTOM_AREA = 100;
+  const listOpacity = useRef(new Animated.Value(1)).current;
 
   // Load user
   useEffect(() => {
@@ -58,112 +47,104 @@ export default function DeleteTask({ navigation }: any) {
   }, [navigation]);
 
   const markDone = async (task: UserTask) => {
-      try {
-        const activeUser = await getActiveUser();
-        if (!activeUser) return;
-        const newDone = !task.done;
-        const updatedTask: UserTask = {
-          ...task,
-          done: newDone,
-          isReturning: newDone === false ? (task.isReturning || 0) + 1 : task.isReturning,
-        };
-        await updateTask(activeUser.username, task.id, updatedTask);
-        const updatedTasks = activeUser.usertasks.map(t => t.id === task.id ? updatedTask : t);
-        setTasks(updatedTasks);
-        closeMenu();
-        showMessage({ message: "Vazifa statusi o'zgartirildi!", type: "success" });
-      } catch (e) {
-        showMessage({ message: String(e), type: "danger" });
-      }
+    try {
+      const activeUser = await getActiveUser();
+      if (!activeUser) return;
+      const newDone = !task.done;
+      const updatedTask: UserTask = {
+        ...task,
+        done: newDone,
+        isReturning: newDone === false ? (task.isReturning || 0) + 1 : task.isReturning,
+      };
+      await updateTask(activeUser.username, task.id, updatedTask);
+      const updatedTasks = activeUser.usertasks.map(t => t.id === task.id ? updatedTask : t);
+      setTasks(updatedTasks);
+      showMessage({ message: "Vazifa statusi o'zgartirildi!", type: "success" });
+    } catch (e) {
+      showMessage({ message: String(e), type: "danger" });
+    }
   };
 
-  let startX = 0;
-  let startY = 0;
-  const handlePressIn = (e: any) => {
-    startX = e.nativeEvent.pageX;
-    startY = e.nativeEvent.pageY;
+  const handleItemPress = (task: UserTask) => {
+    if (openMenuTaskId) {
+      handleCloseMenu();
+      return;
+    }
+    editTask(task, true);
   };
-  const editTask = (task: UserTask, initialView: boolean, e?: any) => {
-      if (e) {
-        const dx = Math.abs(e.nativeEvent.pageX - startX);
-        const dy = Math.abs(e.nativeEvent.pageY - startY);
-        if (dx >= 5 || dy >= 5) return; // swipe bo‘lsa chiqmaydi
-      }
-      // event yo‘q yoki tap bo‘lsa
-      closeMenu();
-      setTimeout(() => {
-        navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
-      }, 0);
-    };
+  const editTask = (task: UserTask, initialView: boolean) => {
+    navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
+  };
 
   const onSetAlarm = async (task: UserTask, date: Date) => {
-      try {
-        const activeUser = await getActiveUser();
-        if (!activeUser) return;
-        if (task.notificationId) {
-          await Notifications.cancelScheduledNotificationAsync(task.notificationId);
-        }
-        const trigger = {
-          type: "date",
-          date,
-        };
-        const notificationId = await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "⏰ Vazifa eslatmasi",
-            body: task.title || "Vaqt bo‘ldi",
-            sound: true,
-          },
-            //@ts-ignore
-          trigger,
-        });
-        await updateTask(activeUser.username, task.id, {
-          alarmDate: date.toISOString(),
-          notificationId,
-        });
-        setTasks(prev =>
-          prev.map(t =>
-            t.id === task.id
-              ? { ...t, alarmDate: date.toISOString(), notificationId }
-              : t
-          )
-        );
-        showMessage({ message: "Bildirishnoma saqlandi!", type: "success" });
-      } catch (e) {
-          console.log(e);
-        showMessage({ message: "Bildirishnoma xatosi", type: "danger" });
+    try {
+      const activeUser = await getActiveUser();
+      if (!activeUser) return;
+      if (task.notificationId) {
+        await Notifications.cancelScheduledNotificationAsync(task.notificationId);
       }
+      const trigger = {
+        type: "date",
+        date,
+      };
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "⏰ Vazifa eslatmasi",
+          body: task.title || "Vaqt bo'ldi",
+          sound: true,
+        },
+        //@ts-ignore
+        trigger,
+      });
+      await updateTask(activeUser.username, task.id, {
+        alarmDate: date.toISOString(),
+        notificationId,
+      });
+      setTasks(prev =>
+        prev.map(t =>
+          t.id === task.id
+            ? { ...t, alarmDate: date.toISOString(), notificationId }
+            : t
+        )
+      );
+      showMessage({ message: "Bildirishnoma saqlandi!", type: "success" });
+    } catch (e) {
+      console.log(e);
+      showMessage({ message: "Bildirishnoma xatosi", type: "danger" });
+    }
   };
+
   const onRemoveAlarm = async (task: UserTask) => {
-      try {
-        const activeUser = await getActiveUser();
-        if (!activeUser) return;
-        if (task.notificationId) {
-          await Notifications.cancelScheduledNotificationAsync(task.notificationId);
-        }
-        await updateTask(activeUser.username, task.id, {
-          alarmDate: null,
-          notificationId: null,
-        });
-        setTasks(prev =>
-          prev.map(t =>
-            t.id === task.id
-              ? { ...t, alarmDate: null, notificationId: null }
-              : t
-          )
-        );
-        closeMenu();
-        showMessage({
-          message: "Qo‘ng‘iroq o‘chirildi",
-          type: "success",
-        });
-      } catch (e) {
-        console.log(e);
-        showMessage({
-          message: "Qo‘ng‘iroqni o‘chirishda xato",
-          type: "danger",
-        });
+    try {
+      const activeUser = await getActiveUser();
+      if (!activeUser) return;
+      if (task.notificationId) {
+        await Notifications.cancelScheduledNotificationAsync(task.notificationId);
       }
+      await updateTask(activeUser.username, task.id, {
+        alarmDate: null,
+        notificationId: null,
+      });
+      setTasks(prev =>
+        prev.map(t =>
+          t.id === task.id
+            ? { ...t, alarmDate: null, notificationId: null }
+            : t
+        )
+      );
+      showMessage({
+        message: "Qo'ng'iroq o'chirildi",
+        type: "success",
+      });
+    } catch (e) {
+      console.log(e);
+      showMessage({
+        message: "Qo'ng'iroqni o'chirishda xato",
+        type: "danger",
+      });
+    }
   };
+
   const deleteTaskHandler = async (task: UserTask) => {
     try {
       const activeUser = await getActiveUser();
@@ -173,30 +154,24 @@ export default function DeleteTask({ navigation }: any) {
         t.id === task.id ? { ...t, isDeleted: true } : t
       );
       setTasks(updatedTasks);
-      closeMenu();
       showMessage({ message: "Vazifa o'chirildi (soft-delete)", type: "success" });
     } catch (e) {
       showMessage({ message: String(e), type: "danger" });
     }
   };
 
-  const openMenu = (taskId: string, y: number) => {
-    setSelectedTaskId(taskId);
-    const screenHeight = globalThis.window?.innerHeight || 800;
-    const spaceBelow = screenHeight - y;
-    setMenuDirection(spaceBelow < MENU_HEIGHT + BOTTOM_AREA ? "top" : "bottom");
-    setMenuPosition({ x: 20, y: spaceBelow < MENU_HEIGHT + BOTTOM_AREA ? y - MENU_HEIGHT : y });
-    Vibration.vibrate(20);
-    menuAnim.setValue(0);
-    Animated.timing(menuAnim, { toValue: 1, duration: 250, useNativeDriver: false }).start();
+  const handleOpenMenu = (taskId: string) => {
+    setOpenMenuTaskId(taskId);
   };
 
-  const closeMenu = () => {
-    Animated.timing(menuAnim, { toValue: 0, duration: 150, useNativeDriver: false }).start(() => setSelectedTaskId(null));
+  const handleCloseMenu = () => {
+    setOpenMenuTaskId(null);
   };
 
   const groupedTasks = tasks
-    .filter(t => {return t.isDeleted})
+    .filter(t => {
+      return t.isDeleted;
+    })
     .slice()
     .reverse()
     .reduce((acc: any[], task) => {
@@ -211,67 +186,73 @@ export default function DeleteTask({ navigation }: any) {
     .sort((a, b) => b.dateKey - a.dateKey);
 
   const hasTasks = groupedTasks.some(section => section.data.length > 0);
-  const BOTTOM_BAR_HEIGHT = 80;
 
   // Animate tab change
-const TAB_ORDER: TaskTab[] = ["main", "done", "deleted"];
+  const TAB_ORDER: TaskTab[] = ["main", "done", "deleted"];
 
-const onTabPress = (tab: TaskTab) => {
-  if (tab === activeTab) return;
-  const currentIndex = TAB_ORDER.indexOf(activeTab);
-  const nextIndex = TAB_ORDER.indexOf(tab);
-  const fromX = nextIndex > currentIndex ? 300 : -300;
-  listAnim.setValue(fromX);
-  listOpacity.setValue(0);
-  setActiveTab(tab);
-  Animated.timing(listAnim, {
-    toValue: 0,
-    duration: 200,
-    easing: Easing.out(Easing.cubic),
-    useNativeDriver: true,
-  }).start();
-  Animated.timing(listOpacity, {
-    toValue: 1,
-    duration: 50,
-    delay: 20,
-    useNativeDriver: true,
-  }).start();
-};
-
+  const onTabPress = (tab: TaskTab) => {
+    if (tab === activeTab) return;
+    const currentIndex = TAB_ORDER.indexOf(activeTab);
+    const nextIndex = TAB_ORDER.indexOf(tab);
+    const fromX = nextIndex > currentIndex ? 300 : -300;
+    listAnim.setValue(fromX);
+    listOpacity.setValue(0);
+    setActiveTab(tab);
+    Animated.timing(listAnim, {
+      toValue: 0,
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(listOpacity, {
+      toValue: 1,
+      duration: 50,
+      delay: 20,
+      useNativeDriver: true,
+    }).start();
+  };
 
   return (
+    <TouchableWithoutFeedback onPress={handleCloseMenu}>
       <View style={[styles.containerLittle, { backgroundColor: theme.background }]}>
-        {/*<CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />*/}
         {hasTasks ? (
           <Animated.View
-              style={{
-                flex: 1, width: "100%",
-                transform: [{ translateX: listAnim }],
-                opacity: listOpacity,
-              }}
-            >
-              <SectionList
-                contentContainerStyle={{ paddingBottom: BOTTOM_BAR_HEIGHT }}
-                style={{ marginBottom: 15, borderRadius: 12 }}
-                sections={groupedTasks}
-                keyExtractor={(item) => item.id}
-                renderSectionHeader={({ section }) => (
-                  <Text style={[styles.sectionHeader, { color: theme.subText }]}>{section.title}</Text>
-                )}
-                renderItem={({ item, index, section }) => (
-                  <TodoItem
-                    item={item}
-                    index={index}
-                    isFirst={index === 0}
-                    isLast={index === section.data.length - 1}
-                    onPressIn={handlePressIn}
-                    onPress={(e) => editTask(item, true, e)}
-                    onLongPress={(y) => openMenu(item.id, y)}
-                  />
-                )}
-              />
-            </Animated.View>
-
+            style={{
+              flex: 1,
+              width: "100%",
+              transform: [{ translateX: listAnim }],
+              opacity: listOpacity,
+            }}
+          >
+            <SectionList
+              contentContainerStyle={{}}
+              style={{ marginVertical: 2, borderRadius: 12 }}
+              sections={groupedTasks}
+              keyExtractor={(item) => item.id}
+              renderSectionHeader={({ section }) => (
+                <Text style={[styles.sectionHeader, { color: theme.subText }]}>
+                  {section.title}
+                </Text>
+              )}
+              renderItem={({ item, index, section }) => (
+                <TodoItem
+                  item={item}
+                  index={index}
+                  isFirst={index === 0}
+                  isLast={index === section.data.length - 1}
+                  onPress={() => handleItemPress(item)}
+                  onMarkDone={markDone}
+                  onEdit={editTask}
+                  onDelete={deleteTaskHandler}
+                  onSetAlarm={onSetAlarm}
+                  onRemoveAlarm={onRemoveAlarm}
+                  isMenuOpen={openMenuTaskId === item.id}
+                  onOpenMenu={handleOpenMenu}
+                  onCloseMenu={handleCloseMenu}
+                />
+              )}
+            />
+          </Animated.View>
         ) : (
           <View style={{ flex: 1, alignItems: "center" }}>
             <Image source={AdminIcon} style={styles.icon} />
@@ -280,68 +261,28 @@ const onTabPress = (tab: TaskTab) => {
             </Text>
           </View>
         )}
-
-        {selectedTaskId && (() => {
-          const task = tasks.find(t => t.id === selectedTaskId);
-          if (!task) return null;
-          return (
-            <TaskContextMenu
-              task={task}
-              visible={true}
-              menuAnim={menuAnim}
-              menuPositionY={menuPosition.y}
-              onClose={closeMenu}
-              onMarkDone={markDone}
-              onEdit={(task) => editTask(task, false)}
-              onDelete={deleteTaskHandler}
-              modalVisible={modalVisible}
-              setModalVisible={setModalVisible}
-              onSetAlarm={onSetAlarm}
-              onRemoveAlarm={onRemoveAlarm}
-            />
-          );
-        })()}
-          {/*<View*/}
-          {/*    style={[*/}
-          {/*      styles.wrapper,*/}
-          {/*      {*/}
-          {/*        bottom: 10,*/}
-          {/*      },*/}
-          {/*    ]}*/}
-          {/*>*/}
-          {/*  <LeftMenu*/}
-          {/*    buttons={[*/}
-          {/*      { icon: "list-outline", onPress: () => onTabPress("main"), size: 20, color: activeTab === "main" ? "#fff" : "transparent" },*/}
-          {/*      { icon: "checkbox-outline", onPress: () => onTabPress("done"), size: 20, color: activeTab === "done" ? "#fff" : "transparent" },*/}
-          {/*      { icon: "archive-outline", onPress: () => onTabPress("deleted"), size: 20, color: activeTab === "deleted" ? "#fff" : "transparent" }*/}
-          {/*    ]}*/}
-          {/*    containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}*/}
-          {/*  />*/}
-          {/*  <LeftMenu*/}
-          {/*    buttons={[*/}
-          {/*      { icon: "create-outline", onPress: () => navigation.navigate("AddPage"), size: 20, marginLeft: "auto", color: "transparent"},*/}
-          {/*      { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 20, color: "transparent" },*/}
-          {/*    ]}*/}
-          {/*    containerStyle={{ width: "100%", paddingBottom: insets.bottom + 8 }}*/}
-          {/*  />*/}
-          {/*</View>*/}
       </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  description: { fontSize: 16, textAlign: "center", marginTop: 15, color: "#555" },
+  description: {
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 15,
+    color: "#555",
+  },
   icon: { width: 200, height: 200, resizeMode: "contain" },
-  containerLittle: { flex: 1, justifyContent: "flex-start", alignItems: "center", paddingHorizontal: 5 },
-  sectionHeader: { fontSize: 11, fontWeight: "bold", marginVertical: 5 },
-  wrapper: {
-      flexDirection: "row",
-      width: "100%",
-    position: "absolute",
-    borderTopLeftRadius: 36,
-    borderTopRightRadius: 36,
-    backgroundColor: "rgba(18,18,18,0.001)",
+  containerLittle: {
+    flex: 1,
+    justifyContent: "flex-start",
     alignItems: "center",
-    justifyContent: "space-between",
+    paddingHorizontal: 5,
+  },
+  sectionHeader: {
+    fontSize: 11,
+    fontWeight: "bold",
+    marginVertical: 5,
   },
 });

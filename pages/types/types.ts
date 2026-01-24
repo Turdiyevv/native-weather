@@ -75,7 +75,7 @@ export interface TodoItemProps {
   isFirst: boolean;
   isLast: boolean;
   onToggle?: (item: object) => void;
-  onLongPress?: (y: number) => void;
+  onLongPress?: (layout: { x: number; y: number; width: number; height: number }) => void;
   onPress?: (e: any) => void;
   onPressIn?: (e: any) => void;
   onPressOut?: (e: any) => void;
