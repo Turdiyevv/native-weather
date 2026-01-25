@@ -22,10 +22,12 @@ interface Props {
   onDelete: (task: UserTask) => void;
   onSetAlarm: (task: UserTask, date: Date) => void;
   onRemoveAlarm: (task: UserTask) => void;
+  itemLayout: { y: number; height: number } | null;
 }
 
 const screenHeight = Dimensions.get("window").height;
 const MENU_HEIGHT = 175;
+const PADDING = 20; // Ekran chetlaridan bo'shliq
 
 export default function TaskContextMenu({
   task,
@@ -36,25 +38,33 @@ export default function TaskContextMenu({
   onDelete,
   onSetAlarm,
   onRemoveAlarm,
+  itemLayout,
 }: Props) {
   const { theme } = useTheme();
   const [showPicker, setShowPicker] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   // Menu joylashuvini aniqlash
-  const [menuPosition, setMenuPosition] = useState({ top: 0, bottom: 0 });
-
-  React.useEffect(() => {
-    // Item balandligi taxminan 64px, menu pastda ochiladi
-    const spaceBelow = screenHeight - 64; // Soddaroq variant
-    if (spaceBelow >= MENU_HEIGHT + 50) {
-      // Pastda joy bor
-      setMenuPosition({ top: 64, bottom: undefined });
-    } else {
-      // Pastda joy yo'q - tepaga
-      setMenuPosition({ top: undefined, bottom: 64 });
+  const getMenuPosition = () => {
+    if (!itemLayout) {
+      // Default: pastda ochiladi
+      return { top: 64 };
     }
-  }, []);
+
+    const itemBottom = itemLayout.y + itemLayout.height;
+    const spaceBelow = screenHeight - itemBottom;
+
+    // Pastda yetarli joy bormi?
+    if (spaceBelow >= MENU_HEIGHT + PADDING) {
+      // Pastda ochiladi (itemning tagida)
+      return { top: itemLayout.height };
+    } else {
+      // Yuqorida ochiladi (itemning tepasida)
+      return { bottom: itemLayout.height };
+    }
+  };
+
+  const menuPosition = getMenuPosition();
 
   const menuStyle: any = {
     position: "absolute",

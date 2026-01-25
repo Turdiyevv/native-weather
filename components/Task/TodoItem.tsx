@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   TouchableOpacity,
   Text,
@@ -45,6 +45,8 @@ export default function TodoItem({
 }: TodoItemProps) {
   const { theme } = useTheme();
   const menuAnim = useRef(new Animated.Value(0)).current;
+  const itemRef = useRef<View>(null);
+  const [itemLayout, setItemLayout] = useState<{ y: number; height: number } | null>(null);
 
   const today = new Date();
   const tomorrow = new Date();
@@ -99,6 +101,14 @@ export default function TodoItem({
 
   const handleLongPress = () => {
     Vibration.vibrate(20);
+
+    // Item koordinatalarini olish
+    if (itemRef.current) {
+      itemRef.current.measureInWindow((x, y, width, height) => {
+        setItemLayout({ y, height });
+      });
+    }
+
     onOpenMenu(item.id);
   };
 
@@ -121,7 +131,7 @@ export default function TodoItem({
   }, [isMenuOpen]);
 
   return (
-    <View style={{ position: "relative" }}>
+    <View style={{ position: "relative" }} ref={itemRef}>
       <TouchableOpacity
         activeOpacity={0.7}
         style={[
@@ -250,6 +260,7 @@ export default function TodoItem({
           onDelete={onDelete}
           onSetAlarm={onSetAlarm}
           onRemoveAlarm={onRemoveAlarm}
+          itemLayout={itemLayout}
         />
       )}
     </View>
