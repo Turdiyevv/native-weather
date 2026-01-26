@@ -1,3 +1,4 @@
+// MainPage.tsx
 import React, { useEffect, useState, useRef } from "react";
 import {
   View,
@@ -16,9 +17,11 @@ import TodoItem from "../../components/Task/TodoItem";
 import { useTheme } from "../../theme/ThemeContext";
 import AdminIcon from "../../assets/admin_icon.png";
 import * as Notifications from "expo-notifications";
+import { useScrollHandler } from "../../navigation/TopTabs";
 
 export default function MainPage({ navigation }: any) {
   const { theme } = useTheme();
+  const scrollHandler = useScrollHandler();
   const [tasks, setTasks] = useState<UserTask[]>([]);
   const [openMenuTaskId, setOpenMenuTaskId] = useState<string | null>(null);
 
@@ -72,6 +75,7 @@ export default function MainPage({ navigation }: any) {
     }
     editTask(task, true);
   };
+
   const editTask = (task: UserTask, initialView: boolean) => {
     navigation.navigate(initialView ? "ViewTask" : "AddPage", { task });
   };
@@ -230,6 +234,8 @@ export default function MainPage({ navigation }: any) {
               style={{ marginVertical: 2, borderRadius: 12 }}
               sections={groupedTasks}
               keyExtractor={(item) => item.id}
+              onScroll={scrollHandler?.handleScroll}
+              scrollEventThrottle={16}
               renderSectionHeader={({ section }) => (
                 <Text style={[styles.sectionHeader, { color: theme.subText }]}>
                   {section.title}

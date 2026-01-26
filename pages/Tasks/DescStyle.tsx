@@ -1,11 +1,12 @@
 import { useTheme } from "../../theme/ThemeContext";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import {Text, StyleSheet, View, ImageBackground, Platform} from "react-native";
+import {Text, StyleSheet, View, ImageBackground, Platform, BackHandler} from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Header from "../../components/global/Header";
 import { RootStackParamList } from "../types/types";
 import Star from "../../components/Task/Star";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {useEffect} from "react";
 
 type DescRouteProp = RouteProp<RootStackParamList, "DescStyle">;
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "DescStyle">;
@@ -16,8 +17,19 @@ const DescStyle: React.FC = () => {
   const route = useRoute<DescRouteProp>();
   const description = route.params.description;
 
+  useEffect(() => {
+    const backAction = () => {
+      navigation.goBack();
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+    return () => backHandler.remove();
+  }, []);
   return (
-      <SafeAreaView style={{flex: 1}}>
+      <View style={{flex: 1}}>
           <View style={styles.background}>
             {/*<ImageBackground*/}
             {/*   source={require("../../assets/background2.jpg")}  background rasmi yo‘li*/}
@@ -35,7 +47,7 @@ const DescStyle: React.FC = () => {
                   </View>
               </View>
         </View>
-      </SafeAreaView>
+      </View>
   );
 };
 

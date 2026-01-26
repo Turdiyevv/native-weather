@@ -297,18 +297,18 @@ const loadActiveUser = async () => {
                 <Text style={[styles.deleteText, {color: theme.danger}]}>Kodni o‘chirish</Text>
               </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
-            <Text style={[styles.loginCode, { color: theme.placeholder }]}>• Chat bo'limi</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Business")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>• Beznis bo'limi</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Habits")}>
-            <Text style={[styles.loginCode, { color: theme.text }]}>• Odatlar bo'limi</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Earnings")}>
-            <Text style={[styles.loginCode, { color: theme.placeholder }]}>• Daromad</Text>
-          </TouchableOpacity>
+          {/*<TouchableOpacity onPress={() => navigation.navigate("Chat")}>*/}
+          {/*  <Text style={[styles.loginCode, { color: theme.placeholder }]}>• Chat bo'limi</Text>*/}
+          {/*</TouchableOpacity>*/}
+          {/*<TouchableOpacity onPress={() => navigation.navigate("Business")}>*/}
+          {/*  <Text style={[styles.loginCode, { color: theme.text }]}>• Beznis bo'limi</Text>*/}
+          {/*</TouchableOpacity>*/}
+          {/*<TouchableOpacity onPress={() => navigation.navigate("Habits")}>*/}
+          {/*  <Text style={[styles.loginCode, { color: theme.text }]}>• Odatlar bo'limi</Text>*/}
+          {/*</TouchableOpacity>*/}
+          {/*<TouchableOpacity onPress={() => navigation.navigate("Earnings")}>*/}
+          {/*  <Text style={[styles.loginCode, { color: theme.placeholder }]}>• Daromad</Text>*/}
+          {/*</TouchableOpacity>*/}
           <TouchableOpacity onPress={() => navigation.navigate("Support")}>
             <Text style={[styles.loginCode, { color: theme.text }]}>• Biz haqimizda.</Text>
           </TouchableOpacity>
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 10
   },
-  label: { fontSize: 16, fontWeight: "bold", marginTop: 10 },
+  label: { fontWeight: "bold", marginTop: 5 },
   value: { fontSize: 16, color: "#333" },
   btns: {
     marginTop: 10,

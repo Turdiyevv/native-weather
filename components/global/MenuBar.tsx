@@ -17,7 +17,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             StyleSheet.absoluteFillObject,
             {
               backgroundColor: theme.primary,
-              // opacity: 0.3,
+              opacity: 0.05,
               borderRadius: 12,
             },
           ]}
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   sideButton: {
       flexDirection: "row",
       alignContent: "center",
-      paddingVertical: 5,
+      paddingVertical: 10,
       paddingHorizontal: 12,
     // height: 25,
     borderRadius: 10,

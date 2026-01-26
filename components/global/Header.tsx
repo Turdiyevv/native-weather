@@ -11,9 +11,10 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 interface HeaderProps {
   title: string | any;
   onBack?: () => void; // optional prop
+    isBack?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, onBack }) => {
+const Header: React.FC<HeaderProps> = ({ title, onBack, isBack }) => {
   const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
 
@@ -27,11 +28,13 @@ const Header: React.FC<HeaderProps> = ({ title, onBack }) => {
 
   return (
     <View style={[styles.header, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
-      <TouchableOpacity onPress={handleBack}>
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
+        { isBack && (
+          <TouchableOpacity onPress={handleBack}>
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
+          </TouchableOpacity>
+        )}
       <Text style={[styles.headerTitle, { color: theme.text }]}>{title}</Text>
-      <View style={{ width: 24 }} />
+      {/*<View style={{ width: 24 }} />*/}
     </View>
   );
 };
@@ -43,8 +46,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 2,
     borderBottomWidth: 1,
   },
   headerTitle: {

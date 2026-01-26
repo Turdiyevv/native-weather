@@ -26,7 +26,7 @@ const Earnings: React.FC = () => {
   }, []);
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <Header title="Earnings" />
+      <Header title="Daromad" />
       <View style={styles.empty}>
         <Image source={AdminIcon} style={styles.icon} />
         <Text style={[styles.description, { color: theme.text }]}>
