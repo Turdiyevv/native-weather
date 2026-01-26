@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import {CommonActions, useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../pages/types/types";
 import { useTheme } from "../../theme/ThemeContext";
@@ -22,7 +22,16 @@ const Header: React.FC<HeaderProps> = ({ title, onBack, isBack }) => {
     if (onBack) {
       onBack();
     } else {
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
     }
   };
 
@@ -47,7 +56,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
-    paddingVertical: 2,
+    paddingVertical: 6,
     borderBottomWidth: 1,
   },
   headerTitle: {

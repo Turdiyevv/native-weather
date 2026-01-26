@@ -4,7 +4,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import Header from "../../components/global/Header";
 import AdminIcon from "../../assets/admin_icon.png";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {useNavigation} from "@react-navigation/native";
+import {CommonActions, useNavigation} from "@react-navigation/native";
 import {RootStackParamList} from "../types/types";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack"; // placeholder icon
 
@@ -15,7 +15,16 @@ const Earnings: React.FC = () => {
 
   useEffect(() => {
     const backAction = () => {
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
       return true;
     };
     const backHandler = BackHandler.addEventListener(

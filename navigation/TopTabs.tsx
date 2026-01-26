@@ -152,7 +152,7 @@ export default function TopTabs({ navigation }: any) {
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    height: 50,
+    height: 40,
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 1,

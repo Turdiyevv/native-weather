@@ -109,7 +109,9 @@ export default function AddPage({ navigation, route }: any) {
       });
       setIsActive(true);
       setDeleteModalVisible(false);
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      }
   };
 
   return (

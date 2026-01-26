@@ -24,7 +24,6 @@ function MyTabBar({ state, descriptors, navigation, theme }: any) {
     { name: "Business", icon: "podium-outline", label: "Business" },
     { name: "Chat", icon: "chatbox-ellipses-outline", label: "Chat" },
     { name: "Earnings", icon: "wallet-outline", label: "Earnings" },
-    // { name: "Profile", icon: "person-outline", label: "Profile" },
   ];
 
   return (
@@ -96,7 +95,6 @@ export default function MainTabs() {
         <Tab.Screen name="Business" component={Business} />
         <Tab.Screen name="Chat" component={ChatPage} />
         <Tab.Screen name="Earnings" component={Earnings} />
-        {/*<Tab.Screen name="Profile" component={ProfileViewPage} />*/}
       </Tab.Navigator>
     </View>
   );
@@ -106,17 +104,13 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
     height: 50,
-    // borderTopWidth: 1,
-    // elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
   tabItem: {
-      // borderWidth: 1,
-      // borderColor: "#fff",
-      borderRadius: 12,
+    borderRadius: 12,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",

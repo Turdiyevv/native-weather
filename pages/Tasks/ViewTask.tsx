@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
 import InfoRow from "../../components/Task/InfoRow";
-import {useRoute, RouteProp, useNavigation} from "@react-navigation/native";
+import {useRoute, RouteProp, useNavigation, CommonActions} from "@react-navigation/native";
 import {RootStackParamList} from "../types/types";
 import SingleCheckBox from "../../components/global/CheckBox";
 import {formatDateTime} from "../../utills/date";
@@ -50,7 +50,16 @@ const ViewPage: React.FC = () => {
         message: "Vazifa butunlay o‘chirildi",
         type: "success",
       });
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
   };
 
   const images =

@@ -198,6 +198,7 @@ const loadActiveUser = async () => {
     <View style={{ flex: 1 }}>
       <Header
         title={"Profil"}
+        isBack={true}
         onBack={() => navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainTabs" }] }))}
       />
       <ScrollView

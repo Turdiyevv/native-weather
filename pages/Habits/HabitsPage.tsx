@@ -8,7 +8,7 @@ import {
   ScrollView,
   BackHandler,
 } from "react-native";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {CommonActions, useFocusEffect, useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -64,7 +64,16 @@ const HabitsPage: React.FC = () => {
   /* 🔙 Back handler */
   useEffect(() => {
     const backAction = () => {
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
       return true;
     };
     const backHandler = BackHandler.addEventListener(

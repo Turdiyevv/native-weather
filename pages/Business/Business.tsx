@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import AdminIcon from "../../assets/admin_icon.png";
 import {RootStackParamList} from "../types/types";
-import {useNavigation} from "@react-navigation/native";
+import {CommonActions, useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {useTheme} from "../../theme/ThemeContext";
 import Calendar from "../../components/global/Calendar";
@@ -23,7 +23,16 @@ export default function BackdropFilterExample() {
 
     useEffect(() => {
         const backAction = () => {
-            navigation.goBack();
+            if (navigation.canGoBack()) {
+                navigation.goBack();
+            } else {
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "MainTabs" }],
+                  })
+                );
+            }
             return true;
         };
         const backHandler = BackHandler.addEventListener(

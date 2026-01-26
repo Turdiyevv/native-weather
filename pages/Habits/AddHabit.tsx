@@ -10,7 +10,7 @@ import {
     Alert, BackHandler,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useNavigation } from "@react-navigation/native";
+import {CommonActions, useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { RootStackParamList } from "../types/types";
@@ -74,7 +74,16 @@ const saveHabit = async () => {
         );
     }
 
-    navigation.goBack();
+    if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
   } catch (e) {
     console.log("SAVE HABIT ERROR:", e);
     showMessage({ message: "Xatolik yuz berdi", type: "danger" });
@@ -85,7 +94,16 @@ const saveHabit = async () => {
 
   useEffect(() => {
       const backAction = () => {
-          navigation.goBack(); // har doim TopTabs ga qaytadi
+          if (navigation.canGoBack()) {
+        navigation.goBack();
+          } else {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: "MainTabs" }],
+              })
+            );
+          } // har doim TopTabs ga qaytadi
           return true; // default behaviorni to‘xtatadi
         };
       const backHandler = BackHandler.addEventListener(
@@ -166,7 +184,19 @@ const saveHabit = async () => {
 
         <TouchableOpacity
           style={styles.cancelBtn}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "MainTabs" }],
+                  })
+                );
+              }
+          }
+        }
         >
           <Text style={styles.cancelText}>Bekor qilish</Text>
         </TouchableOpacity>

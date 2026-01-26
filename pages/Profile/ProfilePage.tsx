@@ -53,7 +53,16 @@ export default function ProfilePage() {
   }, []);
   useEffect(() => {
     const backAction = () => {
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -154,7 +163,7 @@ export default function ProfilePage() {
   };
   return (
       <View style={{flex: 1}}>
-          <Header title={"Tahrirlash"}/>
+          <Header title={"Tahrirlash"} isBack={true}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{

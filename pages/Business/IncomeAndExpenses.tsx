@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     Keyboard, Animated, Vibration,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {CommonActions, useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -123,7 +123,16 @@ export default function Business({ route }: Props) {
   /* 🔙 Android back */
   useEffect(() => {
     const backAction = () => {
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
       return true;
     };
     const backHandler = BackHandler.addEventListener(

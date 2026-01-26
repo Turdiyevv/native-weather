@@ -1,5 +1,5 @@
 import { useTheme } from "../../theme/ThemeContext";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import {CommonActions, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {Text, StyleSheet, View, ImageBackground, Platform, BackHandler} from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Header from "../../components/global/Header";
@@ -19,7 +19,16 @@ const DescStyle: React.FC = () => {
 
   useEffect(() => {
     const backAction = () => {
-      navigation.goBack();
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      }
       return true;
     };
     const backHandler = BackHandler.addEventListener(
