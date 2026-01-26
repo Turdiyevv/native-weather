@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 15,
     padding: 6,
-    borderRadius: 40,
+    // borderRadius: 40,
   },
   sideButton: {
       flexDirection: "row",
