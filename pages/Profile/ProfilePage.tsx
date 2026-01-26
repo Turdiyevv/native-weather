@@ -53,7 +53,7 @@ export default function ProfilePage() {
   }, []);
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate("MainTabs");
+      navigation.goBack();
       return true;
     };
     const backHandler = BackHandler.addEventListener(

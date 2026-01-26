@@ -24,7 +24,7 @@ function MyTabBar({ state, descriptors, navigation, theme }: any) {
     { name: "Business", icon: "podium-outline", label: "Business" },
     { name: "Chat", icon: "chatbox-ellipses-outline", label: "Chat" },
     { name: "Earnings", icon: "wallet-outline", label: "Earnings" },
-    { name: "Profile", icon: "person-outline", label: "Profile" },
+    // { name: "Profile", icon: "person-outline", label: "Profile" },
   ];
 
   return (
@@ -96,7 +96,7 @@ export default function MainTabs() {
         <Tab.Screen name="Business" component={Business} />
         <Tab.Screen name="Chat" component={ChatPage} />
         <Tab.Screen name="Earnings" component={Earnings} />
-        <Tab.Screen name="Profile" component={ProfileViewPage} />
+        {/*<Tab.Screen name="Profile" component={ProfileViewPage} />*/}
       </Tab.Navigator>
     </View>
   );
