@@ -116,7 +116,7 @@ export default function AddPage({ navigation, route }: any) {
 
   return (
       <View style={[{flex: 1}, {backgroundColor: theme.background}]}>
-          <Header title={taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}/>
+          <Header title={taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"} isBack={true}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{

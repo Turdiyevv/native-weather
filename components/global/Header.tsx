@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({ title, onBack, isBack }) => {
           </TouchableOpacity>
         )}
       <Text style={[styles.headerTitle, { color: theme.text }]}>{title}</Text>
-      {/*<View style={{ width: 24 }} />*/}
+      <View style={{ width: 24 }} />
     </View>
   );
 };
@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderBottomWidth: 1,
+    paddingVertical: 10,
+    // borderBottomWidth: 1,
   },
   headerTitle: {
     fontSize: 18,
