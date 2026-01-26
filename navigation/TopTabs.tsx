@@ -1,17 +1,16 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Animated } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../theme/ThemeContext";
 
 import MainPage from "../pages/Tasks/Main";
 import DoneTask from "../pages/Tasks/doneTask";
 import DeleteTask from "../pages/Tasks/deleteTask";
 import CustomHeader from "../components/Task/CustomHeader";
+import LeftMenu from "../components/global/MenuBar";
 
 const Tab = createMaterialTopTabNavigator();
 
-// --- MAXSUS CUSTOM TAB BAR ---
 function MyTabBar({ state, descriptors, navigation, theme }: any) {
   return (
     <View style={[styles.tabContainer, { backgroundColor: theme.background }]}>
@@ -60,50 +59,44 @@ function MyTabBar({ state, descriptors, navigation, theme }: any) {
 
 export default function TopTabs({ navigation }: any) {
   const { theme } = useTheme();
-  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-      <View style={{ flex: 1 }}>
-        <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
 
-        <Tab.Navigator
-          // tabBarLabel ishlamayotgani uchun uni o'zimiz chizamiz
-          tabBar={(props) => <MyTabBar {...props} theme={theme} />}
-          screenOptions={{
-            swipeEnabled: true, // Swipe yumshoqligi saqlanib qoladi
-            lazy: true,
-          }}
-        >
-          <Tab.Screen
-            name="Tasks"
-            component={MainPage}
-            options={{ tabBarLabel: "Hozirgi" }}
-          />
-          <Tab.Screen
-            name="DoneTask"
-            component={DoneTask}
-            options={{ tabBarLabel: "Bajarilgan" }}
-          />
-          <Tab.Screen
-            name="DeleteTask"
-            component={DeleteTask}
-            options={{ tabBarLabel: "Arxiv" }}
-          />
-        </Tab.Navigator>
+      <Tab.Navigator
+        tabBar={(props) => <MyTabBar {...props} theme={theme} />}
+        screenOptions={{
+          swipeEnabled: true,
+          lazy: true,
+        }}
+      >
+        <Tab.Screen
+          name="Tasks"
+          component={MainPage}
+          options={{ tabBarLabel: "Hozirgi" }}
+        />
+        <Tab.Screen
+          name="DoneTask"
+          component={DoneTask}
+          options={{ tabBarLabel: "Bajarilgan" }}
+        />
+        <Tab.Screen
+          name="DeleteTask"
+          component={DeleteTask}
+          options={{ tabBarLabel: "Arxiv" }}
+        />
+      </Tab.Navigator>
+
+      <View style={styles.footerWrapper}>
+        <LeftMenu
+          buttons={[
+            { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), size: 20, color: theme.text },
+          ]}
+          containerStyle={{ width: "100%" }}
+        />
       </View>
-
-      {/* Pastki menyu */}
-      {/*<View style={[styles.footerWrapper, {  }]}>*/}
-      {/*  <LeftMenu*/}
-      {/*    buttons={[*/}
-      {/*      { icon: "create-outline", onPress: () => navigation.navigate("AddPage"), size: 20, color: theme.primary },*/}
-      {/*      { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 20, color: theme.text },*/}
-      {/*    ]}*/}
-      {/*    containerStyle={{ width: "100%" }}*/}
-      {/*  />*/}
-      {/*</View>*/}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -120,12 +113,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth: 3, // Faol tab chizig'i
+    borderBottomWidth: 3,
   },
   footerWrapper: {
-      marginHorizontal:5,
-    // position: "absolute",
+    marginHorizontal: 5,
+    position: "absolute",
     bottom: 0,
+    marginBottom: 5,
     width: "auto",
     backgroundColor: "transparent",
   },

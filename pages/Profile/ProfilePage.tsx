@@ -53,7 +53,7 @@ export default function ProfilePage() {
   }, []);
   useEffect(() => {
     const backAction = () => {
-      navigation.navigate("ProfileView");
+      navigation.navigate("MainTabs");
       return true;
     };
     const backHandler = BackHandler.addEventListener(
@@ -142,7 +142,7 @@ export default function ProfilePage() {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "ProfileView" }],
+          routes: [{ name: "MainTabs" }],
         })
       );
     } catch (e) {
@@ -153,7 +153,7 @@ export default function ProfilePage() {
     }
   };
   return (
-      <SafeAreaView style={{flex: 1}}>
+      <View style={{flex: 1}}>
           <Header title={"Tahrirlash"}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
@@ -220,7 +220,7 @@ export default function ProfilePage() {
               <Text style={[styles.saveText, {color: "#fff"}]}>Saqlash</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
-      </SafeAreaView>
+      </View>
   );
 }
 

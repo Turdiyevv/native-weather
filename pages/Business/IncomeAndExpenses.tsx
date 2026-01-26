@@ -197,7 +197,7 @@ export default function Business({ route }: Props) {
 
 
   return (
-      <SafeAreaView style={{flex: 1}}>
+      <View style={{flex: 1}}>
         <Header title={dateStr}/>
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: theme.background }}
@@ -324,7 +324,7 @@ export default function Business({ route }: Props) {
             </View>
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
   );
 }
 

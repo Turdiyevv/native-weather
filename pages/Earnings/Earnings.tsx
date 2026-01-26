@@ -25,7 +25,7 @@ const Earnings: React.FC = () => {
     return () => backHandler.remove();
   }, []);
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <Header title="Earnings" />
       <View style={styles.empty}>
         <Image source={AdminIcon} style={styles.icon} />
@@ -33,7 +33,7 @@ const Earnings: React.FC = () => {
           Ishga tushirilish uchun qayta ishlanmoqda
         </Text>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

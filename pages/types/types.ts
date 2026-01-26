@@ -5,6 +5,28 @@ import {NavigatorScreenParams} from "@react-navigation/native";
 export type RootStackParamList = {
   LoginPage: undefined;
   MainPage: undefined;
+
+  TopTabs: NavigatorScreenParams<TopTabsParamList>;
+  MainTabs: NavigatorScreenParams<MainTabsParamList>;
+  AddPage: { task?: UserTask };
+  ProfileView: undefined;
+  ProfileEdit: undefined;
+  HomePage: undefined;
+  Chat: undefined;
+  Support: undefined;
+  Habits: undefined;
+  AddHabit: undefined;
+  Business: undefined;
+  Earnings: undefined;
+  LoginCodePage: undefined;
+  DescStyle: { description: string };
+  ViewTask: { task: UserTask };
+  IncomeAndExpenses: {
+    selectedDate: string;
+    businessId: string;
+  };
+};
+export type MainTabsParamList = {
   TopTabs: NavigatorScreenParams<TopTabsParamList>;
   AddPage: { task?: UserTask };
   ProfileView: undefined;

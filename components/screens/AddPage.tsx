@@ -113,7 +113,7 @@ export default function AddPage({ navigation, route }: any) {
   };
 
   return (
-      <SafeAreaView style={[{flex: 1}, {backgroundColor: theme.background}]}>
+      <View style={[{flex: 1}, {backgroundColor: theme.background}]}>
           <Header title={taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
@@ -206,7 +206,7 @@ export default function AddPage({ navigation, route }: any) {
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteModalVisible(false)}
         />
-      </SafeAreaView>
+      </View>
   );
 }
 

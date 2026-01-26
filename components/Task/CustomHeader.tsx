@@ -11,7 +11,7 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 interface HeaderProps {onProfilePress: () => void}
 type HeaderNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  "TopTabs"
+  "MainTabs"
 >;
 const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
     const { theme } = useTheme();

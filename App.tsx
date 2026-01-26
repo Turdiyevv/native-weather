@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from "react-native-screens";
-import {
-  StatusBar,
-  View,
-  StyleSheet,
-  AppState,
-} from "react-native";
+import { StatusBar, View, StyleSheet, AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FlashMessage from "react-native-flash-message";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as Notifications from "expo-notifications";
 
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 
@@ -23,21 +21,18 @@ import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
 import IncomeAndExpenses from "./pages/Business/IncomeAndExpenses";
 import DescStyle from "./pages/Tasks/DescStyle";
+import ViewTask from "./pages/Tasks/ViewTask";
+import HomePage from "./pages/HomePage";
+import HabitsPage from "./pages/Habits/HabitsPage";
+import AddHabit from "./pages/Habits/AddHabit";
+import Earnings from "./pages/Earnings/Earnings";
+import MainTabs from "./navigation/MainTabs";
 
 import { RootStackParamList } from "./pages/types/types";
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
-import ViewTask from "./pages/Tasks/ViewTask";
-import HomePage from "./pages/HomePage";
-import HabitsPage from "./pages/Habits/HabitsPage";
-import AddHabit from "./pages/Habits/AddHabit";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
-import * as Notifications from "expo-notifications";
-import Earnings from "./pages/Earnings/Earnings";
-import TopTabs from "./navigation/TopTabs";
-
 
 enableScreens();
 
@@ -51,135 +46,140 @@ const AppNavigator = () => {
   const { theme } = useTheme();
 
   const navigationTheme = {
-      dark: theme.isDark,
-      colors: {
-        ...(theme.isDark
-          ? NavigationDarkTheme.colors
-          : NavigationDefaultTheme.colors),
-        background: theme.background,
-        card: theme.card,
-        text: theme.text,
-        border: theme.border,
-        primary: theme.primary,
-      },
+    dark: theme.isDark,
+    colors: {
+      ...(theme.isDark
+        ? NavigationDarkTheme.colors
+        : NavigationDefaultTheme.colors),
+      background: theme.background,
+      card: theme.card,
+      text: theme.text,
+      border: theme.border,
+      primary: theme.primary,
+    },
   };
+
   useEffect(() => {
-      (async () => {
-        await Notifications.requestPermissionsAsync();
-      })();
+    (async () => {
+      await Notifications.requestPermissionsAsync();
+    })();
   }, []);
 
   useEffect(() => {
-      const subscription = AppState.addEventListener("change", async (nextState) => {
-
-          // 🔥 FILE PICKER GUARD
-        if (global.filePickerOpen || global.ignoreNextAppState) {
-          if (nextState === "active") {
-              global.ignoreNextAppState = false;
-              lastTimeRef.current = Date.now(); // 🔥 RESET TIMER
-          }
-          return;
-        }
-        // background / inactive → vaqtni saqlaymiz
-        if (nextState === "background" || nextState === "inactive") {
+    const subscription = AppState.addEventListener("change", async (nextState) => {
+      if (global.filePickerOpen || global.ignoreNextAppState) {
+        if (nextState === "active") {
+          global.ignoreNextAppState = false;
           lastTimeRef.current = Date.now();
         }
-        // app qayta active bo‘lganda
-        if (nextState === "active") {
-          const diff = Date.now() - lastTimeRef.current;
-
-          if (diff > 10000) { // 10 sekunddan oshsa
-            try {
-              const activeUsername = await AsyncStorage.getItem("activeUser");
-              const usersStr = await AsyncStorage.getItem("users");
-
-              if (!activeUsername || !usersStr) return;
-
-              const users = JSON.parse(usersStr);
-              const activeUser = users.find(
-                (u: any) => u.username === activeUsername
-              );
-
-              if (activeUser?.passwordCode) {
-                navigationRef.current?.navigate("LoginCodePage");
-              }
-            } catch (err) {
-              console.log("AppState lock error:", err);
-            }
-          }
-        }
-      });
-      return () => subscription.remove();
-    }, []);
-
-  useEffect(() => {
-  (async () => {
-    try {
-      const activeUsername = await AsyncStorage.getItem("activeUser");
-      const usersStr = await AsyncStorage.getItem("users");
-      const users = usersStr ? JSON.parse(usersStr) : [];
-      const activeUser = users.find((u: any) => u.username === activeUsername);
-      if (!activeUser) {
-        setInitialRoute("LoginPage");
         return;
       }
-      if (activeUser.passwordCode) {
-        setInitialRoute("LoginCodePage");
-      } else {
-        setInitialRoute("TopTabs");
+
+      if (nextState === "background" || nextState === "inactive") {
+        lastTimeRef.current = Date.now();
       }
-    } catch (e) {
-      setInitialRoute("LoginPage");
-    }
-  })();
-}, []);
+
+      if (nextState === "active") {
+        const diff = Date.now() - lastTimeRef.current;
+
+        if (diff > 10000) {
+          try {
+            const activeUsername = await AsyncStorage.getItem("activeUser");
+            const usersStr = await AsyncStorage.getItem("users");
+
+            if (!activeUsername || !usersStr) return;
+
+            const users = JSON.parse(usersStr);
+            const activeUser = users.find(
+              (u: any) => u.username === activeUsername
+            );
+
+            if (activeUser?.passwordCode) {
+              navigationRef.current?.navigate("LoginCodePage");
+            }
+          } catch (err) {
+            console.log("AppState lock error:", err);
+          }
+        }
+      }
+    });
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const activeUsername = await AsyncStorage.getItem("activeUser");
+        const usersStr = await AsyncStorage.getItem("users");
+        const users = usersStr ? JSON.parse(usersStr) : [];
+        const activeUser = users.find((u: any) => u.username === activeUsername);
+        if (!activeUser) {
+          setInitialRoute("LoginPage");
+          return;
+        }
+        if (activeUser.passwordCode) {
+          setInitialRoute("LoginCodePage");
+        } else {
+          setInitialRoute("MainTabs");
+        }
+      } catch (e) {
+        setInitialRoute("LoginPage");
+      }
+    })();
+  }, []);
+
   if (!initialRoute) return null;
+
   return (
-    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
       <StatusBar
         barStyle={theme.isDark ? "light-content" : "dark-content"}
         backgroundColor={theme.background}
       />
 
       <View style={{ flex: 1, backgroundColor: theme.background }}>
-          <NavigationContainer ref={navigationRef} theme={navigationTheme}>
-            <Stack.Navigator
-              initialRouteName={initialRoute}
-              screenOptions={{ headerShown: false }}
-            >
-              <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
-              <Stack.Screen name="LoginPage" component={LoginPage} />
-              <Stack.Screen name="HomePage" component={HomePage} />
-              <Stack.Screen name="TopTabs" component={TopTabs} />
-              <Stack.Screen name="Habits" component={HabitsPage} />
-              <Stack.Screen name="Business" component={Business} />
-              <Stack.Screen name="ProfileView" component={ProfileViewPage} />
-              <Stack.Screen name="ProfileEdit" component={ProfilePage} />
-              <Stack.Screen name="Chat" component={ChatPage} />
-              <Stack.Screen name="Support" component={SupportPage} />
-              <Stack.Screen name="AddHabit" component={AddHabit} />
-              <Stack.Screen name="Earnings" component={Earnings} />
-              <Stack.Screen name="AddPage" component={AddPage} />
-              <Stack.Screen name="ViewTask" component={ViewTask} />
-              <Stack.Screen name="DescStyle" component={DescStyle} />
-              <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
-            </Stack.Navigator>
+        <NavigationContainer ref={navigationRef} theme={navigationTheme}>
+          <Stack.Navigator
+            initialRouteName={initialRoute}
+            screenOptions={{ headerShown: false }}
+          >
+            <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
+            <Stack.Screen name="LoginPage" component={LoginPage} />
+            <Stack.Screen name="HomePage" component={HomePage} />
+            <Stack.Screen name="MainTabs" component={MainTabs} />
 
-            <View style={styles.flashWrapper}>
-              <FlashMessage position="top" style={styles.flashBox} />
-            </View>
-          </NavigationContainer>
+            <Stack.Screen name="Habits" component={HabitsPage} />
+            <Stack.Screen name="Business" component={Business} />
+            <Stack.Screen name="ProfileView" component={ProfileViewPage} />
+            <Stack.Screen name="ProfileEdit" component={ProfilePage} />
+            <Stack.Screen name="Chat" component={ChatPage} />
+            <Stack.Screen name="Support" component={SupportPage} />
+            <Stack.Screen name="AddHabit" component={AddHabit} />
+            <Stack.Screen name="Earnings" component={Earnings} />
+            <Stack.Screen name="AddPage" component={AddPage} />
+            <Stack.Screen name="ViewTask" component={ViewTask} />
+            <Stack.Screen name="DescStyle" component={DescStyle} />
+            <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
+          </Stack.Navigator>
+
+          <View style={styles.flashWrapper}>
+            <FlashMessage position="top" style={styles.flashBox} />
+          </View>
+        </NavigationContainer>
       </View>
-    </>
+    </SafeAreaView>
   );
 };
+
 const App: React.FC = () => {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <ThemeProvider>
-          <AppNavigator/>
+          <AppNavigator />
         </ThemeProvider>
-    </GestureHandlerRootView>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 };
 

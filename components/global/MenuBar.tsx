@@ -16,7 +16,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
           style={[
             StyleSheet.absoluteFillObject,
             {
-              backgroundColor: theme.card,
+              backgroundColor: theme.primary,
               // opacity: 0.3,
               borderRadius: 12,
             },
@@ -27,7 +27,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             key={idx}
             style={[
               styles.sideButton,
-              { backgroundColor: theme.bgsound, borderColor: btn.color, borderWidth: 1 },
+              { backgroundColor: theme.primary, borderColor: btn.color, borderWidth: 1 },
               btn.marginLeft ? { marginLeft: btn.marginLeft } : null,
             ]}
             onPress={btn.onPress}

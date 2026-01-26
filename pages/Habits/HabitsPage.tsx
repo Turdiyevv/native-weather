@@ -118,7 +118,7 @@ const HabitsPage: React.FC = () => {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.container, { backgroundColor: theme.background }]}
     >
       <Header title="Odatlar" />
@@ -300,7 +300,7 @@ const HabitsPage: React.FC = () => {
       >
         <Text style={styles.addText}>Yangi qo'shish</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 

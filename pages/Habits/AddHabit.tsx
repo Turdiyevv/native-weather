@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-  KeyboardAvoidingView,
-  Alert,
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    Platform,
+    KeyboardAvoidingView,
+    Alert, BackHandler,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useNavigation } from "@react-navigation/native";
@@ -83,7 +83,15 @@ const saveHabit = async () => {
   }
 };
 
-
+  useEffect(() => {
+      const backAction = () => {
+          navigation.goBack(); // har doim TopTabs ga qaytadi
+          return true; // default behaviorni to‘xtatadi
+        };
+      const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress", backAction);
+      return () => backHandler.remove()
+  }, [navigation]);
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: theme.background }]}
