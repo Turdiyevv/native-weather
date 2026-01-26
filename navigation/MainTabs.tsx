@@ -9,7 +9,7 @@ import TopTabs from "./TopTabs";
 import HabitsPage from "../pages/Habits/HabitsPage";
 import Business from "../pages/Business/Business";
 import Earnings from "../pages/Earnings/Earnings";
-import {ProfileViewPage} from "../pages/Profile/ProfileViewPage";
+// import {ProfileViewPage} from "../pages/Profile/ProfileViewPage";
 import ChatPage from "../pages/chats/ChatPage";
 import CustomHeader from "../components/Task/CustomHeader";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
@@ -17,7 +17,7 @@ import {RootStackParamList} from "../pages/types/types";
 
 const Tab = createMaterialTopTabNavigator();
 
-function MyTabBar({ state, descriptors, navigation, theme }: any) {
+function MyTabBar({ state, navigation, theme }: any) {
   const tabs = [
     { name: "TopTabs", icon: "file-tray-full-outline", label: "Tasks" },
     { name: "Habits", icon: "checkbox-outline", label: "Habits" },

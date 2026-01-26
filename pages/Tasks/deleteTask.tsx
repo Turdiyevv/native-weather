@@ -16,7 +16,7 @@ import TodoItem from "../../components/Task/TodoItem";
 import { useTheme } from "../../theme/ThemeContext";
 import AdminIcon from "../../assets/admin_icon.png";
 import * as Notifications from "expo-notifications";
-import {useScrollHandler} from "../../navigation/TopTabs";
+import {useScrollHandler} from "../../utills/ScrollContext";
 
 export default function DeleteTask({ navigation }: any) {
   const { theme } = useTheme();

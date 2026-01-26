@@ -8,6 +8,8 @@ import MainPage from "../pages/Tasks/Main";
 import DoneTask from "../pages/Tasks/doneTask";
 import DeleteTask from "../pages/Tasks/deleteTask";
 import LeftMenu from "../components/global/MenuBar";
+import {useScroll} from "../utills/useScroll";
+import { ScrollContext } from "../utills/ScrollContext";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -16,9 +18,6 @@ interface ScrollContextType {
   handleScroll: (event: any) => void;
 }
 
-const ScrollContext = createContext<ScrollContextType | null>(null);
-
-export const useScrollHandler = () => useContext(ScrollContext);
 
 function MyTabBar({ state, descriptors, navigation, theme }: any) {
   return (
@@ -68,39 +67,7 @@ function MyTabBar({ state, descriptors, navigation, theme }: any) {
 
 export default function TopTabs({ navigation }: any) {
   const { theme } = useTheme();
-  const footerTranslateY = useRef(new Animated.Value(0)).current;
-  const lastScrollY = useRef(0);
-  const [isFooterVisible, setIsFooterVisible] = useState(true);
-
-  const handleScroll = (event: any) => {
-    const currentScrollY = event.nativeEvent.contentOffset.y;
-    const scrollDiff = currentScrollY - lastScrollY.current;
-
-    // Scroll down - hide footer (pastga scroll - yashirish)
-    if (scrollDiff > 5 && currentScrollY > 50) {
-      if (isFooterVisible) {
-        Animated.timing(footerTranslateY, {
-          toValue: 100,
-          duration: 250,
-          useNativeDriver: true,
-        }).start();
-        setIsFooterVisible(false);
-      }
-    }
-    // Scroll up - show footer (tepaga scroll - ko'rsatish)
-    else if (scrollDiff < -5) {
-      if (!isFooterVisible) {
-        Animated.timing(footerTranslateY, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver: true,
-        }).start();
-        setIsFooterVisible(true);
-      }
-    }
-
-    lastScrollY.current = currentScrollY;
-  };
+  const { handleScroll, footerTranslateY } = useScroll();
 
   return (
     <ScrollContext.Provider value={{ handleScroll }}>
