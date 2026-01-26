@@ -91,7 +91,7 @@ export default function TopTabs({ navigation }: any) {
       <View style={styles.footerWrapper}>
         <LeftMenu
           buttons={[
-            { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), size: 20, color: theme.text },
+            { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), size: 20, color: theme.primary },
           ]}
           containerStyle={{ width: "100%" }}
         />
