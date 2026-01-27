@@ -207,7 +207,7 @@ export default function Business({ route }: Props) {
 
   return (
       <View style={{flex: 1}}>
-        <Header title={dateStr}/>
+        <Header title={dateStr} isBack={true}/>
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: theme.background }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}

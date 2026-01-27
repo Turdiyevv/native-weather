@@ -56,7 +56,7 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
   const { username } = currentUser;
 
   return (
-    <View style={[styles.header, {borderColor: theme.placeholder}]}>
+    <View style={[styles.header, {borderColor: theme.placeholder, backgroundColor: theme.background}]}>
       <View>
         <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
         <Text style={styles.keyUsername}>@{username || "username"}</Text>

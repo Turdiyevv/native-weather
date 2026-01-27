@@ -27,7 +27,16 @@ function MyTabBar({ state, navigation, theme }: any) {
   ];
 
   return (
-    <View style={[styles.tabContainer, { backgroundColor: theme.backgroundColor }]}>
+    <View style={[styles.tabContainer, { backgroundColor: theme.card }]}>
+        <View
+            style={[
+              styles.topIndicator,
+              {
+                backgroundColor: theme.primary,
+                left: `${state.index * 20}%`, // 5 ta tab → 20%
+              },
+            ]}
+        />
       {tabs.map((tab, index) => {
         const isFocused = state.index === index;
 
@@ -48,17 +57,18 @@ function MyTabBar({ state, navigation, theme }: any) {
             key={index}
             onPress={onPress}
             activeOpacity={0.7}
-            style={styles.tabItem}
+            style={[
+                styles.tabItem, { backgroundColor: isFocused ? theme.tabCard : null }
+            ]}
           >
-            {/* Top border indicator */}
-            <View
-              style={[
-                {
-                  backgroundColor: isFocused ? theme.primary : 'transparent',
-                },
-                styles.topIndicator,
-              ]}
-            />
+            {/*<View*/}
+            {/*  style={[*/}
+            {/*    {*/}
+            {/*      backgroundColor: isFocused ? theme.primary : 'transparent',*/}
+            {/*    },*/}
+            {/*    styles.topIndicator,*/}
+            {/*  ]}*/}
+            {/*/>*/}
 
             <Ionicons
               name={tab.icon as any}
@@ -80,7 +90,7 @@ export default function MainTabs() {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
+    <View style={{ flex: 1 }}>
       <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
       <Tab.Navigator
         tabBar={(props) => <MyTabBar {...props} theme={theme} />}
@@ -105,12 +115,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 50,
     shadowColor: "#000",
+    position: "relative",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },
   tabItem: {
-    borderRadius: 12,
+    borderRadius: 7,
+    margin: 5,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -119,9 +131,8 @@ const styles = StyleSheet.create({
   topIndicator: {
     position: 'absolute',
     top: 0,
-    left: '15%',
-    right: '15%',
-    height: 3,
+    width: '20%',
+    height: 2,
     borderBottomLeftRadius: 6,
     borderBottomRightRadius: 6,
   },

@@ -203,7 +203,7 @@ const loadActiveUser = async () => {
       />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingTop: 20, marginHorizontal: 10 }}
+        contentContainerStyle={{marginHorizontal: 10 }}
         showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View>
