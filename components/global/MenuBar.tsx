@@ -4,11 +4,9 @@ import {View, TouchableOpacity, StyleSheet, Text} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LeftMenuProps } from "../../pages/types/types";
 import { useTheme } from "../../theme/ThemeContext";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
   const { theme } = useTheme();
-  const insets = useSafeAreaInsets();
 
   return (
       <View style={styles.buttonBox}>
@@ -32,6 +30,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             ]}
             onPress={btn.onPress}
           >
+              <Text style={{color: theme.text}}>{btn?.text}</Text>
             <Ionicons
               name={btn.icon as any}
               size={btn.size || 16}

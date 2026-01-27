@@ -20,6 +20,14 @@ import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationDefaultTheme,
 } from "@react-navigation/native";
+import {ProfileViewPage} from "./pages/Profile/ProfileViewPage";
+import AddHabit from "./pages/Habits/AddHabit";
+import AddPage from "./components/screens/AddPage";
+import ViewTask from "./pages/Tasks/ViewTask";
+import DescStyle from "./pages/Tasks/DescStyle";
+import IncomeAndExpenses from "./pages/Business/IncomeAndExpenses";
+import ProfilePage from "./pages/Profile/ProfilePage";
+import SupportPage from "./pages/SupportPage";
 
 enableScreens();
 
@@ -133,6 +141,14 @@ const AppNavigator = () => {
             <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
             <Stack.Screen name="LoginPage" component={LoginPage} />
             <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen name="ProfileView" component={ProfileViewPage} />
+            <Stack.Screen name="ProfileEdit" component={ProfilePage} />
+            <Stack.Screen name="Support" component={SupportPage} />
+            <Stack.Screen name="AddHabit" component={AddHabit} />
+            <Stack.Screen name="AddPage" component={AddPage} />
+            <Stack.Screen name="ViewTask" component={ViewTask} />
+            <Stack.Screen name="DescStyle" component={DescStyle} />
+            <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
           </Stack.Navigator>
 
           <View style={styles.flashWrapper}>

@@ -105,6 +105,7 @@ export interface TodoItemProps {
 export interface LeftMenuProps {
   buttons: {
       icon: string;
+      text? : string;
       size?: number;
       color?: string;
       marginLeft?:string | any;

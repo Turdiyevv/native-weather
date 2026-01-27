@@ -106,7 +106,8 @@ export default function TopTabs({ navigation }: any) {
         >
           <LeftMenu
             buttons={[
-              { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), size: 20, color: theme.primary },
+              { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), text: "Qo'shish", size: 20, color: theme.primary },
+              { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 20, color: theme.primary },
             ]}
             containerStyle={{ width: "100%" }}
           />

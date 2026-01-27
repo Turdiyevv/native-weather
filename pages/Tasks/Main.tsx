@@ -231,7 +231,7 @@ export default function MainPage({ navigation }: any) {
           >
             <SectionList
               contentContainerStyle={{}}
-              style={{ marginVertical: 2, borderRadius: 12 }}
+              style={{ marginVertical: 1, borderRadius: 12 }}
               sections={groupedTasks}
               keyExtractor={(item) => item.id}
               onScroll={scrollHandler?.handleScroll}
