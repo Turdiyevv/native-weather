@@ -11,21 +11,8 @@ import * as Notifications from "expo-notifications";
 
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 
-import AddPage from "./components/screens/AddPage";
-import ProfilePage from "./pages/Profile/ProfilePage";
-import { ProfileViewPage } from "./pages/Profile/ProfileViewPage";
-import ChatPage from "./pages/chats/ChatPage";
-import SupportPage from "./pages/SupportPage";
-import Business from "./pages/Business/Business";
 import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
-import IncomeAndExpenses from "./pages/Business/IncomeAndExpenses";
-import DescStyle from "./pages/Tasks/DescStyle";
-import ViewTask from "./pages/Tasks/ViewTask";
-import HomePage from "./pages/HomePage";
-import HabitsPage from "./pages/Habits/HabitsPage";
-import AddHabit from "./pages/Habits/AddHabit";
-import Earnings from "./pages/Earnings/Earnings";
 import MainTabs from "./navigation/MainTabs";
 
 import { RootStackParamList } from "./pages/types/types";
@@ -145,21 +132,7 @@ const AppNavigator = () => {
           >
             <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
             <Stack.Screen name="LoginPage" component={LoginPage} />
-            <Stack.Screen name="HomePage" component={HomePage} />
             <Stack.Screen name="MainTabs" component={MainTabs} />
-
-            <Stack.Screen name="Habits" component={HabitsPage} />
-            <Stack.Screen name="Business" component={Business} />
-            <Stack.Screen name="ProfileView" component={ProfileViewPage} />
-            <Stack.Screen name="ProfileEdit" component={ProfilePage} />
-            <Stack.Screen name="Chat" component={ChatPage} />
-            <Stack.Screen name="Support" component={SupportPage} />
-            <Stack.Screen name="AddHabit" component={AddHabit} />
-            <Stack.Screen name="Earnings" component={Earnings} />
-            <Stack.Screen name="AddPage" component={AddPage} />
-            <Stack.Screen name="ViewTask" component={ViewTask} />
-            <Stack.Screen name="DescStyle" component={DescStyle} />
-            <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
           </Stack.Navigator>
 
           <View style={styles.flashWrapper}>

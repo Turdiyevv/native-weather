@@ -61,15 +61,6 @@ function MyTabBar({ state, navigation, theme }: any) {
                 styles.tabItem, { backgroundColor: isFocused ? theme.tabCard : null }
             ]}
           >
-            {/*<View*/}
-            {/*  style={[*/}
-            {/*    {*/}
-            {/*      backgroundColor: isFocused ? theme.primary : 'transparent',*/}
-            {/*    },*/}
-            {/*    styles.topIndicator,*/}
-            {/*  ]}*/}
-            {/*/>*/}
-
             <Ionicons
               name={tab.icon as any}
               size={24}
