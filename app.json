@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Vega chat",
+    "name": "Vega",
     "slug": "VegaChat",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "orientation": "portrait",
     "icon": "./assets/vega.png",
     "userInterfaceStyle": "light",
@@ -24,7 +24,7 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/vega.png",
-        "backgroundColor": "#1E1F22"
+        "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
