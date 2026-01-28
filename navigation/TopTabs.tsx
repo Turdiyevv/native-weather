@@ -1,5 +1,5 @@
 // TopTabs.tsx
-import React, { useRef, createContext, useContext, useState } from "react";
+import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Animated } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTheme } from "../theme/ThemeContext";
@@ -12,12 +12,6 @@ import {useScroll} from "../utills/useScroll";
 import { ScrollContext } from "../utills/ScrollContext";
 
 const Tab = createMaterialTopTabNavigator();
-
-// Context for scroll handler
-interface ScrollContextType {
-  handleScroll: (event: any) => void;
-}
-
 
 function MyTabBar({ state, descriptors, navigation, theme }: any) {
   return (
@@ -64,7 +58,6 @@ function MyTabBar({ state, descriptors, navigation, theme }: any) {
     </View>
   );
 }
-
 export default function TopTabs({ navigation }: any) {
   const { theme } = useTheme();
   const { handleScroll, footerTranslateY } = useScroll();

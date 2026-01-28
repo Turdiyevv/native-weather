@@ -54,10 +54,10 @@ const AppNavigator = () => {
     },
   };
 
-  const onNavigationStateChange = () => {
-    const currentRoute = navigationRef.current?.getCurrentRoute();
-    console.log('Current Route Name:', currentRoute?.name);
-  };
+  // const onNavigationStateChange = () => {
+  //   const currentRoute = navigationRef.current?.getCurrentRoute();
+  //   console.log('Current Route Name:', currentRoute?.name);
+  // };
 
   useEffect(() => {
     (async () => {

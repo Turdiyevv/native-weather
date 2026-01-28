@@ -42,8 +42,8 @@ export default function AddPage({ navigation, route }: any) {
   ];
   useEffect(() => {
       const backAction = () => {
-          navigation.navigate("TopTabs"); // har doim TopTabs ga qaytadi
-          return true; // default behaviorni to‘xtatadi
+          navigation.navigate("TopTabs");
+          return true;
         };
       const backHandler = BackHandler.addEventListener(
           "hardwareBackPress", backAction);

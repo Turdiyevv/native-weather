@@ -6,11 +6,9 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  BackHandler,
 } from "react-native";
-import {CommonActions, useFocusEffect, useNavigation} from "@react-navigation/native";
+import { useFocusEffect, useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "../../theme/ThemeContext";
 import { RootStackParamList } from "../types/types";
@@ -64,28 +62,6 @@ const HabitsPage: React.FC = () => {
         loadHabits();
       }, [])
   );
-  /* 🔙 Back handler */
-  useEffect(() => {
-    const backAction = () => {
-      if (navigation.canGoBack()) {
-        navigation.goBack();
-      } else {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "MainTabs" }],
-          })
-        );
-      }
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-    return () => backHandler.remove();
-  }, []);
-
   /* 📦 Load habits */
   const loadHabits = async () => {
     setLoading(true);

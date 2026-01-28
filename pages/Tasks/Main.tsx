@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Animated,
   Image,
-  Easing,
   TouchableWithoutFeedback,
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
@@ -191,31 +190,6 @@ export default function MainPage({ navigation }: any) {
     .sort((a, b) => b.dateKey - a.dateKey);
 
   const hasTasks = groupedTasks.some(section => section.data.length > 0);
-
-  // Animate tab change
-  const TAB_ORDER: TaskTab[] = ["main", "done", "deleted"];
-
-  const onTabPress = (tab: TaskTab) => {
-    if (tab === activeTab) return;
-    const currentIndex = TAB_ORDER.indexOf(activeTab);
-    const nextIndex = TAB_ORDER.indexOf(tab);
-    const fromX = nextIndex > currentIndex ? 300 : -300;
-    listAnim.setValue(fromX);
-    listOpacity.setValue(0);
-    setActiveTab(tab);
-    Animated.timing(listAnim, {
-      toValue: 0,
-      duration: 200,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
-    Animated.timing(listOpacity, {
-      toValue: 1,
-      duration: 50,
-      delay: 20,
-      useNativeDriver: true,
-    }).start();
-  };
 
   return (
     <TouchableWithoutFeedback onPress={handleCloseMenu}>
