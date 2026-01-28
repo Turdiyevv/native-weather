@@ -172,10 +172,7 @@ export default function MainPage({ navigation }: any) {
   };
 
   const groupedTasks = tasks
-    .filter(t => {
-      if (activeTab === "main") return !t.isDeleted && !t.done;
-      return true;
-    })
+    .filter(t => {return !t.isDeleted && !t.done;})
     .slice()
     .reverse()
     .reduce((acc: any[], task) => {

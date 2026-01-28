@@ -23,8 +23,6 @@ export default function DeleteTask({ navigation }: any) {
   const [tasks, setTasks] = useState<UserTask[]>([]);
   const [openMenuTaskId, setOpenMenuTaskId] = useState<string | null>(null);
 
-  type TaskTab = "main" | "done" | "deleted";
-  const [activeTab, setActiveTab] = useState<TaskTab>("main");
   const listAnim = useRef(new Animated.Value(0)).current;
   const listOpacity = useRef(new Animated.Value(1)).current;
 
