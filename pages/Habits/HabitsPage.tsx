@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   status: {fontSize: 13 },
 
   footerWrapper: {
-    right: "15%",
+    right: "5%",
     marginHorizontal: 5,
     position: "absolute",
     bottom: 0,
