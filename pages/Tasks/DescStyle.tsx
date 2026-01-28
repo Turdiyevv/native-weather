@@ -1,6 +1,6 @@
 import { useTheme } from "../../theme/ThemeContext";
 import {CommonActions, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {Text, StyleSheet, View, ImageBackground, Platform, BackHandler} from "react-native";
+import {Text, StyleSheet, View, ImageBackground, Platform, BackHandler, ScrollView} from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Header from "../../components/global/Header";
 import { RootStackParamList } from "../types/types";
@@ -50,10 +50,10 @@ const DescStyle: React.FC = () => {
                ))}
               <Header title={"Elementni ko'rish"} />
               <View style={styles.textContainer}>
-                  <View style={[styles.textSmContainer, {backgroundColor: theme.background}]}>
+                  <ScrollView style={[styles.textSmContainer, {backgroundColor: theme.background}]}>
                       <Text style={[styles.text, { color: theme.text }]}>{description}</Text>
                       <Text style={[styles.textLink, { color: theme.placeholder }]}>@turdiyevline</Text>
-                  </View>
+                  </ScrollView>
               </View>
         </View>
       </View>

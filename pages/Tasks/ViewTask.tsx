@@ -78,7 +78,7 @@ const ViewPage: React.FC = () => {
       }
   };
     return (
-    <SafeAreaView style={{flex: 1}}>
+    <View style={{flex: 1}}>
       <Header title={"ELement"}/>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.card, {backgroundColor: theme.card, shadowColor: "black"}]}>
@@ -198,7 +198,7 @@ const ViewPage: React.FC = () => {
         }}
         onCancel={() => setModalVisible(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 export default ViewPage;

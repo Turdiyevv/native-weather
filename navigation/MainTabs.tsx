@@ -32,7 +32,7 @@ function MyTabBar({ state, navigation, theme }: any) {
               styles.topIndicator,
               {
                 backgroundColor: theme.primary,
-                left: `${state.index * 20}%`, // 5 ta tab → 20%
+                left: `${state.index * 20 + 1.9}%`,
               },
             ]}
         />
@@ -109,6 +109,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
+    borderTopLeftRadius: 12,
+    borderTopEndRadius: 12
   },
   tabItem: {
     borderRadius: 7,
@@ -121,9 +123,8 @@ const styles = StyleSheet.create({
   topIndicator: {
     position: 'absolute',
     top: 0,
-    width: '20%',
+    width: '16%',
     height: 2,
-    borderBottomLeftRadius: 6,
-    borderBottomRightRadius: 6,
+    borderRadius: 6
   },
 });
