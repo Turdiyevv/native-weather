@@ -9,7 +9,6 @@ import TopTabs from "./TopTabs";
 import HabitsPage from "../pages/Habits/HabitsPage";
 import Business from "../pages/Business/Business";
 import Earnings from "../pages/Earnings/Earnings";
-// import {ProfileViewPage} from "../pages/Profile/ProfileViewPage";
 import ChatPage from "../pages/chats/ChatPage";
 import CustomHeader from "../components/Task/CustomHeader";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";

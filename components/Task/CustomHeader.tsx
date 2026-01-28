@@ -3,19 +3,15 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getActiveUser } from '../../service/storage';
 import { User } from '../../pages/types/userTypes';
-import {NavigationProp, useFocusEffect, useNavigation} from "@react-navigation/native";
+import { useFocusEffect} from "@react-navigation/native";
 import {useTheme} from "../../theme/ThemeContext";
-import {RootStackParamList} from "../../pages/types/types";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
-interface HeaderProps {onProfilePress: () => void}
-type HeaderNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "MainTabs"
->;
-const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
+interface HeaderProps {
+    onProfilePress: () => void;
+    title?: string | any;
+}
+const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress,title }) => {
     const { theme } = useTheme();
-    const navigation = useNavigation<HeaderNavigationProp>();
     const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -61,6 +57,9 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress }) => {
         <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
         <Text style={styles.keyUsername}>@{username || "username"}</Text>
       </View>
+        {title && (
+          <Text>{title}</Text>
+        )}
       <TouchableOpacity onPress={onProfilePress}>
         {avatar ? (
           <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />

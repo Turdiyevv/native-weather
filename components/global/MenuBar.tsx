@@ -30,7 +30,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
             ]}
             onPress={btn.onPress}
           >
-              <Text style={{color: theme.text}}>{btn?.text}</Text>
+              <Text style={{color: "#fff"}}>{btn?.text}</Text>
             <Ionicons
               name={btn.icon as any}
               size={btn.size || 16}
@@ -45,14 +45,12 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
 export default LeftMenu;
 const styles = StyleSheet.create({
   buttonBox: {
-    // width: "100%",
     elevation: 12,
     shadowColor: "#000",
     shadowOpacity: 0.8,
     flexDirection: "row",
-    gap: 15,
+    gap: 5,
     padding: 6,
-    // borderRadius: 40,
   },
   sideButton: {
       flexDirection: "row",

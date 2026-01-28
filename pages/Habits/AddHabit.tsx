@@ -133,6 +133,7 @@ const saveHabit = async () => {
           Necha kun davom etadi
         </Text>
         <TextInput
+          maxLength={3}
           value={durationDays}
           onChangeText={setDurationDays}
           keyboardType="numeric"
