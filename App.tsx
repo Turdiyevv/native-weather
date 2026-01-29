@@ -56,14 +56,6 @@ const AppNavigator = () => {
   };
 
   useEffect(() => {
-      if (Platform.OS === 'android') {
-        NavigationBar.setBackgroundColorAsync(theme.card);
-        NavigationBar.setButtonStyleAsync(
-          theme.isDark ? 'light' : 'dark'
-        );
-      }
-  }, [theme]);
-  useEffect(() => {
     (async () => {
       await Notifications.requestPermissionsAsync();
     })();
