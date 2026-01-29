@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from "react-native-screens";
-import { StatusBar, View, StyleSheet, AppState } from "react-native";
+import {StatusBar, View, StyleSheet, AppState, Platform} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FlashMessage from "react-native-flash-message";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Notifications from "expo-notifications";
+import * as NavigationBar from 'expo-navigation-bar';
 
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 
@@ -54,11 +55,14 @@ const AppNavigator = () => {
     },
   };
 
-  // const onNavigationStateChange = () => {
-  //   const currentRoute = navigationRef.current?.getCurrentRoute();
-  //   console.log('Current Route Name:', currentRoute?.name);
-  // };
-
+  useEffect(() => {
+      if (Platform.OS === 'android') {
+        NavigationBar.setBackgroundColorAsync(theme.card);
+        NavigationBar.setButtonStyleAsync(
+          theme.isDark ? 'light' : 'dark'
+        );
+      }
+  }, [theme]);
   useEffect(() => {
     (async () => {
       await Notifications.requestPermissionsAsync();
@@ -131,37 +135,43 @@ const AppNavigator = () => {
   if (!initialRoute) return null;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.card }}>
-      <StatusBar
-        barStyle={theme.isDark ? "light-content" : "dark-content"}
-        backgroundColor={theme.background}
-      />
-
-      <View style={{ flex: 1, backgroundColor: theme.background }}>
-        <NavigationContainer ref={navigationRef} theme={navigationTheme}>
-          <Stack.Navigator
-            initialRouteName={initialRoute}
-            screenOptions={{ headerShown: false }}
+      <>
+        <SafeAreaView
+            edges={["top"]}
+            style={{ backgroundColor: theme.background }}
           >
-            <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
-            <Stack.Screen name="LoginPage" component={LoginPage} />
-            <Stack.Screen name="MainTabs" component={MainTabs} />
-            <Stack.Screen name="ProfileView" component={ProfileViewPage} />
-            <Stack.Screen name="ProfileEdit" component={ProfilePage} />
-            <Stack.Screen name="Support" component={SupportPage} />
-            <Stack.Screen name="AddHabit" component={AddHabit} />
-            <Stack.Screen name="AddPage" component={AddPage} />
-            <Stack.Screen name="ViewTask" component={ViewTask} />
-            <Stack.Screen name="DescStyle" component={DescStyle} />
-            <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
-          </Stack.Navigator>
+            <StatusBar
+              barStyle={theme.isDark ? "light-content" : "dark-content"}
+              backgroundColor={theme.background}
+            />
+          </SafeAreaView>
 
-          <View style={styles.flashWrapper}>
-            <FlashMessage position="top" style={styles.flashBox} />
+          <View style={{ flex: 1, backgroundColor: theme.background }}>
+            <NavigationContainer ref={navigationRef} theme={navigationTheme}>
+              <Stack.Navigator
+                initialRouteName={initialRoute}
+                screenOptions={{ headerShown: false }}
+              >
+                <Stack.Screen name="LoginCodePage" component={LoginCodePage} />
+                <Stack.Screen name="LoginPage" component={LoginPage} />
+                <Stack.Screen name="MainTabs" component={MainTabs} />
+                <Stack.Screen name="ProfileView" component={ProfileViewPage} />
+                <Stack.Screen name="ProfileEdit" component={ProfilePage} />
+                <Stack.Screen name="Support" component={SupportPage} />
+                <Stack.Screen name="AddHabit" component={AddHabit} />
+                <Stack.Screen name="AddPage" component={AddPage} />
+                <Stack.Screen name="ViewTask" component={ViewTask} />
+                <Stack.Screen name="DescStyle" component={DescStyle} />
+                <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
+              </Stack.Navigator>
+
+              <View style={styles.flashWrapper}>
+                <FlashMessage position="top" style={styles.flashBox} />
+              </View>
+            </NavigationContainer>
           </View>
-        </NavigationContainer>
-      </View>
-    </SafeAreaView>
+        <SafeAreaView edges={["bottom"]} style={{ backgroundColor: theme.card }}/>
+      </>
   );
 };
 

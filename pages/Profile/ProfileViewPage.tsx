@@ -122,25 +122,22 @@ const loadActiveUser = async () => {
       });
     };
 
-  useEffect(() => {
-    loadActiveUser();
-    const unsubscribe = navigation.addListener("focus", loadActiveUser);
-
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "MainTabs" }],
-        })
+    useEffect(() => {
+      const backAction = () => {
+        if (navigation.canGoBack()) {
+          navigation.goBack(); // EditProfile'dan kelganda
+        } else {
+          navigation.navigate("MainTabs"); // Agar to‘g‘ridan-to‘g‘ri Profile bo‘lsa
+        }
+        return true;
+      };
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
       );
-      return true;
-    });
+      return () => backHandler.remove();
+    }, []);
 
-    return () => {
-      unsubscribe();
-      backHandler.remove();
-    };
-  }, []);
 
   const deleteAccount = async () => {
     setDeleteModalVisible(true);

@@ -52,26 +52,6 @@ export default function ProfilePage() {
       };
   }, []);
   useEffect(() => {
-    const backAction = () => {
-      if (navigation.canGoBack()) {
-        navigation.goBack();
-      } else {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "MainTabs" }],
-          })
-        );
-      }
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-    return () => backHandler.remove();
-  }, []);
-  useEffect(() => {
     const loadProfile = async () => {
       try {
         const active = await getActiveUser();

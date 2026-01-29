@@ -119,29 +119,6 @@ export default function Business({ route }: Props) {
       });
   };
 
-
-  /* 🔙 Android back */
-  useEffect(() => {
-    const backAction = () => {
-      if (navigation.canGoBack()) {
-        navigation.goBack();
-      } else {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "MainTabs" }],
-          })
-        );
-      }
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-    return () => backHandler.remove();
-  }, []);
-
   const dismissForm = () => {
     Keyboard.dismiss();
     setShowForm(false);

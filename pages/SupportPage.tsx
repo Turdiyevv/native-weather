@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
   Platform,
   ScrollView,
   Linking,
-  BackHandler,
 } from "react-native";
 import AdminIcon from "../assets/admin_icon.png";
 
@@ -23,21 +22,6 @@ type SupportNav = NativeStackNavigationProp<RootStackParamList, "Support">;
 const SupportPage: React.FC = () => {
     const { theme } = useTheme();
   const navigation = useNavigation<SupportNav>();
-
-  useEffect(() => {
-    const backAction = () => {
-      navigation.navigate("ProfileView");
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, []);
-
   return (
     <KeyboardAvoidingView
       style={[styles.container, {backgroundColor:theme.background}]}

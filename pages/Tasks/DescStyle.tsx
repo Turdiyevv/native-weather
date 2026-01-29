@@ -17,26 +17,6 @@ const DescStyle: React.FC = () => {
   const route = useRoute<DescRouteProp>();
   const description = route.params.description;
 
-  useEffect(() => {
-    const backAction = () => {
-      if (navigation.canGoBack()) {
-        navigation.goBack();
-      } else {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "MainTabs" }],
-          })
-        );
-      }
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-    return () => backHandler.remove();
-  }, []);
   return (
       <View style={{flex: 1}}>
           <View style={styles.background}>

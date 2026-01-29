@@ -177,7 +177,7 @@ export default function TodoItem({
                 <View style={styles.returnCount}>
                   <Ionicons
                     name="refresh-outline"
-                    size={22}
+                    size={20}
                     color="#a19e9e"
                     style={styles.scale}
                   />
@@ -189,8 +189,16 @@ export default function TodoItem({
               {item.done && (
                 <Ionicons
                   name="checkmark-circle"
-                  size={22}
+                  size={20}
                   color="#4CAF50"
+                  style={{ marginLeft: 1 }}
+                />
+              )}
+              {item.deadline?.length > 0 && (
+                <Ionicons
+                  name="alarm"
+                  size={20}
+                  color="#ff5300"
                   style={{ marginLeft: 1 }}
                 />
               )}
@@ -198,13 +206,13 @@ export default function TodoItem({
                 deadlineColor === "#fa5d5d") && (
                 <Ionicons
                   name="alert-circle"
-                  size={22}
+                  size={20}
                   color="grey"
                   style={{ marginLeft: 1 }}
                 />
               )}
               {item.isDeleted && (
-                <Ionicons name="trash-outline" size={18} color="red" />
+                <Ionicons name="trash" size={16} color="red" />
               )}
             </View>
           </View>

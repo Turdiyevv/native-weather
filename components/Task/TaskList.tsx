@@ -55,6 +55,13 @@ export default function TaskList({
     loadProfile();
     return unsubscribe;
   }, [navigation]);
+  useEffect(() => {
+      const unsubscribeBlur = navigation.addListener('blur', () => {
+        setOpenMenuTaskId(null);
+      });
+
+      return () => unsubscribeBlur();
+  }, [navigation]);
 
   const markDone = async (task: UserTask) => {
     try {

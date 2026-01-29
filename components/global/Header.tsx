@@ -19,20 +19,8 @@ const Header: React.FC<HeaderProps> = ({ title, onBack, isBack }) => {
   const { theme } = useTheme();
 
   const handleBack = () => {
-    if (onBack) {
-      onBack();
-    } else {
-      if (navigation.canGoBack()) {
-        navigation.goBack();
-      } else {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "MainTabs" }],
-          })
-        );
-      }
-    }
+    if (onBack) {onBack()}
+    if (navigation.canGoBack()) {navigation.goBack()}
   };
 
   return (
