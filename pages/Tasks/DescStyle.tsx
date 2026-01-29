@@ -50,7 +50,7 @@ const DescStyle: React.FC = () => {
                ))}
               <Header title={"Elementni ko'rish"} />
               <View style={styles.textContainer}>
-                  <ScrollView style={[styles.textSmContainer, {backgroundColor: theme.background}]}>
+                  <ScrollView style={[styles.textSmContainer, {backgroundColor: theme.background, borderColor: theme.border}]}>
                       <Text style={[styles.text, { color: theme.text }]}>{description}</Text>
                       <Text style={[styles.textLink, { color: theme.placeholder }]}>@turdiyevline</Text>
                   </ScrollView>
@@ -69,16 +69,17 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   textContainer: {
-      flex: 1,
+      flexDirection: "row",
+      height: "90%",
       justifyContent: "center",
       alignItems: "center",
       margin: 16,
   },
   textSmContainer: {
+      borderWidth: 1,
       borderRadius: 16,
       position: "relative",
-      paddingVertical: 30,
-      paddingHorizontal: 20,
+      padding: 10,
       shadowColor: "#fff",
       shadowOffset: { width: 0, height: 6 },
       shadowOpacity: 0.5,
@@ -86,6 +87,7 @@ const styles = StyleSheet.create({
       elevation: 40,
   },
     text: {
+      margin: 10,
       fontSize: 16,
       lineHeight: 30,
       textAlign: "left",
@@ -95,8 +97,8 @@ const styles = StyleSheet.create({
       }),
     },
     textLink: {
-      bottom: 5,
-        right: 10,
+      bottom: 0,
+        right: 0,
       position: "absolute",
       fontSize: 12,
       fontFamily: Platform.select({
