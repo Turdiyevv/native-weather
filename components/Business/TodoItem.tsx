@@ -41,8 +41,8 @@ export default function TodoItem({
       <View
         style={[
           styles.container,
-          { borderBottomColor: theme.border },
-          !isLast && [styles.borderBottom, { borderBottomColor: theme.border }],
+          { borderBottomColor: theme.background },
+          !isLast && [styles.borderBottom, { borderBottomColor: theme.background }],
         ]}
       >
         <Text style={[styles.title, { color: theme.text }]}>{title}</Text>

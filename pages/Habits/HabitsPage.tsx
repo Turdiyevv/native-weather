@@ -201,74 +201,79 @@ const HabitsPage: React.FC = () => {
                           </TouchableOpacity>
                         </View>
 
-                        {openedHabitId === habit.id && (
-                          <Animated.View
-                            style={[
-                              styles.animatedBox,
-                              {
-                                opacity: opacityAnim,
-                                transform: [{ scaleY: scaleAnim }],
-                                  borderRadius: 6,
-                                  backgroundColor: theme.card,
-                              },
-                            ]}
-                          >
-                            <ScrollView style={{
-                                borderWidth: 1,
-                                borderColor: theme.placeholder,
-                                borderRadius: 6,
-                                padding:5,
-                                width: "100%",
-                            }}>
-                              {habit.habitDays.map((day, index) => (
-                                <View key={day.id} style={{
-                                    marginBottom: 6,
-                                    flexDirection: "row",
-                                    justifyContent: "space-between"
-                                }}>
-                                    <View style={{flexDirection: "row"}}>
-                                        <Text style={{ color: theme.placeholder, fontSize: 12, marginRight: 4 }}>{index +1}</Text>
-                                        <Text style={{ color: theme.text, fontSize: 12 }}>{day.date}</Text>
-                                    </View>
-                                    <View style={{flexDirection: "row", alignItems: "center"}}>
-                                      <Text style={{ color: day.status===1 ? "green": day.status===2 ? "red" : theme.text, fontSize: 12 }}>
-                                        {day.status === 0 ? "Kutilmoqda" : day.status === 1 ? "Bajarildi" : "Qoldirildi"}
-                                      </Text>
-                                        {day.status === 0 && (
-                                              <Ionicons
-                                                name="alert-circle-outline"
-                                                size={15}
-                                                color="grey"
-                                                style={{marginLeft:1}}
-                                              />
-                                        )}
-                                        {day.status === 1 && (
-                                              <Ionicons
-                                                name="checkmark-circle-outline"
-                                                size={15}
-                                                color="#4CAF50"
-                                                style={{marginLeft:1}}
-                                              />
-                                        )}
-                                        {day.status === 2 && (
-                                              <Ionicons
-                                                name="close-circle-outline"
-                                                size={15}
-                                                color="red"
-                                                style={{marginLeft:1}}
-                                              />
-                                        )}
-                                    </View>
-                                </View>
-                              ))}
-                            </ScrollView>
-                          </Animated.View>
-                        )}
                       </>
                     ) : (
                       <Text style={[styles.status, { color: theme.text }]}>
                         Muddati tugagan.
                       </Text>
+                    )}
+                    {!todayDay && (
+                      <TouchableOpacity onPress={() => toggleHabitView(habit.id)}>
+                        <Text style={[styles.status, { color: theme.primary }]}>Ko‘rish</Text>
+                      </TouchableOpacity>
+                    )}
+                    {openedHabitId === habit.id && (
+                      <Animated.View
+                        style={[
+                          styles.animatedBox,
+                          {
+                            opacity: opacityAnim,
+                            transform: [{ scaleY: scaleAnim }],
+                              borderRadius: 6,
+                              backgroundColor: theme.card,
+                          },
+                        ]}
+                      >
+                        <ScrollView style={{
+                            borderWidth: 1,
+                            borderColor: theme.placeholder,
+                            borderRadius: 6,
+                            padding:5,
+                            width: "100%",
+                        }}>
+                          {habit.habitDays.map((day, index) => (
+                            <View key={day.id} style={{
+                                marginBottom: 6,
+                                flexDirection: "row",
+                                justifyContent: "space-between"
+                            }}>
+                                <View style={{flexDirection: "row"}}>
+                                    <Text style={{ color: theme.placeholder, fontSize: 12, marginRight: 4 }}>{index +1}</Text>
+                                    <Text style={{ color: theme.text, fontSize: 12 }}>{day.date}</Text>
+                                </View>
+                                <View style={{flexDirection: "row", alignItems: "center"}}>
+                                  <Text style={{ color: day.status===1 ? "green": day.status===2 ? "red" : theme.text, fontSize: 12 }}>
+                                    {day.status === 0 ? "Kutilmoqda" : day.status === 1 ? "Bajarildi" : "Qoldirildi"}
+                                  </Text>
+                                    {day.status === 0 && (
+                                          <Ionicons
+                                            name="alert-circle-outline"
+                                            size={15}
+                                            color="grey"
+                                            style={{marginLeft:1}}
+                                          />
+                                    )}
+                                    {day.status === 1 && (
+                                          <Ionicons
+                                            name="checkmark-circle-outline"
+                                            size={15}
+                                            color="#4CAF50"
+                                            style={{marginLeft:1}}
+                                          />
+                                    )}
+                                    {day.status === 2 && (
+                                          <Ionicons
+                                            name="close-circle-outline"
+                                            size={15}
+                                            color="red"
+                                            style={{marginLeft:1}}
+                                          />
+                                    )}
+                                </View>
+                            </View>
+                          ))}
+                        </ScrollView>
+                      </Animated.View>
                     )}
                   </View>
                 );
