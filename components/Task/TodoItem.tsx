@@ -194,7 +194,7 @@ export default function TodoItem({
                   style={{ marginLeft: 1 }}
                 />
               )}
-              {item.deadline?.length > 0 && (
+              {item.alarmDate?.length > 0 && (
                 <Ionicons
                   name="alarm"
                   size={20}
@@ -203,7 +203,7 @@ export default function TodoItem({
                 />
               )}
               {((item.isDeleted && !item.done) ||
-                deadlineColor === "#fa5d5d") && (
+                deadlineColor === "#fa5d5d" && !item.done) && (
                 <Ionicons
                   name="alert-circle"
                   size={20}

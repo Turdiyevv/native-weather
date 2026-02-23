@@ -86,7 +86,7 @@ export default function MainTabs() {
         tabBar={(props) => <MyTabBar {...props} theme={theme} />}
         tabBarPosition="bottom"
         screenOptions={{
-          swipeEnabled: false,
+          swipeEnabled: true,
           lazy: true,
         }}
       >
