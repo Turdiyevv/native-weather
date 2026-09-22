@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -11,103 +11,83 @@ import {
   Linking,
 } from "react-native";
 import AdminIcon from "../assets/admin_icon.png";
-
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {RootStackParamList} from "./types/types";
-import {useTheme} from "../theme/ThemeContext";
+import { RootStackParamList } from "./types/types";
+import { useTheme } from "../theme/ThemeContext";
+import Header from "../components/global/Header";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Support">;
 
 const SupportPage: React.FC = () => {
-    const { theme } = useTheme();
+  const { theme } = useTheme();
   const navigation = useNavigation<SupportNav>();
-  return (
-    <KeyboardAvoidingView
-      style={[styles.container, {backgroundColor:theme.background}]}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <Image source={AdminIcon} style={styles.icon} />
-          <Text style={[styles.description, {color: theme.text}]}>
-            Bu ilova sizning kundalik vazifalaringizni boshqarish va eslatmalarni kuzatishda yordam beradi.
-          </Text>
-          <Text style={[styles.description, {color: theme.text}]}>Bog'lanmoqchi bo'lsangiz xabar qoldiring!</Text>
 
-          <TouchableOpacity onPress={() => Linking.openURL("https://t.me/Anonim_life_msgbot")}>
-            <Text style={[styles.link, { textDecorationLine: "underline" }]}>
-              Telegram orqali
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Header title="Biz haqimizda" isBack={true} />
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Image source={AdminIcon} style={styles.icon} />
+            <Text style={[styles.title, { color: theme.text }]}>Vega</Text>
+            <Text style={[styles.description, { color: theme.subText }]}>
+              Bu ilova sizning kundalik vazifalaringizni boshqarish va eslatmalarni kuzatishda yordam beradi.
             </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <Text style={[styles.subtitle, { color: theme.text }]}>Bog'lanmoqchi bo'lsangiz xabar qoldiring!</Text>
+
+            <TouchableOpacity
+              style={[styles.linkButton, { backgroundColor: theme.primary }]}
+              onPress={() => Linking.openURL("https://t.me/Anonim_life_msgbot")}
+            >
+              <Text style={styles.linkText}>Telegram orqali</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 export default SupportPage;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
+  container: { flex: 1 },
+  keyboardView: { flex: 1 },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
+    padding: 20,
+  },
+  card: {
+    borderRadius: 28,
+    borderWidth: 1,
+    padding: 24,
     alignItems: "center",
-    padding: 30,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  icon: {
-    width: 200,
-    height: 200,
-    resizeMode: "contain",
-  },
-  description: {
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 15,
-    color: "#555",
-  },
-  link: {
-    fontSize: 18,
-    textAlign: "center",
-    marginTop: 15,
-    color: "orange",
-  },
-  form: {
-    width: "100%",
-    alignItems: "center",
-  },
-  textArea: {
-    width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    textAlignVertical: "top",
-    marginBottom: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    elevation: 6,
   },
-  sendButton: {
+  icon: { width: 170, height: 170, resizeMode: "contain", marginBottom: 8 },
+  title: { fontSize: 28, fontWeight: "800", marginBottom: 8 },
+  description: { fontSize: 16, textAlign: "center", lineHeight: 24 },
+  subtitle: { fontSize: 15, marginTop: 18, marginBottom: 18, textAlign: "center", fontWeight: "600" },
+  linkButton: {
     width: "100%",
-    backgroundColor: "#121",
-    paddingVertical: 15,
-    borderRadius: 10,
+    borderRadius: 16,
+    paddingVertical: 14,
     alignItems: "center",
+    shadowColor: "#4F46E5",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 4,
   },
-  sendButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
+  linkText: { color: "#fff", fontSize: 16, fontWeight: "700" },
 });

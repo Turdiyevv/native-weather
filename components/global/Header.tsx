@@ -24,14 +24,20 @@ const Header: React.FC<HeaderProps> = ({ title, onBack, isBack }) => {
   };
 
   return (
-    <View style={[styles.header, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
-        { isBack && (
-          <TouchableOpacity onPress={handleBack}>
-            <Ionicons name="arrow-back" size={24} color={theme.text} />
+    <View style={[styles.header, { backgroundColor: theme.background }]}>
+      <View style={[styles.headerInner, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        {isBack ? (
+          <TouchableOpacity onPress={handleBack} style={styles.iconButton}>
+            <Ionicons name="arrow-back" size={22} color={theme.text} />
           </TouchableOpacity>
+        ) : (
+          <View style={styles.iconButtonPlaceholder} />
         )}
-      <Text style={[styles.headerTitle, { color: theme.text }]}>{title}</Text>
-      <View style={{ width: 24 }} />
+
+        <Text style={[styles.headerTitle, { color: theme.text }]}>{title}</Text>
+
+        <View style={styles.iconButtonPlaceholder} />
+      </View>
     </View>
   );
 };
@@ -40,15 +46,39 @@ export default Header;
 
 const styles = StyleSheet.create({
   header: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 8,
+  },
+  headerInner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    borderWidth: 1,
+    borderRadius: 18,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    // borderBottomWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    elevation: 5,
+  },
+  iconButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(79, 70, 229, 0.08)",
+  },
+  iconButtonPlaceholder: {
+    width: 34,
+    height: 34,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 0.2,
   },
 });

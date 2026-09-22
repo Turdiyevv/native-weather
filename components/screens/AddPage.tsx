@@ -115,20 +115,19 @@ export default function AddPage({ navigation, route }: any) {
   };
 
   return (
-      <View style={[{flex: 1}, {backgroundColor: theme.background}]}>
+      <View style={[styles.screen, {backgroundColor: theme.background}]}>
           <Header title={taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"} isBack={true}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
           flexGrow: 1,
           paddingBottom: 5,
-          justifyContent: "flex-end", paddingHorizontal: 10 }}
+          justifyContent: "flex-end", paddingHorizontal: 16 }}
           enableOnAndroid={true}
           extraHeight={100 + insets.bottom}
           keyboardShouldPersistTaps="handled"
         >
-            {/*<Text style={{color: theme.placeholder}}>{JSON.stringify(taskToEdit, null, 2)}</Text>*/}
-            <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
+            <View style={[styles.containerInputs, {backgroundColor: theme.card, borderColor: theme.border}]}>
               <TextField
                 label="Vazifa"
                 value={task}
@@ -155,7 +154,7 @@ export default function AddPage({ navigation, route }: any) {
                 ))}
               </View>
             </View>
-            <View style={[styles.containerInputs, {backgroundColor: theme.card}]}>
+            <View style={[styles.containerInputs, {backgroundColor: theme.card, borderColor: theme.border}]}>
               <FilePickerComponent
                   onChange={setAttachments}
                   initialFiles={taskToEdit ? taskToEdit.files : []}
@@ -163,7 +162,7 @@ export default function AddPage({ navigation, route }: any) {
             </View>
             <View style={styles.deadlineContainer}>
               <TouchableOpacity
-                style={[styles.dateButton, {backgroundColor: theme.card}]}
+                style={[styles.dateButton, {backgroundColor: theme.card, borderColor: theme.border}]}
                 onPress={() => setShowPicker(true)}
               >
                 <Text style={[styles.dateText, {color: theme.text}]}>
@@ -213,6 +212,7 @@ export default function AddPage({ navigation, route }: any) {
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1 },
   selectsBox: {
     flexDirection: "row",
     alignItems: "center",
@@ -221,9 +221,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2
   },
   containerInputs: {
-    marginTop:20,
-    padding: 10,
-    borderRadius: 10,
+    marginTop:18,
+    padding: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.05,
+    shadowRadius: 14,
+    elevation: 3,
   },
   row: {
     flexDirection: "row",
@@ -237,13 +243,14 @@ const styles = StyleSheet.create({
   deadlineContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginTop: 16,
+    marginBottom: 10,
   },
   dateButton: {
-    marginTop: 20,
     flex: 1,
-    padding: 12,
-    borderRadius: 10,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
     alignItems: "flex-start",
   },
   dateText: {
@@ -263,13 +270,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   addButton: {
-    backgroundColor: "#121",
-    padding: 12,
-    borderRadius: 10,
+    padding: 15,
+    borderRadius: 16,
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 14,
+    shadowColor: "#4F46E5",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.18,
+    shadowRadius: 14,
+    elevation: 4,
   },
   addText: {
     fontSize: 18,
+    fontWeight: "700",
   },
 });

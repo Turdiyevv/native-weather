@@ -26,7 +26,8 @@ function MyTabBar({ state, navigation, theme }: any) {
   ];
 
   return (
-    <View style={[styles.tabContainer, { backgroundColor: theme.card }]}>
+    <View style={[styles.tabContainer, { backgroundColor: theme.background }]}>
+      <View style={[styles.tabShell, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <View
             style={[
               styles.topIndicator,
@@ -36,41 +37,43 @@ function MyTabBar({ state, navigation, theme }: any) {
               },
             ]}
         />
-      {tabs.map((tab, index) => {
-        const isFocused = state.index === index;
+        {tabs.map((tab, index) => {
+          const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: state.routes[index].key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: state.routes[index].key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(tab.name);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(tab.name);
+            }
+          };
 
-        return (
-          <TouchableOpacity
-            key={index}
-            onPress={onPress}
-            activeOpacity={0.7}
-            style={[
-                styles.tabItem, { backgroundColor: isFocused ? theme.tabCard : null }
-            ]}
-          >
-            <Ionicons
-              name={tab.icon as any}
-              size={24}
-              color={isFocused ? theme.primary : theme.text}
-              style={{
-                transform: [{ scale: isFocused ? 1.15 : 1 }]
-              }}
-            />
-          </TouchableOpacity>
-        );
-      })}
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={onPress}
+              activeOpacity={0.85}
+              style={[
+                  styles.tabItem,
+                  { backgroundColor: isFocused ? theme.tabCard : "transparent" }
+              ]}
+            >
+              <Ionicons
+                name={tab.icon as any}
+                size={24}
+                color={isFocused ? theme.primary : theme.subText}
+                style={{
+                  transform: [{ scale: isFocused ? 1.12 : 1 }]
+                }}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -102,18 +105,24 @@ export default function MainTabs() {
 
 const styles = StyleSheet.create({
   tabContainer: {
+    paddingHorizontal: 12,
+    paddingBottom: 10,
+    paddingTop: 8,
+  },
+  tabShell: {
     flexDirection: "row",
-    height: 50,
+    height: 58,
+    borderRadius: 20,
+    borderWidth: 1,
+    overflow: "hidden",
     shadowColor: "#000",
-    position: "relative",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    borderTopLeftRadius: 12,
-    borderTopEndRadius: 12
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    elevation: 8,
   },
   tabItem: {
-    borderRadius: 7,
+    borderRadius: 14,
     margin: 5,
     flex: 1,
     alignItems: "center",
@@ -122,9 +131,10 @@ const styles = StyleSheet.create({
   },
   topIndicator: {
     position: 'absolute',
-    top: 0,
+    top: 5,
     width: '16%',
-    height: 2,
-    borderRadius: 6
+    height: 4,
+    borderRadius: 999,
+    opacity: 0.95,
   },
 });

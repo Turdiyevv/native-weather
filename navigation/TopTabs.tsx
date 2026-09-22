@@ -16,45 +16,50 @@ const Tab = createMaterialTopTabNavigator();
 function MyTabBar({ state, descriptors, navigation, theme }: any) {
   return (
     <View style={[styles.tabContainer, { backgroundColor: theme.background }]}>
-      {state.routes.map((route: any, index: number) => {
-        const { options } = descriptors[route.key];
-        const label = options.tabBarLabel !== undefined ? options.tabBarLabel : route.name;
-        const isFocused = state.index === index;
+      <View style={[styles.tabInner, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        {state.routes.map((route: any, index: number) => {
+          const { options } = descriptors[route.key];
+          const label = options.tabBarLabel !== undefined ? options.tabBarLabel : route.name;
+          const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
 
-        return (
-          <TouchableOpacity
-            key={index}
-            onPress={onPress}
-            activeOpacity={0.7}
-            style={[
-              styles.tabItem,
-              { borderBottomColor: isFocused ? theme.primary : "transparent" }
-            ]}
-          >
-            <Text
-              style={{
-                color: isFocused ? theme.primary : theme.text,
-                fontWeight: "600",
-                fontSize: 15,
-              }}
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={onPress}
+              activeOpacity={0.8}
+              style={[
+                styles.tabItem,
+                {
+                  backgroundColor: isFocused ? theme.tabCard : "transparent",
+                  borderBottomColor: isFocused ? theme.primary : "transparent",
+                }
+              ]}
             >
-              {label}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+              <Text
+                style={{
+                  color: isFocused ? theme.primary : theme.subText,
+                  fontWeight: "700",
+                  fontSize: 14,
+                }}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -112,10 +117,20 @@ export default function TopTabs({ navigation }: any) {
 
 const styles = StyleSheet.create({
   tabContainer: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 6,
+  },
+  tabInner: {
     flexDirection: "row",
-    height: 40,
-    elevation: 0,
-    shadowOpacity: 0,
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
   },
   tabItem: {
     flex: 1,
@@ -124,6 +139,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
+    height: 42,
   },
   footerWrapper: {
     right: "5%",

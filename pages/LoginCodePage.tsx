@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, BackHandler, Image } from "react-native";
 import PasswordCodeInput from "../components/global/PasswordCodeInput";
 import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "../components/global/ConfirmModal";
 import { loadUsers, setActiveUser } from "../service/storage";
 import { User } from "./types/userTypes";
-import {useTheme} from "../theme/ThemeContext";
+import { useTheme } from "../theme/ThemeContext";
+import AdminIcon from "../assets/admin_icon.png";
 
 export default function LoginCodePage({ navigation }: any) {
   const { theme } = useTheme();
@@ -15,7 +16,6 @@ export default function LoginCodePage({ navigation }: any) {
   const [borderStyle, setBorderStyle] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
 
-  // === BACK BUTTON HANDLER WITH EXIT DIALOG ===
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
@@ -27,14 +27,12 @@ export default function LoginCodePage({ navigation }: any) {
     }, [])
   );
 
-  // === CODE CHECK ===
   const handleCode = async (code: string) => {
     try {
       const users: User[] = await loadUsers();
       const matchedUser = users.find((u) => u.passwordCode === code);
 
       if (matchedUser) {
-        // activeUser ni storage ga qo'yish
         await setActiveUser(matchedUser.username);
 
         setStatusTitle("✔ Tasdiqlandi");
@@ -78,23 +76,26 @@ export default function LoginCodePage({ navigation }: any) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.card }]}>
-      <PasswordCodeInput
-        onComplete={handleCode}
-        title={statusTitle}
-        color={statusColor}
-        status={resetCode}
-        autoSubmit={true}
-        borderStyle={borderStyle}
-        secureTextEntry={true}
-      />
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Image source={AdminIcon} style={styles.logo} />
+        <Text style={[styles.title, { color: theme.text }]}>Xavfsizlik kodi</Text>
+        <Text style={[styles.subtitle, { color: theme.subText }]}>Kodni kiriting</Text>
 
-      <TouchableOpacity
-        style={styles.closeBox}
-        onPress={() => navigation.replace("LoginPage")}
-      >
-        <Text style={styles.closeBoxText}>Username orqali kirish</Text>
-        <Text style={styles.closeBoxText}>(Registratsiya)</Text>
+        <PasswordCodeInput
+          onComplete={handleCode}
+          title={statusTitle}
+          color={statusColor}
+          status={resetCode}
+          autoSubmit={true}
+          borderStyle={borderStyle}
+          secureTextEntry={true}
+        />
+      </View>
+
+      <TouchableOpacity style={styles.closeBox} onPress={() => navigation.replace("LoginPage")}>
+        <Text style={[styles.closeBoxText, { color: theme.primary }]}>Username orqali kirish</Text>
+        <Text style={[styles.closeBoxText, { color: theme.primary }]}>(Registratsiya)</Text>
       </TouchableOpacity>
 
       <ConfirmModal
@@ -111,17 +112,20 @@ export default function LoginCodePage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", paddingHorizontal: 20 },
-  closeBox: {
-    paddingVertical: 3,
-    paddingHorizontal: 35,
-    borderRadius: 7,
-    fontSize: 17,
-    marginTop: 16,
+  container: { flex: 1, justifyContent: "center", paddingHorizontal: 20, paddingVertical: 24 },
+  card: {
+    borderRadius: 28,
+    borderWidth: 1,
+    padding: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    elevation: 6,
   },
-  closeBoxText: {
-    color: "orange",
-    fontSize: 17,
-    fontWeight: "500",
-  },
+  logo: { width: 90, height: 90, alignSelf: "center", marginBottom: 14 },
+  title: { fontSize: 28, fontWeight: "800", textAlign: "center" },
+  subtitle: { fontSize: 14, textAlign: "center", marginBottom: 20 },
+  closeBox: { alignItems: "center", marginTop: 20 },
+  closeBoxText: { fontSize: 16, fontWeight: "600", marginTop: 2, textAlign: "center" },
 });

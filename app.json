@@ -22,7 +22,6 @@
     "android": {
       "package": "com.Turdiyev.vegaChat",
       "versionCode": 1,
-      "edgeToEdge": false,
       "adaptiveIcon": {
         "foregroundImage": "./assets/vega.png",
         "backgroundColor": "#FFFFFF"
@@ -35,6 +34,9 @@
       "eas": {
         "projectId": "69d701f7-fc97-4130-b9d0-059b17f73113"
       }
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

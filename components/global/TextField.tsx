@@ -36,26 +36,25 @@ export default function TextField({
   const displayValue = sumFormat ? formatNumber(value) : value;
 
   return (
-    <View style={{ width: "100%", marginBottom: 10 }}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={{ color: "red" }}>*</Text>}
+    <View style={{ width: "100%", marginBottom: 12 }}>
+      <Text style={[styles.label, { color: theme.subText }]}>
+        {label} {required && <Text style={{ color: theme.danger }}>*</Text>}
       </Text>
 
       <TextInput
         style={[
           styles.input,
-          { backgroundColor: theme.card, color: theme.text },
+          { backgroundColor: theme.card, color: theme.text, borderColor: theme.border },
           minHeight ? { minHeight: minHeight } : {},
           (showError || showMinLengthError) && styles.errorBorder,
         ]}
         editable={editable}
         multiline={multiline}
         secureTextEntry={secureTextEntry}
-        cursorColor={theme.placeholder}
-        selectionColor={theme.placeholder}
+        cursorColor={theme.primary}
+        selectionColor={theme.primary}
         value={displayValue}
         onChangeText={(text) => {
-          // agar sumFormat bo'lsa, faqat raqamlarni onChange ga yuboramiz
           onChangeText(sumFormat ? text.replace(/\D/g, "") : text);
           if (!touched) setTouched(true);
         }}
@@ -66,9 +65,9 @@ export default function TextField({
         {...rest}
       />
 
-      {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
+      {showError && <Text style={[styles.errorText, { color: theme.danger }]}>{errorMessage}</Text>}
       {showMinLengthError && (
-        <Text style={styles.errorText}>
+        <Text style={[styles.errorText, { color: theme.danger }]}>
           {label} kamida {minLength} ta belgi bo'lishi kerak
         </Text>
       )}
@@ -77,21 +76,26 @@ export default function TextField({
 }
 
 const styles = StyleSheet.create({
-  label: { fontSize: 14, marginBottom: 3, color: "#858484" },
+  label: { fontSize: 13, marginBottom: 6, fontWeight: "600" },
   input: {
     width: "100%",
-    borderRadius: 10,
-    padding: 10,
-    borderWidth: 0.5,
-    borderColor: "#eaeaea",
-    fontSize: 18,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderWidth: 1,
+    fontSize: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   errorBorder: {
-    borderColor: "#ff9292",
+    borderColor: "#F87171",
   },
   errorText: {
-    color: "#ff5353",
     fontSize: 12,
-    marginTop: 3,
+    marginTop: 4,
+    fontWeight: "500",
   },
 });

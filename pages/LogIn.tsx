@@ -7,18 +7,20 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  BackHandler
+  BackHandler,
+  Image,
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
 import TextField from "../components/global/TextField";
 import ConfirmModal from "../components/global/ConfirmModal";
-import { User, UserInfo } from "./types/userTypes";
+import { User } from "./types/userTypes";
 import {
   loadUsers,
   setActiveUser,
   addUser,
 } from "../service/storage";
-import {useTheme} from "../theme/ThemeContext";
+import { useTheme } from "../theme/ThemeContext";
+import AdminIcon from "../assets/admin_icon.png";
 
 export default function LoginPage({ navigation }: any) {
   const { theme } = useTheme();
@@ -28,7 +30,6 @@ export default function LoginPage({ navigation }: any) {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [pass, setPass] = useState<string>("");
 
-  // 🔹 Load users count
   useEffect(() => {
     const loadCount = async () => {
       const users = await loadUsers();
@@ -37,7 +38,6 @@ export default function LoginPage({ navigation }: any) {
     loadCount();
   }, []);
 
-  // 🔹 Back handler
   useEffect(() => {
     const onBackPress = () => {
       navigation.replace("LoginCodePage");
@@ -45,7 +45,7 @@ export default function LoginPage({ navigation }: any) {
     };
     const backHandler = BackHandler.addEventListener("hardwareBackPress", onBackPress);
     return () => backHandler.remove();
-  }, []);
+  }, [navigation]);
 
   const handleLogin = async () => {
     const cleanUsername = username.trim().replace(/\s+/g, "");
@@ -63,7 +63,6 @@ export default function LoginPage({ navigation }: any) {
     const users = await loadUsers();
     const existingUser = users.find((u) => u.username === cleanUsername);
 
-    // 🔹 Topilmasa va limit to'la
     if (!existingUser && users.length >= 3) {
       showMessage({
         message: "User topilmadi. Yangi user yaratish imkoni yo'q!",
@@ -72,80 +71,70 @@ export default function LoginPage({ navigation }: any) {
       return;
     }
 
-    // 🔹 Topilmasa lekin yaratish mumkin
     if (!existingUser && users.length < 3) {
       setModalVisible(true);
       return;
     }
 
-    // 🔹 Parol noto‘g‘ri
     if (existingUser!.password !== cleanPassword) {
       setPass(existingUser!.password.replace(/./g, "•"));
       setTimeout(() => setPass(""), 3000);
 
-      showMessage({
-        message: "Password noto‘g‘ri!",
-        type: "danger",
-      });
+      showMessage({ message: "Password noto‘g‘ri!", type: "danger" });
       return;
     }
 
-    // 🔹 Muvaffaqiyatli kirish
     await setActiveUser(existingUser!.username);
     navigation.replace("MainTabs");
-
-    showMessage({
-      message: "Muvaffaqiyatli kirish!",
-      type: "success",
-    });
+    showMessage({ message: "Muvaffaqiyatli kirish!", type: "success" });
   };
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: theme.background }}
+      style={[styles.screen, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={[styles.container]}>
-          <Text style={[styles.title, {color: theme.text}]}>Xush kelibsiz!</Text>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Image source={AdminIcon} style={styles.logo} />
+          <Text style={[styles.title, { color: theme.text }]}>Xush kelibsiz!</Text>
+          <Text style={[styles.subtitle, { color: theme.subText }]}>Boshqaruv markazingizga kiring</Text>
 
-          <View style={styles.countBox}>
-            <Text style={[styles.count, {color: theme.text}]}>Hisoblar: {userCount} / 3</Text>
-            <Text style={styles.pass}>{pass}</Text>
+          <View style={[styles.countBox, { backgroundColor: theme.tabCard, borderColor: theme.border }]}> 
+            <Text style={[styles.count, { color: theme.text }]}>Hisoblar: {userCount} / 3</Text>
+            <Text style={[styles.pass, { color: theme.primary }]}>{pass}</Text>
           </View>
 
-          <TextField
-            label="Username"
-            placeholder="Bo'sh joylarsiz kiriting !"
-            value={username}
-            onChangeText={setUsername}
-            minLength={6}
-            required
-          />
+          <View style={styles.formWrapper}>
+            <TextField
+              label="Username"
+              placeholder="Bo'sh joylarsiz kiriting !"
+              value={username}
+              onChangeText={setUsername}
+              minLength={6}
+              required
+            />
 
-          <TextField
-            placeholder="Bo'sh joylarsiz kiriting !"
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={true}
-            minLength={6}
-            required
-          />
+            <TextField
+              placeholder="Bo'sh joylarsiz kiriting !"
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+              minLength={6}
+              required
+            />
+          </View>
 
-          <TouchableOpacity style={[styles.btn, {backgroundColor: theme.card}]} onPress={handleLogin}>
-            <Text style={[styles.btnText, {color: theme.text}]}>Kirish</Text>
+          <TouchableOpacity style={[styles.btn, { backgroundColor: theme.primary }]} onPress={handleLogin}>
+            <Text style={styles.btnText}>Kirish</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.closeBox}
-            onPress={() => navigation.replace("LoginCodePage")}
-          >
-            <Text style={styles.closeBoxText}>Parol orqali kirish</Text>
+          <TouchableOpacity style={styles.closeBox} onPress={() => navigation.replace("LoginCodePage")}>
+            <Text style={[styles.closeBoxText, { color: theme.primary }]}>Parol orqali kirish</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Yangi user yaratish MODAL */}
         <ConfirmModal
           visible={modalVisible}
           message="Yangi hisob yaratilsinmi?"
@@ -153,7 +142,6 @@ export default function LoginPage({ navigation }: any) {
             setModalVisible(false);
 
             const users = await loadUsers();
-
             const newUser: User = {
               username: username.trim(),
               password: password.trim(),
@@ -171,15 +159,9 @@ export default function LoginPage({ navigation }: any) {
 
             await addUser(newUser);
             await setActiveUser(newUser.username);
-
             setUserCount(users.length + 1);
-
             navigation.replace("MainTabs");
-
-            showMessage({
-              message: "Yangi user yaratildi!",
-              type: "success",
-            });
+            showMessage({ message: "Yangi user yaratildi!", type: "success" });
           }}
           onCancel={() => setModalVisible(false)}
         />
@@ -189,30 +171,46 @@ export default function LoginPage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  closeBox: {
-    paddingVertical: 3,
-    paddingHorizontal: 6,
-    borderRadius: 7,
-    marginTop: 16,
+  screen: { flex: 1 },
+  scroll: { flexGrow: 1, justifyContent: "center", padding: 22 },
+  card: {
+    borderRadius: 28,
+    borderWidth: 1,
+    padding: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 8,
   },
-  closeBoxText: {
-    color: "orange",
-    fontSize: 17,
-  },
-  container: { flex: 1, justifyContent: "center", paddingHorizontal: 30 },
-  title: { fontSize: 32, fontWeight: "700", marginBottom: 10, textAlign: "center" },
+  logo: { width: 96, height: 96, alignSelf: "center", marginBottom: 12 },
+  title: { fontSize: 30, fontWeight: "800", textAlign: "center" },
+  subtitle: { marginTop: 6, textAlign: "center", fontSize: 14 },
   countBox: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  pass: { color: "orange", fontSize: 11, marginLeft: 2 },
-  count: {fontSize: 16 },
-  btn: {
-    paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     marginTop: 20,
+    marginBottom: 16,
   },
-  btnText: { textAlign: "center", fontSize: 18, fontWeight: "600" },
+  count: { fontSize: 15, fontWeight: "600" },
+  pass: { fontSize: 11, fontWeight: "700" },
+  formWrapper: { width: "100%" },
+  btn: {
+    paddingVertical: 14,
+    borderRadius: 16,
+    marginTop: 18,
+    shadowColor: "#4F46E5",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 14,
+    elevation: 5,
+  },
+  btnText: { textAlign: "center", color: "#fff", fontSize: 18, fontWeight: "700" },
+  closeBox: { alignItems: "center", marginTop: 18 },
+  closeBoxText: { fontSize: 16, fontWeight: "600" },
 });
