@@ -4,13 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Linking,
 } from "react-native";
-import AdminIcon from "../assets/admin_icon.png";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types/types";
@@ -33,7 +31,6 @@ const SupportPage: React.FC = () => {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
           <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Image source={AdminIcon} style={styles.icon} />
             <Text style={[styles.title, { color: theme.text }]}>Vega</Text>
             <Text style={[styles.description, { color: theme.subText }]}>
               Bu ilova sizning kundalik vazifalaringizni boshqarish va eslatmalarni kuzatishda yordam beradi.
@@ -74,7 +71,6 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 6,
   },
-  icon: { width: 170, height: 170, resizeMode: "contain", marginBottom: 8 },
   title: { fontSize: 28, fontWeight: "800", marginBottom: 8 },
   description: { fontSize: 16, textAlign: "center", lineHeight: 24 },
   subtitle: { fontSize: 15, marginTop: 18, marginBottom: 18, textAlign: "center", fontWeight: "600" },

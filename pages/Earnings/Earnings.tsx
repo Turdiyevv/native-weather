@@ -1,7 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "../../theme/ThemeContext";
-import AdminIcon from "../../assets/admin_icon.png";
 
 const Earnings: React.FC = () => {
   const { theme } = useTheme();
@@ -10,7 +9,6 @@ const Earnings: React.FC = () => {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.empty}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Image source={AdminIcon} style={styles.icon} />
           <Text style={[styles.title, { color: theme.text }]}>Daromad moduli</Text>
           <Text style={[styles.description, { color: theme.subText }]}>
             Ishga tushirilish uchun qayta ishlanmoqda
@@ -38,7 +36,6 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 4,
   },
-  icon: { width: 160, height: 160, resizeMode: "contain", marginBottom: 16 },
   title: { fontSize: 24, fontWeight: "800", marginBottom: 8 },
   description: { fontSize: 16, textAlign: "center", lineHeight: 22 },
 });

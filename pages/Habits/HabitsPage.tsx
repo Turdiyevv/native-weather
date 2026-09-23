@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
   ScrollView,
 } from "react-native";
 import { useFocusEffect, useNavigation} from "@react-navigation/native";
@@ -12,7 +11,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { useTheme } from "../../theme/ThemeContext";
 import { RootStackParamList } from "../types/types";
-import AdminIcon from "../../assets/admin_icon.png";
 import { Habit } from "../types/userTypes";
 import {
     deleteHabit,
@@ -115,7 +113,6 @@ const HabitsPage: React.FC = () => {
                     scrollEventThrottle={16}>
             {habits.length === 0 || loading ? (
               <View style={styles.empty}>
-                <Image source={AdminIcon} style={styles.icon} />
                 <Text style={[styles.description, { color: theme.text }]}>
                   Hozircha odatlar yo‘q
                 </Text>
@@ -322,7 +319,6 @@ const styles = StyleSheet.create({
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
 
   empty: { alignItems: "center", marginTop: 100 },
-  icon: { width: 160, height: 160, resizeMode: "contain" },
   description: { marginTop: 12, fontSize: 16 },
 
   card: {

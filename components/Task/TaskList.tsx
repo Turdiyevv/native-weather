@@ -6,7 +6,6 @@ import {
   SectionList,
   StyleSheet,
   Animated,
-  Image,
   TouchableWithoutFeedback,
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
@@ -14,7 +13,6 @@ import { UserTask } from "../../pages/types/userTypes";
 import { getActiveUser, updateTask, softDeleteTask } from "../../service/storage";
 import TodoItem from "./TodoItem";
 import { useTheme } from "../../theme/ThemeContext";
-import AdminIcon from "../../assets/admin_icon.png";
 import * as Notifications from "expo-notifications";
 import { useScrollHandler } from "../../utills/ScrollContext";
 
@@ -248,7 +246,6 @@ export default function TaskList({
           </Animated.View>
         ) : (
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Image source={AdminIcon} style={styles.icon} />
             <Text style={[styles.description, { color: theme.text }]}>
               {emptyMessage}
             </Text>
@@ -266,7 +263,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     color: "#555",
   },
-  icon: { width: 200, height: 200, resizeMode: "contain" },
   containerLittle: {
     flex: 1,
     justifyContent: "flex-start",

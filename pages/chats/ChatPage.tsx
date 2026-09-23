@@ -3,12 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
 } from "react-native";
-import AdminIcon from "../../assets/admin_icon.png";
 import { useTheme } from "../../theme/ThemeContext";
 
 const ChatPage: React.FC = () => {
@@ -22,7 +20,6 @@ const ChatPage: React.FC = () => {
     >
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Image source={AdminIcon} style={styles.icon} />
           <Text style={[styles.title, { color: theme.text }]}>Chat</Text>
           <Text style={[styles.description, { color: theme.subText }]}>
             Bu yerda keyinchalik online media chat yaratiladi.
@@ -49,7 +46,6 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 4,
   },
-  icon: { width: 170, height: 170, resizeMode: "contain" },
   title: { fontSize: 26, fontWeight: "800", marginTop: 12 },
   description: { fontSize: 16, textAlign: "center", marginTop: 12, lineHeight: 24 },
 });
