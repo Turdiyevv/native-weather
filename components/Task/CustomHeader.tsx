@@ -53,20 +53,20 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress,title }) => {
 
   return (
     <View style={[styles.header, {borderColor: theme.placeholder, backgroundColor: theme.background}]}>
-      <View>
+      <View style={styles.identityBlock}>
         <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
         <Text style={styles.keyUsername}>@{username || "username"}</Text>
       </View>
-        {title && (
-          <Text>{title}</Text>
-        )}
-      <TouchableOpacity onPress={onProfilePress}>
-        {avatar ? (
-          <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
-        ) : (
-          <Ionicons name="person-circle-outline" size={52} color={theme.placeholder} />
-        )}
-      </TouchableOpacity>
+      <View style={styles.headerActions}>
+        {title && <Text style={[styles.pageTitle, { color: theme.subText }]}>{title}</Text>}
+        <TouchableOpacity onPress={onProfilePress}>
+          {avatar ? (
+            <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
+          ) : (
+            <Ionicons name="person-circle-outline" size={52} color={theme.placeholder} />
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -82,8 +82,11 @@ const styles = StyleSheet.create({
     height: 60,
     borderBottomWidth: 0.3
   },
+  identityBlock: { flex: 1 },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: 10 },
   username: { fontSize: 18, fontWeight: "bold" },
   keyUsername: { fontSize: 12, color: "gray" },
+  pageTitle: { fontSize: 13, fontWeight: "600" },
   avatar: {
     borderWidth: 2,
     width: 50,

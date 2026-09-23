@@ -19,6 +19,7 @@ import { useTheme } from "../../theme/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { appStateFlags } from "../../utills/appStateFlags";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 
@@ -76,7 +77,7 @@ export default function ProfilePage() {
       return;
     }
     try {
-      global.filePickerOpen = true;
+      appStateFlags.filePickerOpen = true;
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -86,7 +87,7 @@ export default function ProfilePage() {
         setAvatar(result.assets[0].uri);
       }
     } finally {
-      global.filePickerOpen = false;
+      appStateFlags.filePickerOpen = false;
     }
   };
 

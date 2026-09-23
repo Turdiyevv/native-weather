@@ -3,14 +3,12 @@ import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import AdminIcon from "../../assets/admin_icon.png";
 import { useTheme } from "../../theme/ThemeContext";
 import Calendar from "../../components/global/Calendar";
-import Header from "../../components/global/Header";
 
 export default function Business() {
   const { theme } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <Header title={"Biznes"} />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={[styles.hero, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Image source={AdminIcon} style={styles.icon} />

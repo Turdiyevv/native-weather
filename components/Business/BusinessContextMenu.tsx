@@ -2,6 +2,16 @@ import React from "react";
 import { Modal, View, Text, Pressable, Animated, StyleSheet } from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {useTheme} from "../../theme/ThemeContext";
+import { BusinessEntry } from "../../pages/types/userTypes";
+
+interface BusinessContextMenuProps {
+  entry: BusinessEntry;
+  visible: boolean;
+  menuAnim: Animated.Value;
+  onClose: () => void;
+  onEdit: (entry: BusinessEntry) => void;
+  onDelete: (entry: BusinessEntry) => void;
+}
 
 export default function BusinessContextMenu({
   entry,
@@ -10,7 +20,7 @@ export default function BusinessContextMenu({
   onClose,
   onEdit,
   onDelete,
-}) {
+}: BusinessContextMenuProps) {
 
   const { theme } = useTheme();
   return (

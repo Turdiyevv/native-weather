@@ -36,7 +36,10 @@
       }
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "@react-native-community/datetimepicker",
+      "expo-sharing",
+      "expo-status-bar"
     ]
   }
 }

@@ -31,7 +31,7 @@ export default function AddPage({ navigation, route }: any) {
     taskToEdit && taskToEdit.deadline ? new Date(taskToEdit.deadline) : null
   );
   const [showPicker, setShowPicker] = useState(false);
-  const [selected, setSelected] = useState<number | null>(taskToEdit ? taskToEdit.status : 1);
+  const [selected, setSelected] = useState<number>(taskToEdit?.status ?? 1);
   const [isActive, setIsActive] = useState<boolean>(taskToEdit ? taskToEdit.isDeleted : false);
   const [attachments, setAttachments] = useState<string[]>(taskToEdit ? taskToEdit.files : []);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);

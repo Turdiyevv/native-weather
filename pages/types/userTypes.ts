@@ -9,7 +9,7 @@ export interface UserTask {
   isDeleted?: boolean;
   files: any[];
   alarmDate?: string | null;
-  notificationId?: string;
+  notificationId?: string | null;
   isReturning?: number;
   isReturningAt?: string | null;
 }
@@ -55,7 +55,7 @@ export interface Habit {
 export interface User {
   username: string;
   password: string;
-  passwordCode?: string;
+  passwordCode?: string | null;
   userinfo: UserInfo;
   usertasks: UserTask[];
   business?: BusinessItem[];

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTheme } from "../theme/ThemeContext";
@@ -16,27 +16,22 @@ import {RootStackParamList} from "../pages/types/types";
 
 const Tab = createMaterialTopTabNavigator();
 
-function MyTabBar({ state, navigation, theme }: any) {
+function MyTabBar({ state, navigation, theme, onActiveTitleChange }: any) {
   const tabs = [
-    { name: "TopTabs", icon: "file-tray-full-outline", label: "Tasks" },
-    { name: "Habits", icon: "checkbox-outline", label: "Habits" },
-    { name: "Business", icon: "podium-outline", label: "Business" },
+    { name: "TopTabs", icon: "file-tray-full-outline", label: "Vazifalar" },
+    { name: "Habits", icon: "checkbox-outline", label: "Odatlar" },
+    { name: "Business", icon: "podium-outline", label: "Biznes" },
     { name: "Chat", icon: "chatbox-ellipses-outline", label: "Chat" },
-    { name: "Earnings", icon: "wallet-outline", label: "Earnings" },
+    { name: "Earnings", icon: "wallet-outline", label: "Daromad" },
   ];
+
+  useEffect(() => {
+    onActiveTitleChange(tabs[state.index]?.label);
+  }, [onActiveTitleChange, state.index]);
 
   return (
     <View style={[styles.tabContainer, { backgroundColor: theme.background }]}>
       <View style={[styles.tabShell, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <View
-            style={[
-              styles.topIndicator,
-              {
-                backgroundColor: theme.primary,
-                left: `${state.index * 20 + 1.9}%`,
-              },
-            ]}
-        />
         {tabs.map((tab, index) => {
           const isFocused = state.index === index;
 
@@ -82,11 +77,17 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function MainTabs() {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const [activeTitle, setActiveTitle] = useState("Vazifalar");
   return (
     <View style={{ flex: 1 }}>
-      <CustomHeader onProfilePress={() => navigation.navigate("ProfileView")} />
+      <CustomHeader
+        title={activeTitle}
+        onProfilePress={() => navigation.navigate("ProfileView")}
+      />
       <Tab.Navigator
-        tabBar={(props) => <MyTabBar {...props} theme={theme} />}
+        tabBar={(props) => (
+          <MyTabBar {...props} theme={theme} onActiveTitleChange={setActiveTitle} />
+        )}
         tabBarPosition="bottom"
         screenOptions={{
           swipeEnabled: true,
@@ -128,13 +129,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     position: 'relative',
-  },
-  topIndicator: {
-    position: 'absolute',
-    top: 5,
-    width: '16%',
-    height: 4,
-    borderRadius: 999,
-    opacity: 0.95,
   },
 });

@@ -135,13 +135,13 @@ export default function TaskContextMenu({
             style={[
               styles.menuButton,
               { borderColor: theme.background },
-              (!!task?.isDeleted || task.isReturning >= 9) && { opacity: 0.4 },
+              (!!task?.isDeleted || (task.isReturning ?? 0) >= 9) && { opacity: 0.4 },
             ]}
             onPress={() => {
               onMarkDone(task);
               onClose();
             }}
-            disabled={!!task?.isDeleted || (!!task.done && task.isReturning >= 9)}
+            disabled={!!task?.isDeleted || (!!task.done && (task.isReturning ?? 0) >= 9)}
           >
             <Text style={[styles.menuText, { color: theme.text }]}>
               {task.done ? "Qaytarish" : "Bajarildi"}

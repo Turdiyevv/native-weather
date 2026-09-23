@@ -305,7 +305,7 @@ export function ProfileViewPage() {
         <View style={styles.modalBackdrop}>
           <View style={[styles.modalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <PasswordCodeInput
-              onComplete={async (code) => {
+              onComplete={async (code: string) => {
                 setPasswordCode(code);
                 const activeUser = await getActiveUser();
                 if (!activeUser) return;

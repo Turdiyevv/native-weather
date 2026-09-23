@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { useTheme } from "../../theme/ThemeContext";
-import Header from "../../components/global/Header";
 import AdminIcon from "../../assets/admin_icon.png";
 
 const Earnings: React.FC = () => {
@@ -9,7 +8,6 @@ const Earnings: React.FC = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <Header title="Daromad" />
       <View style={styles.empty}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Image source={AdminIcon} style={styles.icon} />

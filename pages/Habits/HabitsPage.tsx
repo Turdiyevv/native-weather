@@ -19,7 +19,6 @@ import {
     getHabits,
     updateHabitDayStatus,
 } from "../../service/habits";
-import Header from "../../components/global/Header";
 import { getActiveUser } from "../../service/storage";
 import { Animated, Pressable } from "react-native";
 import {Ionicons} from "@expo/vector-icons";
@@ -111,7 +110,6 @@ const HabitsPage: React.FC = () => {
         <View
           style={[styles.container, { backgroundColor: theme.background }]}
         >
-          <Header title="Odatlar" />
           <ScrollView contentContainerStyle={styles.scroll}
                     onScroll={handleScroll}
                     scrollEventThrottle={16}>

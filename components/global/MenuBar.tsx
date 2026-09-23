@@ -12,7 +12,7 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ buttons }) => {
       <View style={styles.buttonBox}>
         <View
           style={[
-            StyleSheet.absoluteFillObject,
+            StyleSheet.absoluteFill,
             {
               backgroundColor: theme.primary,
               opacity: 0.05,

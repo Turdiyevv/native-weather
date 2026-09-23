@@ -29,6 +29,7 @@ import DescStyle from "./pages/Tasks/DescStyle";
 import IncomeAndExpenses from "./pages/Business/IncomeAndExpenses";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import SupportPage from "./pages/SupportPage";
+import { appStateFlags } from "./utills/appStateFlags";
 
 enableScreens();
 
@@ -63,9 +64,9 @@ const AppNavigator = () => {
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", async (nextState) => {
-      if (global.filePickerOpen || global.ignoreNextAppState) {
+      if (appStateFlags.filePickerOpen || appStateFlags.ignoreNextAppState) {
         if (nextState === "active") {
-          global.ignoreNextAppState = false;
+          appStateFlags.ignoreNextAppState = false;
           lastTimeRef.current = Date.now();
         }
         return;

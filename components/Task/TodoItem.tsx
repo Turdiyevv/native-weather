@@ -194,7 +194,7 @@ export default function TodoItem({
                   style={{ marginLeft: 1 }}
                 />
               )}
-              {item.alarmDate?.length > 0 && (
+              {!!item.alarmDate && (
                 <Ionicons
                   name="alarm"
                   size={20}

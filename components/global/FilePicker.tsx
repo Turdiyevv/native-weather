@@ -10,6 +10,7 @@ import {
 import * as DocumentPicker from "expo-document-picker";
 import ImageViewing from "react-native-image-viewing";
 import { useTheme } from "../../theme/ThemeContext";
+import { appStateFlags } from "../../utills/appStateFlags";
 
 export default function FilePickerComponent({
   onChange,
@@ -40,7 +41,7 @@ export default function FilePickerComponent({
         onChange(newFiles);
       }
     } finally {
-      global.filePickerOpen = false;
+      appStateFlags.filePickerOpen = false;
     }
   };
 
@@ -66,8 +67,8 @@ export default function FilePickerComponent({
         <TouchableOpacity
           style={[styles.btn, { backgroundColor: theme.border }]}
           onPress={() => {
-              global.filePickerOpen = true;
-              global.ignoreNextAppState = true;
+              appStateFlags.filePickerOpen = true;
+              appStateFlags.ignoreNextAppState = true;
               pickDocuments();
           }}
           disabled={disabled}
