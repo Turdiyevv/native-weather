@@ -6,10 +6,13 @@ import ConfirmModal from "../components/global/ConfirmModal";
 import { loadUsers, setActiveUser } from "../service/storage";
 import { User } from "./types/userTypes";
 import { useTheme } from "../theme/ThemeContext";
+import { useLanguage } from "../i18n/LanguageContext";
+import LanguageSelector from "../components/global/LanguageSelector";
 import AdminIcon from "../assets/admin_icon.png";
 
 export default function LoginCodePage({ navigation }: any) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [statusTitle, setStatusTitle] = useState("");
   const [statusColor, setStatusColor] = useState("");
   const [resetCode, setResetCode] = useState(false);
@@ -77,10 +80,11 @@ export default function LoginCodePage({ navigation }: any) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <View style={styles.languagePosition}><LanguageSelector /></View>
       <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <Image source={AdminIcon} style={styles.logo} />
-        <Text style={[styles.title, { color: theme.text }]}>Xavfsizlik kodi</Text>
-        <Text style={[styles.subtitle, { color: theme.subText }]}>Kodni kiriting</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{t("securityCode")}</Text>
+        <Text style={[styles.subtitle, { color: theme.subText }]}>{t("enterCode")}</Text>
 
         <PasswordCodeInput
           onComplete={handleCode}
@@ -94,8 +98,8 @@ export default function LoginCodePage({ navigation }: any) {
       </View>
 
       <TouchableOpacity style={styles.closeBox} onPress={() => navigation.replace("LoginPage")}>
-        <Text style={[styles.closeBoxText, { color: theme.primary }]}>Username orqali kirish</Text>
-        <Text style={[styles.closeBoxText, { color: theme.primary }]}>(Registratsiya)</Text>
+        <Text style={[styles.closeBoxText, { color: theme.primary }]}>{t("usernameLogin")}</Text>
+        <Text style={[styles.closeBoxText, { color: theme.primary }]}>{t("register")}</Text>
       </TouchableOpacity>
 
       <ConfirmModal
@@ -112,6 +116,7 @@ export default function LoginCodePage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  languagePosition: { position: "absolute", top: 18, right: 18, zIndex: 2 },
   container: { flex: 1, justifyContent: "center", paddingHorizontal: 20, paddingVertical: 24 },
   card: {
     borderRadius: 28,

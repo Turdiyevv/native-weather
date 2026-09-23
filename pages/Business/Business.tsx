@@ -7,11 +7,13 @@ import Calendar from "../../components/global/Calendar";
 import { getActiveUser } from "../../service/storage";
 import { formatSum } from "../../utills/utill";
 import { RootStackParamList } from "../types/types";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 type BusinessNavigation = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Business() {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation<BusinessNavigation>();
   const [income, setIncome] = useState(0);
   const [expenses, setExpenses] = useState(0);
@@ -57,7 +59,7 @@ export default function Business() {
             onPress={() => navigation.navigate("BusinessEntries", { type: "income" })}
             android_ripple={{ color: theme.border }}
           >
-            <Text style={[styles.summaryLabel, { color: theme.subText }]}>Kirim</Text>
+            <Text style={[styles.summaryLabel, { color: theme.subText }]}>{t("income")}</Text>
             <Text style={[styles.summaryValue, { color: theme.success }]}>+ {formatSum(income)}</Text>
           </Pressable>
           <Pressable
@@ -65,7 +67,7 @@ export default function Business() {
             onPress={() => navigation.navigate("BusinessEntries", { type: "expense" })}
             android_ripple={{ color: theme.border }}
           >
-            <Text style={[styles.summaryLabel, { color: theme.subText }]}>Chiqim</Text>
+            <Text style={[styles.summaryLabel, { color: theme.subText }]}>{t("expense")}</Text>
             <Text style={[styles.summaryValue, { color: theme.danger }]}>- {formatSum(expenses)}</Text>
           </Pressable>
         </View>

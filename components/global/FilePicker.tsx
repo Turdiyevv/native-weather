@@ -10,6 +10,7 @@ import {
 import * as DocumentPicker from "expo-document-picker";
 import ImageViewing from "react-native-image-viewing";
 import { useTheme } from "../../theme/ThemeContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 import { appStateFlags } from "../../utills/appStateFlags";
 
 export default function FilePickerComponent({
@@ -18,6 +19,7 @@ export default function FilePickerComponent({
   disabled = false,
 }: any) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
   const [files, setFiles] = useState<any[]>(initialFiles);
   const [previewIndex, setPreviewIndex] = useState<number>(0);
@@ -74,7 +76,7 @@ export default function FilePickerComponent({
           disabled={disabled}
         >
           <Text style={[styles.btnText, { color: theme.text }]}>
-            Fayl tanlash
+            {t("chooseFile")}
           </Text>
         </TouchableOpacity>
       </View>

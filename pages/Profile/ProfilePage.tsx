@@ -19,6 +19,8 @@ import { useTheme } from "../../theme/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useLanguage } from "../../i18n/LanguageContext";
+import LanguageSelector from "../../components/global/LanguageSelector";
 import { appStateFlags } from "../../utills/appStateFlags";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
@@ -26,6 +28,7 @@ type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;
 export default function ProfilePage() {
   const navigation = useNavigation<NavProp>();
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -131,7 +134,7 @@ export default function ProfilePage() {
 
   return (
       <View style={[styles.screen, { backgroundColor: theme.background }]}>
-          <Header title={"Tahrirlash"} isBack={true} />
+          <Header title={t("profileEdit")} isBack={true} />
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
@@ -150,7 +153,7 @@ export default function ProfilePage() {
                   source={{ uri: avatar || placeholderImage }}
                   style={styles.avatar}
                 />
-                <Text style={[styles.changeText, { color: theme.primary }]}>Rasmni o‘zgartirish</Text>
+                <Text style={[styles.changeText, { color: theme.primary }]}>{t("changeImage")}</Text>
 
                 {avatar ? (
                   <TouchableOpacity onPress={deleteAvatar} style={[styles.trash, { backgroundColor: theme.card }]}>
@@ -161,16 +164,16 @@ export default function ProfilePage() {
             </View>
 
             <View style={[styles.containerInputs, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]}>Shaxsiy ma’lumotlar</Text>
-              <TextField label="Ism" value={firstName} onChangeText={setFirstName} placeholder="Ism" />
-              <TextField label="Familiya" value={lastName} onChangeText={setLastName} placeholder="Familiya" />
-              <TextField label="Telefon raqam" value={phone} onChangeText={setPhone} placeholder="+998..." keyboardType="phone-pad" />
-              <TextField label="Faoliyat turi" value={job} onChangeText={setJob} placeholder="Faoliyat turi" />
-              <TextField label="Izoh" value={description} minHeight={100} onChangeText={setDescription} placeholder="Izoh..." multiline />
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>{t("personalInfo")}</Text>
+              <TextField label={t("firstName")} value={firstName} onChangeText={setFirstName} placeholder={t("firstName")} />
+              <TextField label={t("lastName")} value={lastName} onChangeText={setLastName} placeholder={t("lastName")} />
+              <TextField label={t("phone")} value={phone} onChangeText={setPhone} placeholder="+998..." keyboardType="phone-pad" />
+              <TextField label={t("job")} value={job} onChangeText={setJob} placeholder={t("job")} />
+              <TextField label={t("note")} value={description} minHeight={100} onChangeText={setDescription} placeholder={`${t("note")}...`} multiline />
             </View>
 
             <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.primary }]} onPress={saveProfile}>
-              <Text style={styles.saveText}>Saqlash</Text>
+              <Text style={styles.saveText}>{t("save")}</Text>
             </TouchableOpacity>
         </KeyboardAwareScrollView>
       </View>

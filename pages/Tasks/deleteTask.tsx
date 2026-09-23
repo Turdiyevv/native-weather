@@ -1,8 +1,10 @@
 import React from "react";
 import TaskList from "../../components/Task/TaskList";
 import { UserTask } from "../types/userTypes";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function DeleteTask({ navigation }: any) {
+  const { t } = useLanguage();
   // Faqat o'chirilgan tasklar
   const filterDeletedTasks = (task: UserTask) => {
     return task.isDeleted === true;
@@ -12,7 +14,7 @@ export default function DeleteTask({ navigation }: any) {
     <TaskList
       navigation={navigation}
       filterTasks={filterDeletedTasks}
-      emptyMessage="O'chirilgan vazifalar yo'q."
+      emptyMessage={t("deletedTasks")}
     />
   );
 }

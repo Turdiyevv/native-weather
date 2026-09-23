@@ -31,6 +31,7 @@ import {formatSum} from "../../utills/utill";
 import BusinessContextMenu from "../../components/Business/BusinessContextMenu";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
@@ -48,6 +49,7 @@ export default function Business({ route }: Props) {
   const { selectedDate, businessId } = route.params;
   const dateStr = new Date(selectedDate).toISOString().slice(0, 10); // YYYY-MM-DD
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<SupportNav>();
 
@@ -251,7 +253,7 @@ export default function Business({ route }: Props) {
                   style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
                 >
                   <View style={styles.exchangeContent}>
-                    <Text style={{ color: theme.text }}>Kirim</Text>
+                    <Text style={{ color: theme.text }}>{t("income")}</Text>
                     <Ionicons name="trending-down-outline" size={24} color="#50C878" style={styles.scale} />
                   </View>
                 </TouchableOpacity>
@@ -264,7 +266,7 @@ export default function Business({ route }: Props) {
                   style={[styles.exchangeBtn, { backgroundColor: theme.card }]}
                 >
                   <View style={styles.exchangeContent}>
-                    <Text style={{ color: theme.text }}>Chiqim</Text>
+                    <Text style={{ color: theme.text }}>{t("expense")}</Text>
                     <Ionicons name="trending-up-outline" size={24} color="#EB4C42" />
                   </View>
                 </TouchableOpacity>
@@ -274,7 +276,7 @@ export default function Business({ route }: Props) {
                 <View style={[styles.formContainer, { backgroundColor: theme.card }]}>
                   <View style={styles.formHeader}>
                     <Text style={{ color: theme.text }}>
-                      {isExpense ? "Chiqim" : "Kirim"}
+                      {isExpense ? t("expense") : t("income")}
                     </Text>
                     <TouchableOpacity onPress={dismissForm}>
                       <Ionicons name="close-circle" size={24} color={theme.text} />
@@ -282,7 +284,7 @@ export default function Business({ route }: Props) {
                   </View>
 
                   <TextField
-                    label="Summa"
+                    label={t("total")}
                     value={amount}
                     onChangeText={setAmount}
                     keyboardType="numeric"
@@ -291,7 +293,7 @@ export default function Business({ route }: Props) {
                   />
 
                   <TextField
-                    label="Izoh"
+                    label={t("note")}
                     value={comment}
                     onChangeText={setComment}
                   />
@@ -303,7 +305,7 @@ export default function Business({ route }: Props) {
                     ]}
                     onPress={onSave}
                   >
-                    <Text style={styles.saveText}>Saqlash</Text>
+                    <Text style={styles.saveText}>{t("save")}</Text>
                   </TouchableOpacity>
                 </View>
               )}

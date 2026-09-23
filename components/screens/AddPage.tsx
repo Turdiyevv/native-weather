@@ -20,10 +20,12 @@ import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../servic
 import {useTheme} from "../../theme/ThemeContext";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../global/Header";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 
 export default function AddPage({ navigation, route }: any) {
     const { theme } = useTheme();
+    const { t } = useLanguage();
     const insets = useSafeAreaInsets();
   const { task: taskToEdit } = route.params || {};
   const [task, setTask] = useState(taskToEdit ? taskToEdit.title : "");
@@ -126,7 +128,7 @@ export default function AddPage({ navigation, route }: any) {
 
   return (
       <View style={[styles.screen, {backgroundColor: theme.background}]}>
-          <Header title={taskToEdit ?  "Vazifani tahrirlash" : "Yangi vazifa qo‘shish"} isBack={true}/>
+          <Header title={taskToEdit ? t("edit") : t("add")} isBack={true}/>
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{
@@ -139,16 +141,16 @@ export default function AddPage({ navigation, route }: any) {
         >
             <View style={[styles.containerInputs, {backgroundColor: theme.card, borderColor: theme.border}]}>
               <TextField
-                label="Vazifa"
+                label={t("tasks")}
                 value={task}
                 onChangeText={setTask}
-                placeholder="Vazifa nomi"
+                placeholder={t("name")}
               />
               <TextField
-                label="Batafsil izoh"
+                label={t("note")}
                 value={description}
                 onChangeText={setDescription}
-                placeholder="Enter description..."
+                placeholder={t("note")}
                 multiline={true}
                 minHeight={100}
               />

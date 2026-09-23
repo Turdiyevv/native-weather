@@ -30,11 +30,14 @@ import { useTheme } from "../../theme/ThemeContext";
 import { exportTasksAsTxt } from "../../service/exportTasks";
 import Header from "../../components/global/Header";
 import ImageViewing from "react-native-image-viewing";
+import { useLanguage } from "../../i18n/LanguageContext";
+import LanguageSelector from "../../components/global/LanguageSelector";
 
 type ProfileViewNavProp = NativeStackNavigationProp<RootStackParamList, "ProfileView">;
 
 export function ProfileViewPage() {
   const { theme, setTheme, themeName } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation<ProfileViewNavProp>();
   const [user, setUser] = useState<any>(null);
   const avatarAnim = useRef(new Animated.Value(0)).current;
@@ -165,10 +168,14 @@ export function ProfileViewPage() {
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}> 
       <Header
-        title={"Profil"}
+        title={t("profileInfo")}
         isBack={true}
         onBack={() => navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainTabs" }] }))}
       />
+
+      <View style={styles.languagePosition}>
+        <LanguageSelector />
+      </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -193,7 +200,7 @@ export function ProfileViewPage() {
               onPress={() => navigation.navigate("ProfileEdit")}
             >
               <Ionicons name="pencil" size={16} color="#fff" />
-              <Text style={styles.primaryActionText}>Tahrirlash</Text>
+              <Text style={styles.primaryActionText}>{t("profileEdit")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -201,20 +208,20 @@ export function ProfileViewPage() {
               onPress={() => setModalVisible(true)}
             >
               <Ionicons name="log-out" size={16} color={theme.danger} />
-              <Text style={[styles.secondaryActionText, { color: theme.danger }]}>Chiqish</Text>
+              <Text style={[styles.secondaryActionText, { color: theme.danger }]}>{t("logout")}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Profil ma’lumotlari</Text>
-          <InfoRow label="Telefon" value={user?.phone || "-"} theme={theme} />
-          <InfoRow label="Faoliyat" value={user?.job || "-"} theme={theme} />
-          <InfoRow label="Izoh" value={user?.description || "-"} theme={theme} />
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t("profileInfo")}</Text>
+          <InfoRow label={t("phone")} value={user?.phone || "-"} theme={theme} />
+          <InfoRow label={t("job")} value={user?.job || "-"} theme={theme} />
+          <InfoRow label={t("note")} value={user?.description || "-"} theme={theme} />
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Foydalanuvchilar</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t("users")}</Text>
           <View style={styles.userWrap}>
             {users.map((u) => (
               <TouchableOpacity
@@ -235,31 +242,31 @@ export function ProfileViewPage() {
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Sozlamalar</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t("settings")}</Text>
 
           <TouchableOpacity style={styles.settingRow} onPress={openPasswordBox}>
-            <Text style={[styles.settingText, { color: theme.text }]}>Oson kirish kodi</Text>
+            <Text style={[styles.settingText, { color: theme.text }]}>{t("quickCode")}</Text>
             <Ionicons name="chevron-forward" size={18} color={theme.subText} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.settingRow} onPress={() => navigation.navigate("Support")}>
-            <Text style={[styles.settingText, { color: theme.text }]}>Biz haqimizda</Text>
+            <Text style={[styles.settingText, { color: theme.text }]}>{t("about")}</Text>
             <Ionicons name="chevron-forward" size={18} color={theme.subText} />
           </TouchableOpacity>
 
           <View style={styles.settingRow}>
-            <Text style={[styles.settingText, { color: theme.text }]}>Kodni o‘chirish</Text>
+            <Text style={[styles.settingText, { color: theme.text }]}>{t("deleteCode")}</Text>
             <TouchableOpacity onPress={removePasswordCode}>
-              <Text style={[styles.actionLink, { color: theme.danger }]}>O‘chirish</Text>
+              <Text style={[styles.actionLink, { color: theme.danger }]}>{t("delete")}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.themeBox}>
             {[
-              { key: "dark", label: "Tungi" },
-              { key: "light", label: "Kunduzgi" },
-              { key: "blue", label: "Ko‘k" },
-              { key: "orange", label: "Mandarin" },
+              { key: "dark", label: t("dark") },
+              { key: "light", label: t("light") },
+              { key: "blue", label: t("blue") },
+              { key: "orange", label: t("orange") },
             ].map((item) => (
               <TouchableOpacity
                 key={item.key}
@@ -278,11 +285,11 @@ export function ProfileViewPage() {
           </View>
 
           <TouchableOpacity onPress={exportTasksAsTxt} style={[styles.downloadButton, { borderColor: theme.primary }]}>
-            <Text style={{ color: theme.primary, fontWeight: "700" }}>Vazifalarni yuklab olish</Text>
+            <Text style={{ color: theme.primary, fontWeight: "700" }}>{t("exportTasks")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={deleteAccount} style={styles.deleteButton}>
-            <Text style={{ color: theme.danger, fontWeight: "700" }}>Hisobni butunlay o‘chirish</Text>
+            <Text style={{ color: theme.danger, fontWeight: "700" }}>{t("deleteAccount")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -379,6 +386,7 @@ function InfoRow({ label, value, theme }: { label: string; value: string; theme:
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  languagePosition: { alignItems: "flex-end", paddingHorizontal: 16, paddingTop: 4 },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 16, paddingBottom: 28, paddingTop: 8 },
   heroCard: {

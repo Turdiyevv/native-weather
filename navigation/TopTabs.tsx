@@ -10,6 +10,7 @@ import DeleteTask from "../pages/Tasks/deleteTask";
 import LeftMenu from "../components/global/MenuBar";
 import {useScroll} from "../utills/useScroll";
 import { ScrollContext } from "../utills/ScrollContext";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -65,6 +66,7 @@ function MyTabBar({ state, descriptors, navigation, theme }: any) {
 }
 export default function TopTabs({ navigation }: any) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const { handleScroll, footerTranslateY } = useScroll();
 
   return (
@@ -80,17 +82,17 @@ export default function TopTabs({ navigation }: any) {
           <Tab.Screen
             name="Tasks"
             component={MainPage}
-            options={{ tabBarLabel: "Hozirgi" }}
+            options={{ tabBarLabel: t("current") }}
           />
           <Tab.Screen
             name="DoneTask"
             component={DoneTask}
-            options={{ tabBarLabel: "Bajarilgan" }}
+            options={{ tabBarLabel: t("completed") }}
           />
           <Tab.Screen
             name="DeleteTask"
             component={DeleteTask}
-            options={{ tabBarLabel: "Arxiv" }}
+            options={{ tabBarLabel: t("archive") }}
           />
         </Tab.Navigator>
 
@@ -104,7 +106,7 @@ export default function TopTabs({ navigation }: any) {
         >
           <LeftMenu
             buttons={[
-              { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), text: "Qo'shish", size: 20, color: theme.primary },
+              { icon: "add-outline", onPress: () => navigation.navigate("AddPage"), text: t("add"), size: 20, color: theme.primary },
               { icon: "person-outline", onPress: () => navigation.navigate("ProfileView"), size: 20, color: theme.primary },
             ]}
             containerStyle={{ width: "100%" }}

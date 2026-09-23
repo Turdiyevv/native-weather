@@ -11,6 +11,7 @@ import * as Notifications from "expo-notifications";
 import * as NavigationBar from 'expo-navigation-bar';
 
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
+import { LanguageProvider } from "./i18n/LanguageContext";
 
 import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
@@ -174,9 +175,11 @@ const App: React.FC = () => {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider>
-          <AppNavigator />
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AppNavigator />
+          </ThemeProvider>
+        </LanguageProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

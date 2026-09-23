@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
 import { TextFieldProps } from "../../pages/types/types";
 import { useTheme } from "../../theme/ThemeContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function TextField({
   label,
@@ -21,6 +22,8 @@ export default function TextField({
 }: TextFieldProps) {
   const [touched, setTouched] = useState(false);
   const { theme } = useTheme();
+  const { t } = useLanguage();
+  const translatedError = errorMessage === "Bu maydon to‘ldirilishi shart!" ? t("required") : errorMessage;
   const showError = required && touched && value.trim().length === 0;
   const showMinLengthError = touched && value.length > 0 && value.length < minLength;
 
@@ -65,7 +68,7 @@ export default function TextField({
         {...rest}
       />
 
-      {showError && <Text style={[styles.errorText, { color: theme.danger }]}>{errorMessage}</Text>}
+      {showError && <Text style={[styles.errorText, { color: theme.danger }]}>{translatedError}</Text>}
       {showMinLengthError && (
         <Text style={[styles.errorText, { color: theme.danger }]}>
           {label} kamida {minLength} ta belgi bo'lishi kerak

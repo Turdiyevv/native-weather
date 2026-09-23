@@ -24,11 +24,13 @@ import ConfirmModal from "../../components/global/ConfirmModal";
 import LeftMenu from "../../components/global/MenuBar";
 import {useScroll} from "../../utills/useScroll";
 import {ScrollContext} from "../../utills/ScrollContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 type HabitsNav = NativeStackNavigationProp<RootStackParamList, "Habits">;
 
 const HabitsPage: React.FC = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation<HabitsNav>();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,7 +116,7 @@ const HabitsPage: React.FC = () => {
             {habits.length === 0 || loading ? (
               <View style={styles.empty}>
                 <Text style={[styles.description, { color: theme.text }]}>
-                  Hozircha odatlar yo‘q
+                  {t("noData")}
                 </Text>
               </View>
             ) : (
@@ -135,7 +137,7 @@ const HabitsPage: React.FC = () => {
                             setSelectedHabitId(habit.id);
                             setModalVisible(true);
                           }}>
-                            <Text style={[styles.meta, { color: theme.danger }]}>O'chirish</Text>
+                            <Text style={[styles.meta, { color: theme.danger }]}>{t("deleteHabit")}</Text>
                         </TouchableOpacity>
                     </View>
                     <Text style={styles.meta}>
@@ -150,20 +152,20 @@ const HabitsPage: React.FC = () => {
                             style={[styles.btn, styles.done]}
                             onPress={() => changeStatus(habit.id, todayDay.id, 1)}
                           >
-                            <Text style={styles.btnText}>Bajarildi</Text>
+                            <Text style={styles.btnText}>{t("done")}</Text>
                           </TouchableOpacity>
                           <TouchableOpacity
                             style={[styles.btn, styles.skip]}
                             onPress={() => changeStatus(habit.id, todayDay.id, 2)}
                           >
-                            <Text style={styles.btnText}>Qoldirildi</Text>
+                            <Text style={styles.btnText}>{t("skipped")}</Text>
                           </TouchableOpacity>
                         </View>
 
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
                             <View style={{ flexDirection: "row", alignItems: "center"}}>
                               <Text style={[styles.status, { color: theme.text }]}>
-                                Bugun: {todayDay.status === 0 ? "Kutilmoqda" : todayDay.status === 1 ? "Bajarildi" : "Qoldirildi"}
+                                {todayDay.status === 0 ? t("pending") : todayDay.status === 1 ? t("done") : t("skipped")}
                               </Text>
                               {todayDay.status === 0 && (
                                   <Ionicons
@@ -192,19 +194,19 @@ const HabitsPage: React.FC = () => {
                             </View>
 
                           <TouchableOpacity onPress={() => toggleHabitView(habit.id)}>
-                            <Text style={[styles.status, { color: theme.primary }]}>Ko‘rish</Text>
+                            <Text style={[styles.status, { color: theme.primary }]}>{t("view")}</Text>
                           </TouchableOpacity>
                         </View>
 
                       </>
                     ) : (
                       <Text style={[styles.status, { color: theme.text }]}>
-                        Muddati tugagan.
+                        {t("expired")}
                       </Text>
                     )}
                     {!todayDay && (
                       <TouchableOpacity onPress={() => toggleHabitView(habit.id)}>
-                        <Text style={[styles.status, { color: theme.primary }]}>Ko‘rish</Text>
+                        <Text style={[styles.status, { color: theme.primary }]}>{t("view")}</Text>
                       </TouchableOpacity>
                     )}
                     {openedHabitId === habit.id && (

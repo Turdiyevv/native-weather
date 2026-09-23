@@ -13,12 +13,14 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./types/types";
 import { useTheme } from "../theme/ThemeContext";
+import { useLanguage } from "../i18n/LanguageContext";
 import Header from "../components/global/Header";
 
 type SupportNav = NativeStackNavigationProp<RootStackParamList, "Support">;
 
 const SupportPage: React.FC = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation<SupportNav>();
 
   return (
@@ -32,16 +34,16 @@ const SupportPage: React.FC = () => {
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
           <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.title, { color: theme.text }]}>Vega</Text>
-            <Text style={[styles.description, { color: theme.subText }]}>
-              Bu ilova sizning kundalik vazifalaringizni boshqarish va eslatmalarni kuzatishda yordam beradi.
+            <Text style={[styles.description, { color: theme.subText }]}> 
+              {t("aboutDescription")}
             </Text>
-            <Text style={[styles.subtitle, { color: theme.text }]}>Bog'lanmoqchi bo'lsangiz xabar qoldiring!</Text>
+            <Text style={[styles.subtitle, { color: theme.text }]}>{t("leaveMessage")}</Text>
 
             <TouchableOpacity
               style={[styles.linkButton, { backgroundColor: theme.primary }]}
               onPress={() => Linking.openURL("https://t.me/Anonim_life_msgbot")}
             >
-              <Text style={styles.linkText}>Telegram orqali</Text>
+              <Text style={styles.linkText}>{t("viaTelegram")}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

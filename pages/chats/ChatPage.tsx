@@ -8,9 +8,11 @@ import {
   ScrollView,
 } from "react-native";
 import { useTheme } from "../../theme/ThemeContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const ChatPage: React.FC = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <KeyboardAvoidingView
@@ -22,7 +24,7 @@ const ChatPage: React.FC = () => {
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.title, { color: theme.text }]}>Chat</Text>
           <Text style={[styles.description, { color: theme.subText }]}>
-            Bu yerda keyinchalik online media chat yaratiladi.
+            {t("chatDescription")}
           </Text>
         </View>
       </ScrollView>

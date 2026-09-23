@@ -12,6 +12,7 @@ import { getActiveUser } from "../../service/storage";
 import { BusinessEntry } from "../types/userTypes";
 import { RootStackParamList } from "../types/types";
 import { formatSum } from "../../utills/utill";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 type BusinessEntriesRoute = RouteProp<RootStackParamList, "BusinessEntries">;
 
@@ -32,6 +33,7 @@ const formatDate = (dateString: string) => {
 
 export default function BusinessEntries() {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const route = useRoute<BusinessEntriesRoute>();
   const isIncome = route.params.type === "income";
   const [entries, setEntries] = useState<DatedBusinessEntry[]>([]);
@@ -69,7 +71,7 @@ export default function BusinessEntries() {
   );
 
   const total = entries.reduce((sum, entry) => sum + entry.total, 0);
-  const title = isIncome ? "Barcha kirimlar" : "Barcha chiqimlar";
+  const title = isIncome ? t("allIncome") : t("allExpenses");
   const accent = isIncome ? theme.success : theme.danger;
 
   return (
@@ -81,19 +83,19 @@ export default function BusinessEntries() {
       >
         <View style={[styles.summary, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View>
-            <Text style={[styles.eyebrow, { color: theme.subText }]}>Jami summa</Text>
+            <Text style={[styles.eyebrow, { color: theme.subText }]}>{t("total")}</Text>
             <Text style={[styles.total, { color: accent }]}> {isIncome ? "+" : "-"} {formatSum(total)}</Text>
           </View>
           <View style={styles.countBlock}>
             <Text style={[styles.count, { color: theme.text }]}>{entries.length}</Text>
-            <Text style={[styles.countLabel, { color: theme.subText }]}>ta yozuv</Text>
+            <Text style={[styles.countLabel, { color: theme.subText }]}>{t("entries")}</Text>
           </View>
         </View>
 
         {entries.length === 0 ? (
           <View style={[styles.empty, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={[styles.emptyTitle, { color: theme.text }]}>Hozircha ma’lumot yo‘q</Text>
-            <Text style={[styles.emptyText, { color: theme.subText }]}>Yangi yozuvlar shu yerda ko‘rinadi.</Text>
+            <Text style={[styles.emptyTitle, { color: theme.text }]}>{t("noData")}</Text>
+            <Text style={[styles.emptyText, { color: theme.subText }]}>{t("dataWillAppear")}</Text>
           </View>
         ) : (
           <View style={styles.list}>

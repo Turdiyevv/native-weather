@@ -20,10 +20,13 @@ import {
   addUser,
 } from "../service/storage";
 import { useTheme } from "../theme/ThemeContext";
+import { useLanguage } from "../i18n/LanguageContext";
+import LanguageSelector from "../components/global/LanguageSelector";
 import AdminIcon from "../assets/admin_icon.png";
 
 export default function LoginPage({ navigation }: any) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [userCount, setUserCount] = useState<number>(0);
@@ -52,7 +55,7 @@ export default function LoginPage({ navigation }: any) {
     const cleanPassword = password.trim().replace(/\s+/g, "");
 
     if (!cleanUsername || !cleanPassword) {
-      showMessage({ message: "Username va Password kiriting!", type: "warning" });
+      showMessage({ message: `${t("username")} va ${t("password")} kiriting!`, type: "warning" });
       return;
     }
     if (cleanUsername.length < 6 || cleanPassword.length < 6) {
@@ -80,7 +83,7 @@ export default function LoginPage({ navigation }: any) {
       setPass(existingUser!.password.replace(/./g, "•"));
       setTimeout(() => setPass(""), 3000);
 
-      showMessage({ message: "Password noto‘g‘ri!", type: "danger" });
+      showMessage({ message: `${t("password")} noto‘g‘ri!`, type: "danger" });
       return;
     }
 
@@ -94,21 +97,22 @@ export default function LoginPage({ navigation }: any) {
       style={[styles.screen, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <View style={styles.languagePosition}><LanguageSelector /></View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Image source={AdminIcon} style={styles.logo} />
-          <Text style={[styles.title, { color: theme.text }]}>Xush kelibsiz!</Text>
-          <Text style={[styles.subtitle, { color: theme.subText }]}>Boshqaruv markazingizga kiring</Text>
+          <Text style={[styles.title, { color: theme.text }]}>{t("welcome")}</Text>
+          <Text style={[styles.subtitle, { color: theme.subText }]}>{t("loginSubtitle")}</Text>
 
           <View style={[styles.countBox, { backgroundColor: theme.tabCard, borderColor: theme.border }]}> 
-            <Text style={[styles.count, { color: theme.text }]}>Hisoblar: {userCount} / 3</Text>
+            <Text style={[styles.count, { color: theme.text }]}>{t("accounts")}: {userCount} / 3</Text>
             <Text style={[styles.pass, { color: theme.primary }]}>{pass}</Text>
           </View>
 
           <View style={styles.formWrapper}>
             <TextField
-              label="Username"
-              placeholder="Bo'sh joylarsiz kiriting !"
+              label={t("username")}
+              placeholder={t("noSpaces")}
               value={username}
               onChangeText={setUsername}
               minLength={6}
@@ -116,8 +120,8 @@ export default function LoginPage({ navigation }: any) {
             />
 
             <TextField
-              placeholder="Bo'sh joylarsiz kiriting !"
-              label="Password"
+              placeholder={t("noSpaces")}
+              label={t("password")}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={true}
@@ -127,11 +131,11 @@ export default function LoginPage({ navigation }: any) {
           </View>
 
           <TouchableOpacity style={[styles.btn, { backgroundColor: theme.primary }]} onPress={handleLogin}>
-            <Text style={styles.btnText}>Kirish</Text>
+            <Text style={styles.btnText}>{t("login")}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeBox} onPress={() => navigation.replace("LoginCodePage")}>
-            <Text style={[styles.closeBoxText, { color: theme.primary }]}>Parol orqali kirish</Text>
+            <Text style={[styles.closeBoxText, { color: theme.primary }]}>{t("passwordLogin")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -171,6 +175,7 @@ export default function LoginPage({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  languagePosition: { position: "absolute", top: 18, right: 18, zIndex: 2 },
   screen: { flex: 1 },
   scroll: { flexGrow: 1, justifyContent: "center", padding: 22 },
   card: {

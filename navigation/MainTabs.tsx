@@ -13,16 +13,18 @@ import ChatPage from "../pages/chats/ChatPage";
 import CustomHeader from "../components/Task/CustomHeader";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../pages/types/types";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const Tab = createMaterialTopTabNavigator();
 
 function MyTabBar({ state, navigation, theme, onActiveTitleChange }: any) {
+  const { t } = useLanguage();
   const tabs = [
-    { name: "TopTabs", icon: "file-tray-full-outline", label: "Vazifalar" },
-    { name: "Habits", icon: "checkbox-outline", label: "Odatlar" },
-    { name: "Business", icon: "podium-outline", label: "Biznes" },
-    { name: "Chat", icon: "chatbox-ellipses-outline", label: "Chat" },
-    { name: "Earnings", icon: "wallet-outline", label: "Daromad" },
+    { name: "TopTabs", icon: "file-tray-full-outline", label: t("tasks") },
+    { name: "Habits", icon: "checkbox-outline", label: t("habits") },
+    { name: "Business", icon: "podium-outline", label: t("business") },
+    { name: "Chat", icon: "chatbox-ellipses-outline", label: t("chat") },
+    { name: "Earnings", icon: "wallet-outline", label: t("earnings") },
   ];
 
   useEffect(() => {
@@ -76,8 +78,9 @@ function MyTabBar({ state, navigation, theme, onActiveTitleChange }: any) {
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function MainTabs() {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation<NavigationProp>();
-  const [activeTitle, setActiveTitle] = useState("Vazifalar");
+  const [activeTitle, setActiveTitle] = useState(t("tasks"));
   return (
     <View style={{ flex: 1 }}>
       <CustomHeader

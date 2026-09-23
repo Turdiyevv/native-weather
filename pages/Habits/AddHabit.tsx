@@ -20,6 +20,7 @@ import { getActiveUser } from "../../service/storage";
 import {showMessage} from "react-native-flash-message";
 import { scheduleHabitDayNotification} from "../../service/notification";
 import Header from "../../components/global/Header";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 type AddHabitNav = NativeStackNavigationProp<
   RootStackParamList,
@@ -28,6 +29,7 @@ type AddHabitNav = NativeStackNavigationProp<
 
 const AddHabitPage: React.FC = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const navigation = useNavigation<AddHabitNav>();
 
   const [name, setName] = useState("");
@@ -116,37 +118,37 @@ const saveHabit = async () => {
       style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Header title="Odat qo‘shish" isBack={true} />
+      <Header title={t("habitAdd")} isBack={true} />
       <View style={styles.form}>
         {/* NAME */}
         <Text style={[styles.label, { color: theme.text }]}>
-          Odat nomi
+          {t("habitName")}
         </Text>
         <TextInput
           value={name}
           onChangeText={setName}
-          placeholder="Masalan: Har kuni sport"
+          placeholder={t("habitName")}
           placeholderTextColor="#999"
           style={[styles.input, { color: theme.text }]}
         />
 
         {/* DAYS */}
         <Text style={[styles.label, { color: theme.text }]}>
-          Necha kun davom etadi
+          {t("duration")}
         </Text>
         <TextInput
           maxLength={3}
           value={durationDays}
           onChangeText={setDurationDays}
           keyboardType="numeric"
-          placeholder="Masalan: 21"
+          placeholder="21"
           placeholderTextColor="#999"
           style={[styles.input, { color: theme.text }]}
         />
 
         {/* TIME PICKER */}
         <Text style={[styles.label, { color: theme.text }]}>
-          Bildirishnoma vaqti
+          {t("notificationTime")}
         </Text>
 
         <TouchableOpacity
@@ -181,7 +183,7 @@ const saveHabit = async () => {
           onPress={saveHabit}
         >
           <Text style={styles.saveText}>
-            {saving ? "Saqlanmoqda..." : "Saqlash"}
+            {saving ? "..." : t("save")}
           </Text>
         </TouchableOpacity>
 
@@ -201,7 +203,7 @@ const saveHabit = async () => {
           }
         }
         >
-          <Text style={styles.cancelText}>Bekor qilish</Text>
+          <Text style={styles.cancelText}>{t("cancel")}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

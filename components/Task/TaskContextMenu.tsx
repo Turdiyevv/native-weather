@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "../global/ConfirmModal";
 import { UserTask } from "../../pages/types/userTypes";
 import { useTheme } from "../../theme/ThemeContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 import DateTimePickerModalComponent from "../global/DateTimePickerModalComponent";
 
 interface Props {
@@ -41,6 +42,7 @@ export default function TaskContextMenu({
   itemLayout,
 }: Props) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [showPicker, setShowPicker] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -124,8 +126,8 @@ export default function TaskContextMenu({
               ]}
             >
               {task.alarmDate
-                ? "Qo'ng'iroqni o'chirish"
-                : "Qo'ng'iroqni o'rnatish"}
+                ? t("removeAlarm")
+                : t("setAlarm")}
             </Text>
             <Ionicons name="time-outline" size={18} color={theme.text} />
           </TouchableOpacity>
@@ -144,7 +146,7 @@ export default function TaskContextMenu({
             disabled={!!task?.isDeleted || (!!task.done && (task.isReturning ?? 0) >= 9)}
           >
             <Text style={[styles.menuText, { color: theme.text }]}>
-              {task.done ? "Qaytarish" : "Bajarildi"}
+              {task.done ? t("restore") : t("markDone")}
             </Text>
             <Ionicons
               name={
@@ -169,7 +171,7 @@ export default function TaskContextMenu({
             disabled={!!task?.isDeleted || !!task?.done}
           >
             <Text style={[styles.menuText, { color: theme.text }]}>
-              Tahrirlash
+              {t("edit")}
             </Text>
             <Ionicons name="create-outline" size={20} color="blue" />
           </TouchableOpacity>
@@ -183,7 +185,7 @@ export default function TaskContextMenu({
             onPress={() => setModalVisible(true)}
             disabled={!!task?.isDeleted}
           >
-            <Text style={[styles.menuText, { color: "red" }]}>Arxivlash</Text>
+            <Text style={[styles.menuText, { color: "red" }]}>{t("archiveTask")}</Text>
             <Ionicons name="archive-outline" size={20} color="red" />
           </TouchableOpacity>
         </Animated.View>

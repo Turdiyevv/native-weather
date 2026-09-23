@@ -2,9 +2,11 @@ import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import {ConfirmModalProps} from "../../pages/types/types";
 import {useTheme} from "../../theme/ThemeContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function ConfirmModal({ visible, message, onConfirm, onCancel }: ConfirmModalProps) {
   const { theme } = useTheme();
+  const { t } = useLanguage();
     return (
     <Modal
       visible={visible}
@@ -21,11 +23,11 @@ export default function ConfirmModal({ visible, message, onConfirm, onCancel }: 
           <Text style={[styles.message, {color: theme.text}]}>{message}</Text>
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.btn} onPress={onCancel}>
-              <Text style={[styles.canBtnText, {color: theme.text}]}>Yo‘q</Text>
+              <Text style={[styles.canBtnText, {color: theme.text}]}>{t("no")}</Text>
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity style={styles.btn} onPress={onConfirm}>
-              <Text style={styles.btnText}>Ha</Text>
+              <Text style={styles.btnText}>{t("yes")}</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -22,6 +22,7 @@ import ConfirmModal from "../../components/global/ConfirmModal";
 import { deleteTask, getActiveUser } from "../../service/storage";
 import { UserTask } from "../types/userTypes";
 import ImageViewing from "react-native-image-viewing";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type ViewTaskRouteProp = RouteProp<RootStackParamList, "ViewTask">;
@@ -29,6 +30,7 @@ type ViewTaskRouteProp = RouteProp<RootStackParamList, "ViewTask">;
 const ViewPage: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const route = useRoute<ViewTaskRouteProp>();
   const taskToEdit = route.params?.task;
   const options = [
@@ -75,7 +77,7 @@ const ViewPage: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <Header title={"Detal"} isBack={true} />
+      <Header title={t("detail")} isBack={true} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View style={styles.headerRow}>
@@ -102,7 +104,7 @@ const ViewPage: React.FC = () => {
           <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
           <View style={styles.sectionBlock}>
-            <Text style={[styles.label, { color: theme.subText }]}>Batafsil</Text>
+            <Text style={[styles.label, { color: theme.subText }]}>{t("details")}</Text>
             <TouchableOpacity
               activeOpacity={0.8}
               delayLongPress={1800}
@@ -115,9 +117,9 @@ const ViewPage: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          <InfoRow label="Kategoriya" value={taskToEdit?.done ? "Bajarilgan" : "Bajarilmagan"} />
-          <InfoRow label="Deadline" value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "-"} />
-          <InfoRow label="Qo'ng'iroq" value={taskToEdit.alarmDate ? formatDateTime(taskToEdit.alarmDate) : "-"} />
+          <InfoRow label={t("category")} value={taskToEdit?.done ? t("finished") : t("unfinished")} />
+          <InfoRow label={t("deadline")} value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "-"} />
+          <InfoRow label={t("alarm")} value={taskToEdit.alarmDate ? formatDateTime(taskToEdit.alarmDate) : "-"} />
 
           <Text style={[styles.statusLabel, { color: theme.subText }]}>Status</Text>
           <View style={styles.selectsBox}>
