@@ -17,6 +17,7 @@ export type RootStackParamList = {
   Habits: undefined;
   AddHabit: undefined;
   Business: undefined;
+  BusinessEntries: { type: "income" | "expense" };
   Earnings: undefined;
   LoginCodePage: undefined;
   DescStyle: { description: string };
@@ -37,6 +38,7 @@ export type MainTabsParamList = {
   Habits: undefined;
   AddHabit: undefined;
   Business: undefined;
+  BusinessEntries: { type: "income" | "expense" };
   Earnings: undefined;
   LoginCodePage: undefined;
   DescStyle: { description: string };

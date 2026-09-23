@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import {CommonActions, useNavigation} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../pages/types/types";
 import { useTheme } from "../../theme/ThemeContext";
@@ -19,8 +19,14 @@ const Header: React.FC<HeaderProps> = ({ title, onBack, isBack }) => {
   const { theme } = useTheme();
 
   const handleBack = () => {
-    if (onBack) {onBack()}
-    if (navigation.canGoBack()) {navigation.goBack()}
+    if (onBack) {
+      onBack();
+      return;
+    }
+
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
   };
 
   return (

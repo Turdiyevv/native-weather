@@ -27,6 +27,7 @@ import AddPage from "./components/screens/AddPage";
 import ViewTask from "./pages/Tasks/ViewTask";
 import DescStyle from "./pages/Tasks/DescStyle";
 import IncomeAndExpenses from "./pages/Business/IncomeAndExpenses";
+import BusinessEntries from "./pages/Business/BusinessEntries";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import SupportPage from "./pages/SupportPage";
 import { appStateFlags } from "./utills/appStateFlags";
@@ -156,6 +157,7 @@ const AppNavigator = () => {
                 <Stack.Screen name="ViewTask" component={ViewTask} />
                 <Stack.Screen name="DescStyle" component={DescStyle} />
                 <Stack.Screen name="IncomeAndExpenses" component={IncomeAndExpenses} />
+                <Stack.Screen name="BusinessEntries" component={BusinessEntries} />
               </Stack.Navigator>
 
               <View style={styles.flashWrapper}>

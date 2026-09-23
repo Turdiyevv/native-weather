@@ -19,6 +19,7 @@ import { addHabit } from "../../service/habits";
 import { getActiveUser } from "../../service/storage";
 import {showMessage} from "react-native-flash-message";
 import { scheduleHabitDayNotification} from "../../service/notification";
+import Header from "../../components/global/Header";
 
 type AddHabitNav = NativeStackNavigationProp<
   RootStackParamList,
@@ -115,6 +116,7 @@ const saveHabit = async () => {
       style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <Header title="Odat qo‘shish" isBack={true} />
       <View style={styles.form}>
         {/* NAME */}
         <Text style={[styles.label, { color: theme.text }]}>

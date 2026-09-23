@@ -1,13 +1,18 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTheme } from "../../theme/ThemeContext";
 import Calendar from "../../components/global/Calendar";
 import { getActiveUser } from "../../service/storage";
 import { formatSum } from "../../utills/utill";
+import { RootStackParamList } from "../types/types";
+
+type BusinessNavigation = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Business() {
   const { theme } = useTheme();
+  const navigation = useNavigation<BusinessNavigation>();
   const [income, setIncome] = useState(0);
   const [expenses, setExpenses] = useState(0);
 
@@ -47,14 +52,22 @@ export default function Business() {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.summaryRow}>
-          <View style={[styles.summaryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Pressable
+            style={[styles.summaryCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => navigation.navigate("BusinessEntries", { type: "income" })}
+            android_ripple={{ color: theme.border }}
+          >
             <Text style={[styles.summaryLabel, { color: theme.subText }]}>Kirim</Text>
             <Text style={[styles.summaryValue, { color: theme.success }]}>+ {formatSum(income)}</Text>
-          </View>
-          <View style={[styles.summaryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          </Pressable>
+          <Pressable
+            style={[styles.summaryCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => navigation.navigate("BusinessEntries", { type: "expense" })}
+            android_ripple={{ color: theme.border }}
+          >
             <Text style={[styles.summaryLabel, { color: theme.subText }]}>Chiqim</Text>
             <Text style={[styles.summaryValue, { color: theme.danger }]}>- {formatSum(expenses)}</Text>
-          </View>
+          </Pressable>
         </View>
 
         <View style={styles.calendarWrapper}>

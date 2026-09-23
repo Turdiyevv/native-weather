@@ -15,6 +15,7 @@ import FilePickerComponent from "../global/FilePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ConfirmModal from "../global/ConfirmModal";
 import {UserTask} from "../../pages/types/userTypes";
+import { CommonActions } from "@react-navigation/native";
 import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
 import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
@@ -42,7 +43,16 @@ export default function AddPage({ navigation, route }: any) {
   ];
   useEffect(() => {
       const backAction = () => {
-          navigation.navigate("TopTabs");
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          } else {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: "MainTabs" }],
+              })
+            );
+          }
           return true;
         };
       const backHandler = BackHandler.addEventListener(
@@ -95,7 +105,7 @@ export default function AddPage({ navigation, route }: any) {
         message: "Muvaffaqiyatli saqlandi!",
         type: "success",
       });
-      navigation.navigate("TopTabs");
+      navigation.replace("MainTabs");
     };
 
   const modalVisible=() => {setDeleteModalVisible(true)}

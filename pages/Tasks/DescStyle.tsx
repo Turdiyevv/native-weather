@@ -28,7 +28,7 @@ const DescStyle: React.FC = () => {
                {Array.from({ length: 50 }).map((_, i) => (
                     <Star key={i} />
                ))}
-              <Header title={"Elementni ko'rish"} />
+              <Header title={"Elementni ko'rish"} isBack={true} />
               <View style={styles.textContainer}>
                   <ScrollView style={[styles.textSmContainer, {backgroundColor: theme.background, borderColor: theme.border}]}>
                       <Text style={[styles.text, { color: theme.text }]}>{description}</Text>

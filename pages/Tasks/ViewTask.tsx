@@ -75,7 +75,7 @@ const ViewPage: React.FC = () => {
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <Header title={"Detal"} />
+      <Header title={"Detal"} isBack={true} />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View style={styles.headerRow}>
