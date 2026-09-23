@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Vega",
-    "slug": "VegaChat",
+    "slug": "vegachat",
     "version": "2.3.0",
     "orientation": "portrait",
     "icon": "./assets/vega.png",
