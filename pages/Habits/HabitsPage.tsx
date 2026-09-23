@@ -18,7 +18,7 @@ import {
     updateHabitDayStatus,
 } from "../../service/habits";
 import { getActiveUser } from "../../service/storage";
-import { Animated, Pressable } from "react-native";
+import { Animated } from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import ConfirmModal from "../../components/global/ConfirmModal";
 import LeftMenu from "../../components/global/MenuBar";

@@ -14,7 +14,6 @@ export default function LanguageSelector() {
 
   return (
     <View style={styles.wrapper} accessibilityLabel={t("selectLanguage")}>
-      <Text style={[styles.label, { color: theme.subText }]}>{t("language")}</Text>
       <View style={[styles.control, { backgroundColor: theme.card, borderColor: theme.border }]}>
         {languages.map((item) => (
           <TouchableOpacity
@@ -35,8 +34,7 @@ export default function LanguageSelector() {
 }
 
 const styles = StyleSheet.create({
-  wrapper: { alignItems: "center", gap: 6 },
-  label: { fontSize: 12, fontWeight: "600" },
+  wrapper: { alignItems: "center" },
   control: { flexDirection: "row", borderWidth: 1, borderRadius: 12, padding: 3 },
   option: { minWidth: 38, paddingVertical: 6, borderRadius: 9, alignItems: "center" },
   optionText: { fontSize: 11, fontWeight: "800" },

@@ -8,7 +8,6 @@ import {
   Platform,
   ScrollView,
   BackHandler,
-  Image,
 } from "react-native";
 import { showMessage } from "react-native-flash-message";
 import TextField from "../components/global/TextField";
@@ -22,7 +21,6 @@ import {
 import { useTheme } from "../theme/ThemeContext";
 import { useLanguage } from "../i18n/LanguageContext";
 import LanguageSelector from "../components/global/LanguageSelector";
-import AdminIcon from "../assets/admin_icon.png";
 
 export default function LoginPage({ navigation }: any) {
   const { theme } = useTheme();
@@ -100,7 +98,6 @@ export default function LoginPage({ navigation }: any) {
       <View style={styles.languagePosition}><LanguageSelector /></View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Image source={AdminIcon} style={styles.logo} />
           <Text style={[styles.title, { color: theme.text }]}>{t("welcome")}</Text>
           <Text style={[styles.subtitle, { color: theme.subText }]}>{t("loginSubtitle")}</Text>
 
@@ -188,7 +185,6 @@ const styles = StyleSheet.create({
     shadowRadius: 24,
     elevation: 8,
   },
-  logo: { width: 96, height: 96, alignSelf: "center", marginBottom: 12 },
   title: { fontSize: 30, fontWeight: "800", textAlign: "center" },
   subtitle: { marginTop: 6, textAlign: "center", fontSize: 14 },
   countBox: {

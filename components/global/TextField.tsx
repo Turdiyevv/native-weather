@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 import { TextFieldProps } from "../../pages/types/types";
 import { useTheme } from "../../theme/ThemeContext";
 import { useLanguage } from "../../i18n/LanguageContext";

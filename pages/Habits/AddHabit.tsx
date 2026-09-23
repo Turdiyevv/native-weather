@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     Platform,
     KeyboardAvoidingView,
-    Alert, BackHandler,
+    BackHandler,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {CommonActions, useNavigation} from "@react-navigation/native";
@@ -29,7 +29,7 @@ type AddHabitNav = NativeStackNavigationProp<
 
 const AddHabitPage: React.FC = () => {
   const { theme } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigation = useNavigation<AddHabitNav>();
 
   const [name, setName] = useState("");
@@ -72,7 +72,7 @@ const saveHabit = async () => {
     if (habit) {
         await Promise.all(
           habit.habitDays.map(day =>
-            scheduleHabitDayNotification(habit.name, day)
+            scheduleHabitDayNotification(habit.name, day, language)
           )
         );
     }

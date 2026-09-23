@@ -2,7 +2,7 @@
 export const generateId = () =>
   Date.now().toString(36) + Math.random().toString(36).slice(2);
 
-import { BusinessItem, BusinessEntry, User } from "../pages/types/userTypes";
+import { BusinessItem, BusinessEntry } from "../pages/types/userTypes";
 import { loadUsers, saveUsers } from "./storage";
 
 export const getOrCreateBusinessByDate = async (

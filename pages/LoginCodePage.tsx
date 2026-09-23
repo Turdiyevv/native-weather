@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, BackHandler, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from "react-native";
 import PasswordCodeInput from "../components/global/PasswordCodeInput";
 import { useFocusEffect } from "@react-navigation/native";
 import ConfirmModal from "../components/global/ConfirmModal";
@@ -8,7 +8,6 @@ import { User } from "./types/userTypes";
 import { useTheme } from "../theme/ThemeContext";
 import { useLanguage } from "../i18n/LanguageContext";
 import LanguageSelector from "../components/global/LanguageSelector";
-import AdminIcon from "../assets/admin_icon.png";
 
 export default function LoginCodePage({ navigation }: any) {
   const { theme } = useTheme();
@@ -82,7 +81,6 @@ export default function LoginCodePage({ navigation }: any) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.languagePosition}><LanguageSelector /></View>
       <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Image source={AdminIcon} style={styles.logo} />
         <Text style={[styles.title, { color: theme.text }]}>{t("securityCode")}</Text>
         <Text style={[styles.subtitle, { color: theme.subText }]}>{t("enterCode")}</Text>
 
@@ -128,7 +126,6 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 6,
   },
-  logo: { width: 90, height: 90, alignSelf: "center", marginBottom: 14 },
   title: { fontSize: 28, fontWeight: "800", textAlign: "center" },
   subtitle: { fontSize: 14, textAlign: "center", marginBottom: 20 },
   closeBox: { alignItems: "center", marginTop: 20 },

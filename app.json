@@ -4,10 +4,10 @@
     "slug": "vegachat",
     "version": "2.3.0",
     "orientation": "portrait",
-    "icon": "./assets/vega.png",
+    "icon": "./assets/notebook.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/vega.png",
+      "image": "./assets/notebook.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
@@ -23,12 +23,12 @@
       "package": "com.Turdiyev.vegaChat",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/vega.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/notebook.png",
+        "backgroundColor": "#006262"
       }
     },
     "web": {
-      "favicon": "./assets/vega.png"
+      "favicon": "./assets/notebook.png"
     },
     "extra": {
       "eas": {

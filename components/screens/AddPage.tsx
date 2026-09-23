@@ -18,7 +18,7 @@ import {UserTask} from "../../pages/types/userTypes";
 import { CommonActions } from "@react-navigation/native";
 import { addTask, updateTask, getActiveUser, softDeleteTask } from "../../service/storage";
 import {useTheme} from "../../theme/ThemeContext";
-import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../global/Header";
 import { useLanguage } from "../../i18n/LanguageContext";
 

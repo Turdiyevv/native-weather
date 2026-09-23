@@ -15,6 +15,7 @@ import TodoItem from "./TodoItem";
 import { useTheme } from "../../theme/ThemeContext";
 import * as Notifications from "expo-notifications";
 import { useScrollHandler } from "../../utills/ScrollContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 interface TaskListProps {
   navigation: any;
@@ -27,6 +28,7 @@ export default function TaskList({
   filterTasks,
   emptyMessage = "Bu yerda kun tartibingiz bo'yicha vazifalarni yozishingiz mumkin."
 }: TaskListProps) {
+  const { t } = useLanguage();
   const { theme } = useTheme();
   const scrollHandler = useScrollHandler();
   const [tasks, setTasks] = useState<UserTask[]>([]);
@@ -105,8 +107,8 @@ export default function TaskList({
       };
       const notificationId = await Notifications.scheduleNotificationAsync({
         content: {
-          title: "⏰ Vazifa eslatmasi",
-          body: task.title || "Vaqt bo'ldi",
+          title: `⏰ ${t("notificationTask")}`,
+          body: task.title || t("timeUp"),
           sound: true,
         },
         //@ts-ignore
@@ -123,10 +125,10 @@ export default function TaskList({
             : t
         )
       );
-      showMessage({ message: "Bildirishnoma saqlandi!", type: "success" });
+      showMessage({ message: t("notificationSaved"), type: "success" });
     } catch (e) {
       console.log(e);
-      showMessage({ message: "Bildirishnoma xatosi", type: "danger" });
+      showMessage({ message: t("notificationError"), type: "danger" });
     }
   };
 

@@ -20,7 +20,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useLanguage } from "../../i18n/LanguageContext";
-import LanguageSelector from "../../components/global/LanguageSelector";
 import { appStateFlags } from "../../utills/appStateFlags";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "ProfileEdit">;

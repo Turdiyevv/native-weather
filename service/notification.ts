@@ -1,4 +1,5 @@
 import * as Notifications from "expo-notifications";
+import { Language } from "../i18n/LanguageContext";
 
 type HabitDay = {
   id: string;
@@ -9,7 +10,8 @@ type HabitDay = {
 
 export const scheduleHabitDayNotification = async (
   habitName: string,
-  habitDay: HabitDay
+  habitDay: HabitDay,
+  language: Language = "uz"
 ): Promise<string | null> => {
   try {
     // faqat bajarilmagan kunlar
@@ -32,10 +34,16 @@ export const scheduleHabitDayNotification = async (
       date: triggerDate,
     };
 
+    const notificationTitles: Record<Language, string> = {
+      uz: "⏰ Odat vaqti",
+      ru: "⏰ Время привычки",
+      en: "⏰ Habit time",
+    };
+
     const notificationId =
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: "⏰ Odat vaqti",
+          title: notificationTitles[language],
           body: habitName,
           sound: true,
           data: {

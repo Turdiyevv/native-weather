@@ -41,7 +41,7 @@ const SupportPage: React.FC = () => {
 
             <TouchableOpacity
               style={[styles.linkButton, { backgroundColor: theme.primary }]}
-              onPress={() => Linking.openURL("https://t.me/Anonim_life_msgbot")}
+              onPress={() => Linking.openURL("https://t.me/turdiyevme")}
             >
               <Text style={styles.linkText}>{t("viaTelegram")}</Text>
             </TouchableOpacity>

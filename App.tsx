@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { enableScreens } from "react-native-screens";
-import {StatusBar, View, StyleSheet, AppState, Platform} from "react-native";
+import {StatusBar, View, StyleSheet, AppState} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FlashMessage from "react-native-flash-message";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as Notifications from "expo-notifications";
-import * as NavigationBar from 'expo-navigation-bar';
 
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 import { LanguageProvider } from "./i18n/LanguageContext";
