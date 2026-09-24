@@ -6,7 +6,6 @@ export type RootStackParamList = {
   LoginPage: undefined;
   MainPage: undefined;
 
-  TopTabs: NavigatorScreenParams<TopTabsParamList>;
   MainTabs: NavigatorScreenParams<MainTabsParamList>;
   AddPage: { task?: UserTask };
   ProfileView: undefined;
@@ -28,7 +27,7 @@ export type RootStackParamList = {
   };
 };
 export type MainTabsParamList = {
-  TopTabs: NavigatorScreenParams<TopTabsParamList>;
+  TopTabs: undefined;
   AddPage: { task?: UserTask };
   ProfileView: undefined;
   ProfileEdit: undefined;
@@ -47,11 +46,6 @@ export type MainTabsParamList = {
     selectedDate: string;
     businessId: string;
   };
-};
-export type TopTabsParamList = {
-  Tasks: undefined;
-  DoneTask: undefined;
-  DeleteTask: undefined;
 };
 export interface Checkbox {
   label?: string;

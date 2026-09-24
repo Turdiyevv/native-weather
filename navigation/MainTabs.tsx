@@ -5,7 +5,7 @@ import { useTheme } from "../theme/ThemeContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useNavigation } from "@react-navigation/native";
-import TopTabs from "./TopTabs";
+import TasksScreen from "../pages/Tasks/TasksScreen";
 import HabitsPage from "../pages/Habits/HabitsPage";
 import Business from "../pages/Business/Business";
 import Earnings from "../pages/Earnings/Earnings";
@@ -97,7 +97,7 @@ export default function MainTabs() {
           lazy: true,
         }}
       >
-        <Tab.Screen name="TopTabs" component={TopTabs} />
+        <Tab.Screen name="TopTabs" component={TasksScreen} />
         <Tab.Screen name="Habits" component={HabitsPage} />
         <Tab.Screen name="Business" component={Business} />
         <Tab.Screen name="Chat" component={ChatPage} />
