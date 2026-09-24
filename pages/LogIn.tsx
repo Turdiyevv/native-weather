@@ -53,11 +53,11 @@ export default function LoginPage({ navigation }: any) {
     const cleanPassword = password.trim().replace(/\s+/g, "");
 
     if (!cleanUsername || !cleanPassword) {
-      showMessage({ message: `${t("username")} va ${t("password")} kiriting!`, type: "warning" });
+      showMessage({ message: t("requiredCredentials"), type: "warning" });
       return;
     }
     if (cleanUsername.length < 6 || cleanPassword.length < 6) {
-      showMessage({ message: "Minimum 6 ta belgi bo'lishi kerak!", type: "warning" });
+      showMessage({ message: t("minimumSixCharacters"), type: "warning" });
       return;
     }
 
@@ -66,7 +66,7 @@ export default function LoginPage({ navigation }: any) {
 
     if (!existingUser && users.length >= 3) {
       showMessage({
-        message: "User topilmadi. Yangi user yaratish imkoni yo'q!",
+        message: t("userNotFound"),
         type: "warning",
       });
       return;
@@ -81,13 +81,13 @@ export default function LoginPage({ navigation }: any) {
       setPass(existingUser!.password.replace(/./g, "•"));
       setTimeout(() => setPass(""), 3000);
 
-      showMessage({ message: `${t("password")} noto‘g‘ri!`, type: "danger" });
+      showMessage({ message: t("wrongPassword"), type: "danger" });
       return;
     }
 
     await setActiveUser(existingUser!.username);
     navigation.replace("MainTabs");
-    showMessage({ message: "Muvaffaqiyatli kirish!", type: "success" });
+    showMessage({ message: t("loginSuccess"), type: "success" });
   };
 
   return (
@@ -138,7 +138,7 @@ export default function LoginPage({ navigation }: any) {
 
         <ConfirmModal
           visible={modalVisible}
-          message="Yangi hisob yaratilsinmi?"
+          message={t("logoutConfirm")}
           onConfirm={async () => {
             setModalVisible(false);
 
@@ -162,7 +162,7 @@ export default function LoginPage({ navigation }: any) {
             await setActiveUser(newUser.username);
             setUserCount(users.length + 1);
             navigation.replace("MainTabs");
-            showMessage({ message: "Yangi user yaratildi!", type: "success" });
+            showMessage({ message: t("newUserCreated"), type: "success" });
           }}
           onCancel={() => setModalVisible(false)}
         />

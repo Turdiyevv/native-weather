@@ -76,7 +76,7 @@ export function ProfileViewPage() {
         description: profile.description || "",
       });
     } catch (e) {
-      showMessage({ message: "Foydalanuvchini yuklashda xatolik", type: "danger" });
+      showMessage({ message: t("profileLoadError"), type: "danger" });
     }
   };
 
@@ -120,7 +120,7 @@ export function ProfileViewPage() {
     if (activeUser && activeUser.username === selectedUser.username) return;
     await setActiveUser(selectedUser.username);
     await loadActiveUser();
-    showMessage({ message: `${username} foydalanuvchi aktiv qilindi`, type: "success" });
+    showMessage({ message: `${username} ${t("userActivated")}`, type: "success" });
   };
 
   const deleteAccount = async () => {
@@ -131,7 +131,7 @@ export function ProfileViewPage() {
     if (!user) return;
     await deleteUser(user.username);
     setDeleteModalVisible(false);
-    showMessage({ message: "Hisob muvaffaqiyatli o‘chirildi!", type: "success" });
+    showMessage({ message: t("accountDeleted"), type: "success" });
     navigation.replace("LoginPage");
   };
 
@@ -146,14 +146,14 @@ export function ProfileViewPage() {
     const currentUser = users.find((u) => u.username === activeUser.username);
     if (!currentUser) return;
     if (!currentUser.passwordCode) {
-      showMessage({ message: "Tezkor kod mavjud emas!", type: "warning" });
+      showMessage({ message: t("quickCodeMissing"), type: "warning" });
       return;
     }
     const updatedUsers = users.map((u) =>
       u.username === activeUser.username ? { ...u, passwordCode: null } : u
     );
     await saveUsers(updatedUsers);
-    showMessage({ message: "Tezkor kod o‘chirildi!", type: "success" });
+    showMessage({ message: t("quickCodeDeleted"), type: "success" });
   };
 
   const openPreview = (uri: string) => {
@@ -356,7 +356,7 @@ export function ProfileViewPage() {
 
       <ConfirmModal
         visible={modalVisible}
-        message="Ishonchingiz komilmi?"
+        message={t("logoutConfirm")}
         onConfirm={() => {
           logout();
           setModalVisible(false);
@@ -366,7 +366,7 @@ export function ProfileViewPage() {
 
       <ConfirmModal
         visible={deleteModalVisible}
-        message="Hisobni butunlay o‘chirmoqchimisiz?"
+        message={t("deleteConfirm")}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteModalVisible(false)}
       />

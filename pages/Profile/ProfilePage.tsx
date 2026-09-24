@@ -65,7 +65,7 @@ export default function ProfilePage() {
         setDescription(info.description || "");
         setAvatar(info.avatar || "");
       } catch (e) {
-        showMessage({ message: "Profilni yuklab bo‘lmadi", type: "danger" });
+        showMessage({ message: t("profileLoadError"), type: "danger" });
       }
     };
 
@@ -75,7 +75,7 @@ export default function ProfilePage() {
   const chooseAvatar = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      alert("Rasm galereyasiga ruxsat berish kerak");
+      alert(t("galleryPermission"));
       return;
     }
     try {
@@ -95,7 +95,7 @@ export default function ProfilePage() {
 
   const deleteAvatar = () => {
     setAvatar("");
-    showMessage({ message: "Rasm o‘chirildi", type: "info" });
+    showMessage({ message: t("imageDeleted"), type: "info" });
   };
 
   const saveProfile = async () => {
@@ -119,7 +119,7 @@ export default function ProfilePage() {
         u.username === active.username ? updatedUser : u
       );
       await saveUsers(updatedUsers);
-      showMessage({ message: "Ma'lumot saqlandi!", type: "success" });
+      showMessage({ message: t("profileSaved"), type: "success" });
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -127,7 +127,7 @@ export default function ProfilePage() {
         })
       );
     } catch (e) {
-      showMessage({ message: "Saqlashda xatolik", type: "danger" });
+      showMessage({ message: t("profileSaveError"), type: "danger" });
     }
   };
 

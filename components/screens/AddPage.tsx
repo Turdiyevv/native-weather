@@ -64,7 +64,7 @@ export default function AddPage({ navigation, route }: any) {
   const saveTask = async () => {
       if (task.trim() === "" || description.trim() === "") {
         showMessage({
-          message: "Vazifa nomi va izoh bo‘sh bo‘lishi mumkin emas",
+          message: t("taskFieldsRequired"),
           type: "warning",
         });
         return;
@@ -104,7 +104,7 @@ export default function AddPage({ navigation, route }: any) {
       }
 
       showMessage({
-        message: "Muvaffaqiyatli saqlandi!",
+        message: t("savedSuccessfully"),
         type: "success",
       });
       navigation.replace("MainTabs");
@@ -116,7 +116,7 @@ export default function AddPage({ navigation, route }: any) {
       if (!activeUser || !taskToEdit) return;
       await softDeleteTask(activeUser.username, taskToEdit.id);
       showMessage({
-        message: "Vazifa o‘chirildi!",
+        message: t("taskArchivedSuccess"),
         type: "success",
       });
       setIsActive(true);
@@ -215,7 +215,7 @@ export default function AddPage({ navigation, route }: any) {
         </KeyboardAwareScrollView>
         <ConfirmModal
           visible={deleteModalVisible}
-          message="Hisobni butunlay o‘chirmoqchimisiz?"
+          message={t("deleteConfirm")}
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteModalVisible(false)}
         />

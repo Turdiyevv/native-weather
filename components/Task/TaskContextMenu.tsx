@@ -193,7 +193,7 @@ export default function TaskContextMenu({
       {/* Confirm modal */}
       <ConfirmModal
         visible={modalVisible}
-        message="Element arxivga tushuriladi. Ishonchingiz komilmi?"
+        message={t("archiveConfirm")}
         onConfirm={() => {
           onDelete(task);
           setModalVisible(false);

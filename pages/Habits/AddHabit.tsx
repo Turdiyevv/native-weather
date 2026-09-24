@@ -48,13 +48,13 @@ const AddHabitPage: React.FC = () => {
 const saveHabit = async () => {
   try {
     if (!name.trim()) {
-      showMessage({ message: "Odat nomini kiriting !", type: "warning" });
+      showMessage({ message: t("habitNameRequired"), type: "warning" });
       return;
     }
 
     const days = Number(durationDays);
     if (!Number.isInteger(days) || days <= 0) {
-      showMessage({ message: "Davomiylik noto‘g‘ri !", type: "warning" });
+      showMessage({ message: t("habitDurationInvalid"), type: "warning" });
       return;
     }
 
@@ -89,7 +89,7 @@ const saveHabit = async () => {
       }
   } catch (e) {
     console.log("SAVE HABIT ERROR:", e);
-    showMessage({ message: "Xatolik yuz berdi", type: "danger" });
+    showMessage({ message: t("genericError"), type: "danger" });
   } finally {
     setSaving(false);
   }

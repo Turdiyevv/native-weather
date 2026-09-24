@@ -7,6 +7,7 @@ import {
   Vibration,
   Animated,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { UserTask } from "../../pages/types/userTypes";
 import { useTheme } from "../../theme/ThemeContext";
 import TaskContextMenu from "./TaskContextMenu";
@@ -87,6 +88,7 @@ export default function TaskRow({
     minute: "2-digit",
     hour12: false,
   });
+  const displayTitle = item.title.slice(0, 30);
 
   return (
     <View ref={itemRef}>
@@ -103,12 +105,20 @@ export default function TaskRow({
         <View style={styles.taskLine}>
           <View style={[styles.dot, { backgroundColor: taskColor }]} />
           <Text
-            numberOfLines={2}
-            ellipsizeMode="tail"
+            numberOfLines={1}
+            ellipsizeMode="clip"
             style={[styles.title, { color: taskColor }, item.done && styles.doneTitle]}
           >
-            {item.title}
+            {displayTitle}
           </Text>
+          {item.alarmDate && (
+            <Ionicons
+              name="alarm-outline"
+              size={15}
+              color={theme.placeholder}
+              style={styles.alarmIcon}
+            />
+          )}
           <Text style={[styles.time, { color: theme.placeholder }]}>
             {createdTime}
           </Text>
@@ -136,7 +146,7 @@ export default function TaskRow({
 const styles = StyleSheet.create({
   row: {
     paddingHorizontal: 18,
-    paddingVertical: 12,
+    paddingVertical: 0.5,
   },
   archivedRow: {
     opacity: 0.55,
@@ -162,6 +172,9 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 18,
     flexShrink: 0,
+  },
+  alarmIcon: {
+    marginLeft: 2,
   },
   doneTitle: {
     textDecorationLine: "line-through",

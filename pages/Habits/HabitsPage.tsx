@@ -278,7 +278,7 @@ const HabitsPage: React.FC = () => {
             )}
             <ConfirmModal
               visible={modalVisible}
-              message="Element arxivga tushuriladi. Ishonchingiz komilmi?"
+              message={t("archiveConfirm")}
               onConfirm={onDelete}
               onCancel={() => {
                   setModalVisible(false);

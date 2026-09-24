@@ -44,11 +44,11 @@ const ViewPage: React.FC = () => {
   const onDelete = async (task: UserTask) => {
     const activeUser = await getActiveUser();
     if (!activeUser) {
-      showMessage({ message: "Foydalanuvchi topilmadi!", type: "danger" });
+      showMessage({ message: t("taskNotFound"), type: "danger" });
       return;
     }
     await deleteTask(activeUser.username, task.id);
-    showMessage({ message: "Vazifa butunlay o‘chirildi", type: "success" });
+    showMessage({ message: t("taskPermanentlyDeleted"), type: "success" });
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
@@ -172,7 +172,7 @@ const ViewPage: React.FC = () => {
               if (!taskToEdit.done && !taskToEdit.isDeleted) {
                 navigation.navigate("AddPage", { task: taskToEdit });
               } else {
-                showMessage({ message: "Tahrirlashni imkoni yo'q!", type: "danger" });
+                showMessage({ message: t("taskEditUnavailable"), type: "danger" });
               }
             }}
             style={[styles.button, { backgroundColor: theme.primary, borderColor: theme.primary }]}
@@ -185,7 +185,7 @@ const ViewPage: React.FC = () => {
 
       <ConfirmModal
         visible={modalVisible}
-        message="Siz bu vazifani butunlay o'chirmoqchimisiz ?"
+        message={t("taskDeleteConfirm")}
         onConfirm={async () => {
           await onDelete(taskToEdit);
           setModalVisible(false);

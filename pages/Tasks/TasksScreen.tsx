@@ -91,12 +91,7 @@ export default function TasksScreen() {
 
   const [tasks,         setTasks]         = useState<UserTask[]>([]);
   const [filter,        setFilter]        = useState<FilterType>("active");
-  const [filterVisible, setFilterVisible] = useState(false);
   const [openMenuId,    setOpenMenuId]    = useState<string | null>(null);
-
-  // Filter panel animated height
-  const filterAnim = useRef(new Animated.Value(0)).current;
-  const FILTER_HEIGHT = 52;
 
   // FAB animated opacity/scale (scroll hide)
   const fabAnim  = useRef(new Animated.Value(1)).current;
@@ -112,7 +107,7 @@ export default function TasksScreen() {
       }
       setTasks(user.usertasks || []);
     } catch (e) {
-      showMessage({ message: String(e), type: "danger" });
+      showMessage({ message: t("genericError"), type: "danger" });
     }
   }, [navigation]);
 
@@ -124,30 +119,8 @@ export default function TasksScreen() {
     return unsub;
   }, [navigation]);
 
-  // ─── Filter panel toggle ────────────────────────────────────────────────────
-  const toggleFilter = () => {
-    const show = !filterVisible;
-    setFilterVisible(show);
-    Animated.spring(filterAnim, {
-      toValue: show ? FILTER_HEIGHT : 0,
-      useNativeDriver: false,
-      bounciness: 4,
-    }).start();
-  };
-
-  const closeFilter = () => {
-    if (!filterVisible) return;
-    setFilterVisible(false);
-    Animated.timing(filterAnim, {
-      toValue: 0,
-      duration: 160,
-      useNativeDriver: false,
-    }).start();
-  };
-
   // ─── Scroll — FAB yashirish ─────────────────────────────────────────────────
   const handleScroll = (e: any) => {
-    closeFilter();
     const y = e.nativeEvent.contentOffset.y;
     const dy = y - lastScrollY.current;
     lastScrollY.current = y;
@@ -170,7 +143,7 @@ export default function TasksScreen() {
     };
     await updateTask(user.username, task.id, updated);
     setTasks(prev => prev.map(t => (t.id === task.id ? updated : t)));
-    showMessage({ message: newDone ? "Bajarildi ✓" : "Qaytarildi", type: "success" });
+    showMessage({ message: newDone ? t("taskCompleted") : t("taskRestored"), type: "success" });
   };
 
   const editTask = (task: UserTask, view: boolean) => {
@@ -182,7 +155,7 @@ export default function TasksScreen() {
     if (!user) return;
     await softDeleteTask(user.username, task.id);
     setTasks(prev => prev.map(t => (t.id === task.id ? { ...t, isDeleted: true } : t)));
-    showMessage({ message: "Arxivlandi", type: "success" });
+    showMessage({ message: t("taskArchived"), type: "success" });
   };
 
   const onSetAlarm = async (task: UserTask, date: Date) => {
@@ -226,7 +199,7 @@ export default function TasksScreen() {
     setTasks(prev =>
       prev.map(t => (t.id === task.id ? { ...t, alarmDate: null, notificationId: null } : t))
     );
-    showMessage({ message: "Eslatma o'chirildi", type: "success" });
+    showMessage({ message: t("alarmRemoved"), type: "success" });
   };
 
   // ─── Sections ──────────────────────────────────────────────────────────────
@@ -237,17 +210,8 @@ export default function TasksScreen() {
     <TouchableWithoutFeedback onPress={() => openMenuId && setOpenMenuId(null)}>
       <View style={[styles.screen, { backgroundColor: theme.background }]}>
 
-        {/* ── Filter chip paneli (animated collapse) ─── */}
-        <Animated.View
-          style={[
-            styles.filterPanel,
-            {
-              height: filterAnim,
-              backgroundColor: theme.background,
-              overflow: "hidden",
-            },
-          ]}
-        >
+        {/* ── Doimiy filter chip paneli ─── */}
+        <View style={[styles.filterPanel, { backgroundColor: theme.background }]}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -261,12 +225,6 @@ export default function TasksScreen() {
                   key={f.key}
                   onPress={() => {
                     setFilter(f.key);
-                    setFilterVisible(false);
-                    Animated.spring(filterAnim, {
-                      toValue: 0,
-                      useNativeDriver: false,
-                      bounciness: 4,
-                    }).start();
                   }}
                   style={[
                     styles.chip,
@@ -288,34 +246,6 @@ export default function TasksScreen() {
               );
             })}
           </ScrollView>
-        </Animated.View>
-
-        {/* ── Filter tugmasini header'da ko'rsatish (CustomHeader) ─── */}
-        {/* Active filter nomi + filter icon — MainTabs'dagi CustomHeader bilan
-            birgalikda ishlaydi, shuning uchun bu yerda alohida mini-toolbar */}
-        <View style={[styles.toolbar, { borderColor: theme.border }]}>
-          <TouchableOpacity
-            onPress={toggleFilter}
-            style={[styles.toolbarBtn, { backgroundColor: filterVisible ? theme.tabCard : "transparent" }]}
-          >
-            <Ionicons
-              name="options-outline"
-              size={20}
-              color={filterVisible ? theme.primary : theme.subText}
-            />
-            <Text style={[styles.toolbarLabel, { color: filterVisible ? theme.primary : theme.subText }]}>
-              {t(FILTERS.find(f => f.key === filter)?.labelKey ?? "all")}
-            </Text>
-            <Ionicons
-              name={filterVisible ? "chevron-up" : "chevron-down"}
-              size={14}
-              color={theme.subText}
-            />
-          </TouchableOpacity>
-
-          <Text style={[styles.totalCount, { color: theme.subText }]}>
-            {countFilter(tasks, filter)} ta
-          </Text>
         </View>
 
         {/* ── Asosiy ro'yxat ─────────────────────────────────────────── */}
@@ -392,31 +322,6 @@ export default function TasksScreen() {
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-
-  // Toolbar (filter tugmasi + soni)
-  toolbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  toolbarBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-  },
-  toolbarLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  totalCount: {
-    fontSize: 13,
-  },
 
   // Filter chips
   filterPanel: {

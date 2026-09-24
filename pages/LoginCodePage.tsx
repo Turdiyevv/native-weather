@@ -102,7 +102,7 @@ export default function LoginCodePage({ navigation }: any) {
 
       <ConfirmModal
         visible={modalVisible}
-        message="Ilovadan chiqmoqchimisiz?"
+        message={t("exitAppConfirm")}
         onConfirm={() => {
           setModalVisible(false);
           BackHandler.exitApp();
