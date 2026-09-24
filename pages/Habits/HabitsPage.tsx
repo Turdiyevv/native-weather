@@ -128,7 +128,7 @@ const HabitsPage: React.FC = () => {
                 return (
                   <View
                     key={habit.id}
-                    style={[styles.card, { backgroundColor: theme.card }]}
+                    style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}
                   >
                     <View style={{flexDirection: "row", justifyContent: "space-between"}}>
                         <Text style={[styles.name, { color: theme.text }]}>{habit.name}</Text>
@@ -140,7 +140,7 @@ const HabitsPage: React.FC = () => {
                             <Text style={[styles.meta, { color: theme.danger }]}>{t("deleteHabit")}</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.meta}>
+                    <Text style={[styles.meta, { color: theme.subText }]}>
                       {habit.durationDays} kun
                       {todayDay && ` • ⏰ ${todayDay.notificationTime}`}
                     </Text>
@@ -149,13 +149,13 @@ const HabitsPage: React.FC = () => {
                       <>
                         <View style={styles.actions}>
                           <TouchableOpacity
-                            style={[styles.btn, styles.done]}
+                            style={[styles.btn, { backgroundColor: theme.success }]}
                             onPress={() => changeStatus(habit.id, todayDay.id, 1)}
                           >
                             <Text style={styles.btnText}>{t("done")}</Text>
                           </TouchableOpacity>
                           <TouchableOpacity
-                            style={[styles.btn, styles.skip]}
+                            style={[styles.btn, { backgroundColor: theme.danger }]}
                             onPress={() => changeStatus(habit.id, todayDay.id, 2)}
                           >
                             <Text style={styles.btnText}>{t("skipped")}</Text>
@@ -171,7 +171,7 @@ const HabitsPage: React.FC = () => {
                                   <Ionicons
                                     name="alert-circle-outline"
                                     size={15}
-                                    color="grey"
+                                    color={theme.subText}
                                     style={{marginLeft:1}}
                                   />
                               )}
@@ -179,7 +179,7 @@ const HabitsPage: React.FC = () => {
                                   <Ionicons
                                     name="checkmark-circle-outline"
                                     size={15}
-                                    color="#4CAF50"
+                                    color={theme.success}
                                     style={{marginLeft:1}}
                                   />
                               )}
@@ -187,7 +187,7 @@ const HabitsPage: React.FC = () => {
                                   <Ionicons
                                     name="close-circle-outline"
                                     size={15}
-                                    color="red"
+                                    color={theme.danger}
                                     style={{marginLeft:1}}
                                   />
                               )}
@@ -239,14 +239,14 @@ const HabitsPage: React.FC = () => {
                                     <Text style={{ color: theme.text, fontSize: 12 }}>{day.date}</Text>
                                 </View>
                                 <View style={{flexDirection: "row", alignItems: "center"}}>
-                                  <Text style={{ color: day.status===1 ? "green": day.status===2 ? "red" : theme.text, fontSize: 12 }}>
+                                  <Text style={{ color: day.status===1 ? theme.success: day.status===2 ? theme.danger : theme.text, fontSize: 12 }}>
                                     {day.status === 0 ? "Kutilmoqda" : day.status === 1 ? "Bajarildi" : "Qoldirildi"}
                                   </Text>
                                     {day.status === 0 && (
                                           <Ionicons
                                             name="alert-circle-outline"
                                             size={15}
-                                            color="grey"
+                                            color={theme.subText}
                                             style={{marginLeft:1}}
                                           />
                                     )}
@@ -254,7 +254,7 @@ const HabitsPage: React.FC = () => {
                                           <Ionicons
                                             name="checkmark-circle-outline"
                                             size={15}
-                                            color="#4CAF50"
+                                            color={theme.success}
                                             style={{marginLeft:1}}
                                           />
                                     )}
@@ -262,7 +262,7 @@ const HabitsPage: React.FC = () => {
                                           <Ionicons
                                             name="close-circle-outline"
                                             size={15}
-                                            color="red"
+                                            color={theme.danger}
                                             style={{marginLeft:1}}
                                           />
                                     )}
@@ -327,10 +327,11 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 10,
     marginBottom: 12,
+    borderWidth: 1,
     elevation: 2,
   },
   name: { fontSize: 16, fontWeight: "600" },
-  meta: { fontSize: 13, color: "#777", marginTop: 4 },
+  meta: { fontSize: 13, marginTop: 4 },
 
   actions: { flexDirection: "row", marginTop: 10 },
   btn: {
@@ -340,8 +341,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 6,
   },
-  done: { backgroundColor: "#4CAF50" },
-  skip: { backgroundColor: "#FF9800" },
   btnText: { color: "#fff", fontWeight: "600" },
 
   status: {fontSize: 13 },

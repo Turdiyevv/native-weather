@@ -119,7 +119,7 @@ const saveHabit = async () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <Header title={t("habitAdd")} isBack={true} />
-      <View style={styles.form}>
+      <View style={[styles.form, styles.formCard, { backgroundColor: theme.card, borderColor: theme.border }] }>
         {/* NAME */}
         <Text style={[styles.label, { color: theme.text }]}>
           {t("habitName")}
@@ -128,8 +128,8 @@ const saveHabit = async () => {
           value={name}
           onChangeText={setName}
           placeholder={t("habitName")}
-          placeholderTextColor="#999"
-          style={[styles.input, { color: theme.text }]}
+          placeholderTextColor={theme.placeholder}
+          style={[styles.input, { color: theme.text, borderColor: theme.border, backgroundColor: theme.background }]}
         />
 
         {/* DAYS */}
@@ -142,8 +142,8 @@ const saveHabit = async () => {
           onChangeText={setDurationDays}
           keyboardType="numeric"
           placeholder="21"
-          placeholderTextColor="#999"
-          style={[styles.input, { color: theme.text }]}
+          placeholderTextColor={theme.placeholder}
+          style={[styles.input, { color: theme.text, borderColor: theme.border, backgroundColor: theme.background }]}
         />
 
         {/* TIME PICKER */}
@@ -177,6 +177,7 @@ const saveHabit = async () => {
         <TouchableOpacity
           style={[
             styles.saveBtn,
+            { backgroundColor: theme.primary },
             saving && { opacity: 0.6 },
           ]}
           disabled={saving}
@@ -203,7 +204,7 @@ const saveHabit = async () => {
           }
         }
         >
-          <Text style={styles.cancelText}>{t("cancel")}</Text>
+          <Text style={[styles.cancelText, { color: theme.danger }]}>{t("cancel")}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -222,6 +223,11 @@ const styles = StyleSheet.create({
   },
   container: { flex: 1 },
   form: { padding: 20 },
+  formCard: {
+    margin: 16,
+    borderWidth: 1,
+    borderRadius: 14,
+  },
 
   label: {
     fontSize: 14,
@@ -230,14 +236,12 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
   },
 
   saveBtn: {
-    backgroundColor: "#4CAF50",
     padding: 14,
     borderRadius: 10,
     alignItems: "center",
@@ -254,7 +258,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   cancelText: {
-    color: "#F44336",
     fontSize: 15,
   },
 });
