@@ -1,18 +1,13 @@
 import { useTheme } from "../../theme/ThemeContext";
-import {CommonActions, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
-import {Text, StyleSheet, View, ImageBackground, Platform, BackHandler, ScrollView} from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {RouteProp, useRoute} from "@react-navigation/native";
+import {Text, StyleSheet, View, Platform, ScrollView} from "react-native";
 import Header from "../../components/global/Header";
 import { RootStackParamList } from "../types/types";
 import Star from "../../components/Task/Star";
-import {SafeAreaView} from "react-native-safe-area-context";
-import {useEffect} from "react";
 
 type DescRouteProp = RouteProp<RootStackParamList, "DescStyle">;
-type SupportNav = NativeStackNavigationProp<RootStackParamList, "DescStyle">;
 
 const DescStyle: React.FC = () => {
-  const navigation = useNavigation<SupportNav>();
   const { theme } = useTheme();
   const route = useRoute<DescRouteProp>();
   const description = route.params.description;

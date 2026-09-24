@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet } from "react-native";
 
 const { width, height } = Dimensions.get("window");

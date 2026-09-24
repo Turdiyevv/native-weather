@@ -9,20 +9,13 @@ import {
   ScrollView,
   Linking,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./types/types";
 import { useTheme } from "../theme/ThemeContext";
 import { useLanguage } from "../i18n/LanguageContext";
 import Header from "../components/global/Header";
 
-type SupportNav = NativeStackNavigationProp<RootStackParamList, "Support">;
-
 const SupportPage: React.FC = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
-  const navigation = useNavigation<SupportNav>();
-
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <Header title="Biz haqimizda" isBack={true} />

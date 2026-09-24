@@ -1,21 +1,17 @@
 // pages/Business.tsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     View,
     Text,
     StyleSheet,
-    BackHandler,
     KeyboardAvoidingView,
     ScrollView,
     Platform,
     TouchableOpacity,
     Keyboard, Animated, Vibration,
 } from "react-native";
-import {CommonActions, useNavigation} from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 
-import { RootStackParamList } from "../types/types";
 import { useTheme } from "../../theme/ThemeContext";
 import TodoItem from "../../components/Business/TodoItem";
 import TextField from "../../components/global/TextField";
@@ -29,12 +25,9 @@ import {
 } from "../../service/business";
 import {formatSum} from "../../utills/utill";
 import BusinessContextMenu from "../../components/Business/BusinessContextMenu";
-import {SafeAreaView, useSafeAreaInsets} from "react-native-safe-area-context";
 import Header from "../../components/global/Header";
 import { useLanguage } from "../../i18n/LanguageContext";
 
-
-type SupportNav = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
 
 interface Props {
   route: {
@@ -46,12 +39,10 @@ interface Props {
 }
 
 export default function Business({ route }: Props) {
-  const { selectedDate, businessId } = route.params;
+  const { selectedDate } = route.params;
   const dateStr = new Date(selectedDate).toISOString().slice(0, 10); // YYYY-MM-DD
   const { theme } = useTheme();
   const { t } = useLanguage();
-  const insets = useSafeAreaInsets();
-  const navigation = useNavigation<SupportNav>();
 
   const [entries, setEntries] = useState<BusinessEntry[]>([]);
   const [isExpense, setIsExpense] = useState(false);
@@ -82,23 +73,6 @@ export default function Business({ route }: Props) {
   const [menuAnim] = useState(new Animated.Value(0));
   const [modalVisible, setModalVisible] = useState(false);
   const [editingEntry, setEditingEntry] = useState<BusinessEntry | null>(null);
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
-  useEffect(() => {
-      const showSub = Keyboard.addListener("keyboardDidShow", () => {
-        setKeyboardOpen(true);
-      });
-
-      const hideSub = Keyboard.addListener("keyboardDidHide", () => {
-        setKeyboardOpen(false);
-      });
-
-      return () => {
-        showSub.remove();
-        hideSub.remove();
-      };
-  }, []);
-
-
   const openMenu = (entry: BusinessEntry) => {
       setSelectedEntry(entry);
       setModalVisible(true);

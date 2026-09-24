@@ -38,7 +38,7 @@ const ViewPage: React.FC = () => {
     { id: 2, text: "O'rtacha", color: "orange" },
     { id: 3, text: "Og'ir", color: "#fb5151" },
   ];
-  const [selected, setSelected] = useState<number | null>(taskToEdit ? taskToEdit.status : 1);
+  const selected = taskToEdit ? taskToEdit.status : 1;
   const [modalVisible, setModalVisible] = useState(false);
 
   const onDelete = async (task: UserTask) => {

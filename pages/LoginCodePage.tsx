@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from "react-native";
 import PasswordCodeInput from "../components/global/PasswordCodeInput";
 import { useFocusEffect } from "@react-navigation/native";

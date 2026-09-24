@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   SectionList,
   StyleSheet,
   Text,
+  ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -134,8 +135,19 @@ export default function TasksScreen() {
     }).start();
   };
 
+  const closeFilter = () => {
+    if (!filterVisible) return;
+    setFilterVisible(false);
+    Animated.timing(filterAnim, {
+      toValue: 0,
+      duration: 160,
+      useNativeDriver: false,
+    }).start();
+  };
+
   // ─── Scroll — FAB yashirish ─────────────────────────────────────────────────
   const handleScroll = (e: any) => {
+    closeFilter();
     const y = e.nativeEvent.contentOffset.y;
     const dy = y - lastScrollY.current;
     lastScrollY.current = y;
@@ -236,16 +248,19 @@ export default function TasksScreen() {
             },
           ]}
         >
-          <View style={styles.filterRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterRow}
+          >
             {FILTERS.map(f => {
-              const count   = countFilter(tasks, f.key);
-              const active  = filter === f.key;
+              const count = countFilter(tasks, f.key);
+              const active = filter === f.key;
               return (
                 <TouchableOpacity
                   key={f.key}
                   onPress={() => {
                     setFilter(f.key);
-                    // filterni tanlagandan so'ng panelni yopish
                     setFilterVisible(false);
                     Animated.spring(filterAnim, {
                       toValue: 0,
@@ -272,7 +287,7 @@ export default function TasksScreen() {
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </ScrollView>
         </Animated.View>
 
         {/* ── Filter tugmasini header'da ko'rsatish (CustomHeader) ─── */}
@@ -405,22 +420,23 @@ const styles = StyleSheet.create({
 
   // Filter chips
   filterPanel: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     justifyContent: "center",
   },
   filterRow: {
     flexDirection: "row",
     gap: 8,
-    paddingTop: 8,
+    alignItems: "center",
+    paddingVertical: 7,
   },
   chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: 12,
     borderWidth: 1,
   },
   chipText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "600",
   },
 
@@ -433,8 +449,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 4,
+    paddingTop: 18,
+    paddingBottom: 6,
   },
   sectionDate: {
     fontSize: 12,
@@ -448,7 +464,7 @@ const styles = StyleSheet.create({
   },
   // Kunlar orasidagi bo'shliq (chiziq emas!)
   sectionGap: {
-    height: 16,
+    height: 22,
   },
 
   // Bo'sh holat

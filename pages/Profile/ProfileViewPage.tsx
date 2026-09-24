@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,6 @@ import {
   Animated,
   BackHandler,
   Image,
-  Vibration,
   Modal,
 } from "react-native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
@@ -43,7 +42,7 @@ export function ProfileViewPage() {
   const avatarAnim = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [passwordCode, setPasswordCode] = useState("");
+  const [, setPasswordCode] = useState("");
   const [statusTitle, setStatusTitle] = useState("");
   const [statusColor, setStatusColor] = useState("");
   const [passwordBoxVisible, setPasswordBoxVisible] = useState(false);

@@ -1,4 +1,3 @@
-import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import {ConfirmModalProps} from "../../pages/types/types";
 import {useTheme} from "../../theme/ThemeContext";

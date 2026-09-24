@@ -10,16 +10,6 @@ export const getHabits = async (username: string): Promise<Habit[]> => {
   return user?.habits || [];
 };
 
-export const getHabitDays = async (
-  username: string,
-  habitId: string
-): Promise<HabitDay[]> => {
-  const users = await loadUsers();
-  const user = users.find(u => u.username === username);
-  const habit = user?.habits?.find(h => h.id === habitId);
-  return habit?.habitDays || [];
-};
-
 /* ===================== ADD ===================== */
 
 export const addHabit = async (

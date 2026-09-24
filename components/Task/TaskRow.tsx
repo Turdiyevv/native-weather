@@ -1,13 +1,12 @@
-import React, { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
-  TouchableOpacity,
   Text,
+  TouchableOpacity,
   StyleSheet,
   View,
   Vibration,
   Animated,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { UserTask } from "../../pages/types/userTypes";
 import { useTheme } from "../../theme/ThemeContext";
 import TaskContextMenu from "./TaskContextMenu";
@@ -25,12 +24,6 @@ interface TaskRowProps {
   onOpenMenu: (taskId: string) => void;
   onCloseMenu: () => void;
 }
-
-const STATUS_COLORS: Record<number, string> = {
-  1: "#10B981", // yashil — yengil
-  2: "#F59E0B", // sariq — o'rtacha
-  3: "#EF4444", // qizil — og'ir
-};
 
 export default function TaskRow({
   item,
@@ -58,48 +51,6 @@ export default function TaskRow({
     }).start();
   }, [isMenuOpen]);
 
-  // Sarlavha rang
-  const getTitleColor = () => {
-    if (item.isDeleted) return theme.subText;
-    if (item.done) return theme.subText;
-    return STATUS_COLORS[item.status] ?? theme.text;
-  };
-
-  // Deadline rang
-  const getDeadlineColor = () => {
-    if (!item.deadline) return null;
-    const dl = new Date(item.deadline);
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    dl.setHours(0, 0, 0, 0);
-    if (dl <= now) return theme.danger;
-    return "#60A5FA";
-  };
-
-  const deadlineColor = getDeadlineColor();
-
-  // Deadline matn (qisqa format)
-  const getDeadlineText = () => {
-    if (!item.deadline) return null;
-    const dl = new Date(item.deadline);
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const dlDay = new Date(dl.getFullYear(), dl.getMonth(), dl.getDate());
-    const diff = Math.round((dlDay.getTime() - today.getTime()) / 86400000);
-    if (diff === 0) return "bugun";
-    if (diff === 1) return "ertaga";
-    if (diff === -1) return "kecha";
-    if (diff < 0) return `${Math.abs(diff)}k oldin`;
-    return dl.toLocaleDateString("uz-UZ", { day: "numeric", month: "short" });
-  };
-
-  // Vaqt (qo'shilgan vaqt)
-  const createdTime = new Date(item.time).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-
   // Press handlers
   let startX = 0;
   let startY = 0;
@@ -116,14 +67,26 @@ export default function TaskRow({
   const handleLongPress = () => {
     Vibration.vibrate(20);
     if (itemRef.current) {
-      itemRef.current.measureInWindow((x, y, width, height) => {
+      itemRef.current.measureInWindow((_x, y, _width, height) => {
         setItemLayout({ y, height });
       });
     }
     onOpenMenu(item.id);
   };
 
-  const titleColor = getTitleColor();
+  const taskColor =
+    item.status === 1
+      ? theme.success
+      : item.status === 3
+        ? theme.danger
+        : theme.isDark
+          ? "#FBBF24"
+          : "#C47A00";
+  const createdTime = new Date(item.time).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 
   return (
     <View ref={itemRef}>
@@ -134,74 +97,22 @@ export default function TaskRow({
         onLongPress={handleLongPress}
         style={[
           styles.row,
-          item.isDeleted && { opacity: 0.5 },
+          item.isDeleted && styles.archivedRow,
         ]}
       >
-        {/* Qator 1: sarlavha + vaqt */}
-        <View style={styles.line1}>
+        <View style={styles.taskLine}>
+          <View style={[styles.dot, { backgroundColor: taskColor }]} />
           <Text
             numberOfLines={2}
-            style={[
-              styles.title,
-              { color: titleColor },
-              item.done && styles.doneTitle,
-              item.isDeleted && styles.deletedTitle,
-            ]}
+            ellipsizeMode="tail"
+            style={[styles.title, { color: taskColor }, item.done && styles.doneTitle]}
           >
             {item.title}
           </Text>
-          <Text style={[styles.time, { color: theme.subText }]}>
+          <Text style={[styles.time, { color: theme.placeholder }]}>
             {createdTime}
           </Text>
         </View>
-
-        {/* Qator 2: tavsif + meta (deadline, alarm, fayl, qaytarish) */}
-        {(item.description ||
-          item.deadline ||
-          item.alarmDate ||
-          (item.files?.length > 0) ||
-          (item.isReturning && item.isReturning > 0)) ? (
-          <View style={styles.line2}>
-            {/* Tavsif */}
-            {!!item.description && (
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={[styles.description, { color: theme.subText }]}
-              >
-                {item.description}
-              </Text>
-            )}
-
-            {/* Meta iconlar va deadline */}
-            <View style={styles.metaGroup}>
-              {item.alarmDate && (
-                <Ionicons name="alarm-outline" size={13} color={theme.subText} style={styles.metaIcon} />
-              )}
-              {item.files?.length > 0 && (
-                <View style={styles.metaItem}>
-                  <Ionicons name="attach-outline" size={13} color={theme.subText} />
-                  <Text style={[styles.metaText, { color: theme.subText }]}>
-                    {item.files.length}
-                  </Text>
-                </View>
-              )}
-              {item.isReturning && item.isReturning > 0 ? (
-                <View style={styles.metaItem}>
-                  <Ionicons name="refresh-outline" size={13} color={theme.subText} />
-                  <Text style={[styles.metaText, { color: theme.subText }]}>
-                    {item.isReturning}
-                  </Text>
-                </View>
-              ) : null}
-              {deadlineColor && (
-                <Text style={[styles.deadline, { color: deadlineColor }]}>
-                  {getDeadlineText()}
-                </Text>
-              )}
-            </View>
-          </View>
-        ) : null}
       </TouchableOpacity>
 
       {/* Context Menu */}
@@ -224,60 +135,35 @@ export default function TaskRow({
 
 const styles = StyleSheet.create({
   row: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
   },
-  line1: {
+  archivedRow: {
+    opacity: 0.55,
+  },
+  taskLine: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: 8,
+    alignItems: "center",
+    minHeight: 24,
+    gap: 10,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   title: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "600",
-    lineHeight: 20,
+    lineHeight: 22,
+  },
+  time: {
+    fontSize: 11,
+    lineHeight: 18,
+    flexShrink: 0,
   },
   doneTitle: {
     textDecorationLine: "line-through",
-  },
-  deletedTitle: {
-    fontStyle: "italic",
-  },
-  time: {
-    fontSize: 12,
-    marginTop: 1,
-    flexShrink: 0,
-  },
-  line2: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 3,
-    gap: 6,
-  },
-  description: {
-    flex: 1,
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  metaGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    flexShrink: 0,
-  },
-  metaItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  metaIcon: {},
-  metaText: {
-    fontSize: 12,
-  },
-  deadline: {
-    fontSize: 12,
-    fontWeight: "600",
   },
 });

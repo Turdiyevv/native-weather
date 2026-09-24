@@ -1,5 +1,4 @@
-import React from "react";
-import { Modal, View, Text, Pressable, Animated, StyleSheet } from "react-native";
+import { Modal, Text, Pressable, Animated, StyleSheet } from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {useTheme} from "../../theme/ThemeContext";
 import { BusinessEntry } from "../../pages/types/userTypes";

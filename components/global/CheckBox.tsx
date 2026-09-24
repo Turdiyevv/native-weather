@@ -1,4 +1,3 @@
-import React from "react";
 import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
 import {Checkbox} from "../../pages/types/types"
 import {useTheme} from "../../theme/ThemeContext";

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {
     View,
     Text,
@@ -197,7 +197,7 @@ export default function AddPage({ navigation, route }: any) {
                 mode="date"
                 display={Platform.OS === "ios" ? "spinner" : "default"}
                 minimumDate={new Date()}
-                onChange={(event, selectedDate) => {
+                onChange={(_event, selectedDate) => {
                   setShowPicker(false);
                   if (selectedDate) setDeadline(selectedDate);
                 }}

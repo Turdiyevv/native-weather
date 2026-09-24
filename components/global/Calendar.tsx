@@ -9,9 +9,6 @@ import {getActiveUser} from "../../service/storage";
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 type NavProp = NativeStackNavigationProp<RootStackParamList, "IncomeAndExpenses">;
-interface Props {
-  businessId: string;
-}
 export default function Calendar() {
   const navigation = useNavigation<NavProp>();
   const route = useRoute<any>();
