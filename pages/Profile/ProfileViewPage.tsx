@@ -42,7 +42,6 @@ export function ProfileViewPage() {
   const avatarAnim = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [, setPasswordCode] = useState("");
   const [statusTitle, setStatusTitle] = useState("");
   const [statusColor, setStatusColor] = useState("");
   const [passwordBoxVisible, setPasswordBoxVisible] = useState(false);
@@ -75,7 +74,7 @@ export function ProfileViewPage() {
         job: profile.job || "",
         description: profile.description || "",
       });
-    } catch (e) {
+    } catch {
       showMessage({ message: t("profileLoadError"), type: "danger" });
     }
   };
@@ -123,7 +122,7 @@ export function ProfileViewPage() {
     showMessage({ message: `${username} ${t("userActivated")}`, type: "success" });
   };
 
-  const deleteAccount = async () => {
+  const deleteAccount = () => {
     setDeleteModalVisible(true);
   };
 
@@ -238,27 +237,19 @@ export function ProfileViewPage() {
               </TouchableOpacity>
             ))}
           </View>
+          <TouchableOpacity
+            onPress={deleteAccount}
+            style={[styles.deleteAccountAction, { borderColor: theme.danger }]}
+          >
+            <Ionicons name="trash-outline" size={19} color={theme.danger} />
+            <Text style={[styles.deleteAccountText, { color: theme.danger }]}>
+              {t("deleteAccount")}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t("settings")}</Text>
-
-          <TouchableOpacity style={styles.settingRow} onPress={openPasswordBox}>
-            <Text style={[styles.settingText, { color: theme.text }]}>{t("quickCode")}</Text>
-            <Ionicons name="chevron-forward" size={18} color={theme.subText} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.settingRow} onPress={() => navigation.navigate("Support")}>
-            <Text style={[styles.settingText, { color: theme.text }]}>{t("about")}</Text>
-            <Ionicons name="chevron-forward" size={18} color={theme.subText} />
-          </TouchableOpacity>
-
-          <View style={styles.settingRow}>
-            <Text style={[styles.settingText, { color: theme.text }]}>{t("deleteCode")}</Text>
-            <TouchableOpacity onPress={removePasswordCode}>
-              <Text style={[styles.actionLink, { color: theme.danger }]}>{t("delete")}</Text>
-            </TouchableOpacity>
-          </View>
 
           <View style={styles.themeBox}>
             {[
@@ -278,18 +269,41 @@ export function ProfileViewPage() {
                 ]}
                 onPress={() => setTheme(item.key as any)}
               >
-                <Text style={{ color: themeName === item.key ? "#fff" : theme.text }}>{item.label}</Text>
+                <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  style={{ color: themeName === item.key ? "#fff" : theme.text }}
+                >
+                  {item.label}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <TouchableOpacity onPress={exportTasksAsTxt} style={[styles.downloadButton, { borderColor: theme.primary }]}>
-            <Text style={{ color: theme.primary, fontWeight: "700" }}>{t("exportTasks")}</Text>
+          <TouchableOpacity style={styles.settingRow} onPress={openPasswordBox}>
+            <Text style={[styles.settingText, { color: theme.text }]}>{t("quickCode")}</Text>
+            <Ionicons name="chevron-forward" size={18} color={theme.subText} />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={deleteAccount} style={styles.deleteButton}>
-            <Text style={{ color: theme.danger, fontWeight: "700" }}>{t("deleteAccount")}</Text>
+          <View style={styles.settingRow}>
+            <Text style={[styles.settingText, { color: theme.text }]}>{t("deleteCode")}</Text>
+            <TouchableOpacity onPress={removePasswordCode}>
+              <Text style={[styles.actionLink, { color: theme.danger }]}>{t("delete")}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.settingRow}>
+            <Text style={[styles.settingText, { color: theme.text }]}>{t("exportTasks")}</Text>
+            <TouchableOpacity onPress={exportTasksAsTxt}>
+              <Ionicons name="download-outline" size={20} color={theme.primary} />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity style={styles.settingRow} onPress={() => navigation.navigate("Support")}>
+            <Text style={[styles.settingText, { color: theme.text }]}>{t("about")}</Text>
+            <Ionicons name="chevron-forward" size={18} color={theme.subText} />
           </TouchableOpacity>
+
         </View>
       </ScrollView>
 
@@ -312,7 +326,6 @@ export function ProfileViewPage() {
           <View style={[styles.modalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <PasswordCodeInput
               onComplete={async (code: string) => {
-                setPasswordCode(code);
                 const activeUser = await getActiveUser();
                 if (!activeUser) return;
                 const allUsers = await loadUsers();
@@ -439,6 +452,16 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginBottom: 8,
   },
+  deleteAccountAction: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderRadius: 14,
+    marginTop: 8,
+    paddingVertical: 12,
+  },
+  deleteAccountText: { marginLeft: 8, fontSize: 15, fontWeight: "700" },
   settingRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -449,23 +472,16 @@ const styles = StyleSheet.create({
   },
   settingText: { fontSize: 15, fontWeight: "600" },
   actionLink: { fontWeight: "700" },
-  themeBox: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 12 },
+  themeBox: { flexDirection: "row", gap: 6, marginBottom: 10 },
   themeBtn: {
-    borderRadius: 12,
+    flex: 1,
+    borderRadius: 10,
     borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  downloadButton: {
-    borderWidth: 1,
-    borderRadius: 14,
-    marginTop: 14,
-    paddingVertical: 12,
+    paddingHorizontal: 4,
+    paddingVertical: 9,
     alignItems: "center",
+    justifyContent: "center",
   },
-  deleteButton: { marginTop: 14, alignItems: "center", paddingVertical: 12 },
   modalBackdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
