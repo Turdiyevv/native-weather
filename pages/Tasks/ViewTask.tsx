@@ -41,6 +41,19 @@ const ViewPage: React.FC = () => {
   const selected = taskToEdit ? taskToEdit.status : 1;
   const [modalVisible, setModalVisible] = useState(false);
 
+  // Qiyinlik nuqta rangi (status asosida)
+  const difficultyColor =
+    taskToEdit?.status === 1
+      ? theme.success
+      : taskToEdit?.status === 3
+        ? theme.danger
+        : theme.isDark
+          ? "#FBBF24"
+          : "#C47A00";
+
+  // Title rangi: default, faqat bajarilaganlarda success
+  const titleColor = taskToEdit?.done ? theme.success : theme.text;
+
   const onDelete = async (task: UserTask) => {
     const activeUser = await getActiveUser();
     if (!activeUser) {
@@ -81,13 +94,22 @@ const ViewPage: React.FC = () => {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View style={styles.headerRow}>
+            <View style={[styles.difficultyDot, { backgroundColor: difficultyColor }]} />
             <View style={styles.titleWrap}>
-              <Text style={[styles.title, { color: theme.text }]}>{taskToEdit.title}</Text>
+              <Text
+                style={[
+                  styles.title,
+                  { color: titleColor },
+                  taskToEdit?.isDeleted && styles.strikethrough,
+                ]}
+              >
+                {taskToEdit.title}
+              </Text>
               <View style={styles.metaRow}>
                 <Text style={{ color: theme.subText, fontSize: 12 }}>{formatDateTime(taskToEdit.time)}</Text>
-                {taskToEdit.isDeleted && (
-                  <Text style={[styles.deletedBadge, { color: theme.danger, borderColor: theme.danger }]}>
-                    Bekor qilingan
+                {taskToEdit.done && (
+                  <Text style={[styles.statusBadge, { color: theme.success, borderColor: theme.success }]}>
+                    {t("finished")}
                   </Text>
                 )}
               </View>
@@ -211,11 +233,14 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 5,
   },
-  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  titleWrap: { flex: 1, paddingRight: 8 },
+  headerRow: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
+  difficultyDot: { width: 10, height: 10, borderRadius: 5, marginTop: 8, flexShrink: 0 },
+  titleWrap: { flex: 1 },
   title: { fontSize: 22, fontWeight: "800" },
-  metaRow: { flexDirection: "row", alignItems: "center", marginTop: 6 },
+  metaRow: { flexDirection: "row", alignItems: "center", marginTop: 6, gap: 6 },
+  statusBadge: { fontSize: 10, borderWidth: 1, borderRadius: 5, paddingHorizontal: 6, paddingVertical: 3 },
   deletedBadge: { fontSize: 10, borderWidth: 1, borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2, marginLeft: 6 },
+  strikethrough: { textDecorationLine: "line-through" },
   returnCount: { justifyContent: "center", alignItems: "center", width: 42, height: 42 },
   returnCountText: { position: "absolute", fontSize: 11, fontWeight: "700" },
   scale: { transform: [{ scaleX: -1 }, { rotate: "40deg" }] },

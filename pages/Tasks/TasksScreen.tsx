@@ -4,7 +4,6 @@ import {
   SectionList,
   StyleSheet,
   Text,
-  ScrollView,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -92,6 +91,7 @@ export default function TasksScreen() {
   const [tasks,         setTasks]         = useState<UserTask[]>([]);
   const [filter,        setFilter]        = useState<FilterType>("active");
   const [openMenuId,    setOpenMenuId]    = useState<string | null>(null);
+  const [draggingTaskId, setDraggingTaskId] = useState<string | null>(null);
 
   // FAB animated opacity/scale (scroll hide)
   const fabAnim  = useRef(new Animated.Value(1)).current;
@@ -115,8 +115,7 @@ export default function TasksScreen() {
 
   // Blur da menyuni yopish
   useEffect(() => {
-    const unsub = navigation.addListener("blur", () => setOpenMenuId(null));
-    return unsub;
+    return navigation.addListener("blur", () => setOpenMenuId(null));
   }, [navigation]);
 
   // ─── Scroll — FAB yashirish ─────────────────────────────────────────────────
@@ -202,6 +201,9 @@ export default function TasksScreen() {
     showMessage({ message: t("alarmRemoved"), type: "success" });
   };
 
+  // ─── Reorder logikasi ─────────────────────────────────────────────────────
+  // (Future implementation: Advanced drag-and-drop with swipe gestures)
+
   // ─── Sections ──────────────────────────────────────────────────────────────
   const sections = buildSections(tasks, filter);
 
@@ -212,11 +214,7 @@ export default function TasksScreen() {
 
         {/* ── Doimiy filter chip paneli ─── */}
         <View style={[styles.filterPanel, { backgroundColor: theme.background }]}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterRow}
-          >
+          <View style={styles.filterRow}>
             {FILTERS.map(f => {
               const count = countFilter(tasks, f.key);
               const active = filter === f.key;
@@ -239,13 +237,14 @@ export default function TasksScreen() {
                       styles.chipText,
                       { color: active ? "#fff" : theme.subText },
                     ]}
+                    numberOfLines={1}
                   >
                     {t(f.labelKey)} · {count}
                   </Text>
                 </TouchableOpacity>
               );
             })}
-          </ScrollView>
+          </View>
         </View>
 
         {/* ── Asosiy ro'yxat ─────────────────────────────────────────── */}
@@ -279,6 +278,7 @@ export default function TasksScreen() {
                 item={item}
                 index={index}
                 isMenuOpen={openMenuId === item.id}
+                isDragging={draggingTaskId === item.id}
                 onPress={() => {
                   if (openMenuId) { setOpenMenuId(null); return; }
                   navigation.navigate("ViewTask", { task: item });
@@ -290,30 +290,45 @@ export default function TasksScreen() {
                 onRemoveAlarm={onRemoveAlarm}
                 onOpenMenu={id => setOpenMenuId(id)}
                 onCloseMenu={() => setOpenMenuId(null)}
+                onLongPressDrag={() => setDraggingTaskId(item.id)}
               />
             )}
           />
         )}
 
         {/* ── FAB ─── */}
-        <Animated.View
-          style={[
-            styles.fab,
-            {
-              backgroundColor: theme.primary,
-              opacity: fabAnim,
-              transform: [{ scale: fabAnim }],
-            },
-          ]}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.navigate("AddPage", {})}
-            style={styles.fabInner}
-            activeOpacity={0.85}
+        {draggingTaskId ? (
+          <View style={[styles.dragHint, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <TouchableOpacity onPress={() => {}} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <Ionicons name="arrow-up-outline" size={16} color={theme.primary} />
+              <Text style={[styles.dragHintText, { color: theme.primary }]}>Yuqori</Text>
+            </TouchableOpacity>
+            <Text style={[styles.dragHintDivider, { color: theme.subText }]}>|</Text>
+            <TouchableOpacity onPress={() => setDraggingTaskId(null)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <Ionicons name="close-outline" size={16} color={theme.danger} />
+              <Text style={[styles.dragHintText, { color: theme.danger }]}>Bekor</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Animated.View
+            style={[
+              styles.fab,
+              {
+                backgroundColor: theme.primary,
+                opacity: fabAnim,
+                transform: [{ scale: fabAnim }],
+              },
+            ]}
           >
-            <Ionicons name="add" size={28} color="#fff" />
-          </TouchableOpacity>
-        </Animated.View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("AddPage", {})}
+              style={styles.fabInner}
+              activeOpacity={0.85}
+            >
+              <Ionicons name="add" size={28} color="#fff" />
+            </TouchableOpacity>
+          </Animated.View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -325,24 +340,31 @@ const styles = StyleSheet.create({
 
   // Filter chips
   filterPanel: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     justifyContent: "center",
+    backgroundColor: "transparent",
   },
   filterRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: 6,
     alignItems: "center",
-    paddingVertical: 7,
+    justifyContent: "space-between",
   },
   chip: {
-    paddingHorizontal: 11,
-    paddingVertical: 5,
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 42,
   },
   chipText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
+    textAlign: "center",
   },
 
   // List
@@ -354,7 +376,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 18,
+    paddingTop: 12,
     paddingBottom: 6,
   },
   sectionDate: {
@@ -369,7 +391,7 @@ const styles = StyleSheet.create({
   },
   // Kunlar orasidagi bo'shliq (chiziq emas!)
   sectionGap: {
-    height: 22,
+    height: 10,
   },
 
   // Bo'sh holat
@@ -403,5 +425,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  dragHint: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  dragHintText: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  dragHintDivider: {
+    fontSize: 14,
+    marginHorizontal: 2,
   },
 });

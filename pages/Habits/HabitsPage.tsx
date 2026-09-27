@@ -146,63 +146,62 @@ const HabitsPage: React.FC = () => {
                     </Text>
 
                     {todayDay ? (
-                      <>
-                        <View style={styles.actions}>
-                          <TouchableOpacity
-                            style={[styles.btn, { backgroundColor: theme.success }]}
-                            onPress={() => changeStatus(habit.id, todayDay.id, 1)}
-                          >
-                            <Text style={styles.btnText}>{t("done")}</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={[styles.btn, { backgroundColor: theme.danger }]}
-                            onPress={() => changeStatus(habit.id, todayDay.id, 2)}
-                          >
-                            <Text style={styles.btnText}>{t("skipped")}</Text>
-                          </TouchableOpacity>
-                        </View>
+                       <>
+                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 12, marginBottom: 10 }}>
+                             <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                               <Text style={[styles.status, { color: theme.text }]}>
+                                 {todayDay.status === 0 ? t("pending") : todayDay.status === 1 ? t("done") : t("skipped")}
+                               </Text>
+                               {todayDay.status === 0 && (
+                                   <Ionicons
+                                     name="alert-circle-outline"
+                                     size={14}
+                                     color={theme.subText}
+                                   />
+                               )}
+                               {todayDay.status === 1 && (
+                                   <Ionicons
+                                     name="checkmark-circle-outline"
+                                     size={14}
+                                     color={theme.success}
+                                   />
+                               )}
+                               {todayDay.status === 2 && (
+                                   <Ionicons
+                                     name="close-circle-outline"
+                                     size={14}
+                                     color={theme.danger}
+                                   />
+                               )}
+                             </View>
 
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
-                            <View style={{ flexDirection: "row", alignItems: "center"}}>
-                              <Text style={[styles.status, { color: theme.text }]}>
-                                {todayDay.status === 0 ? t("pending") : todayDay.status === 1 ? t("done") : t("skipped")}
-                              </Text>
-                              {todayDay.status === 0 && (
-                                  <Ionicons
-                                    name="alert-circle-outline"
-                                    size={15}
-                                    color={theme.subText}
-                                    style={{marginLeft:1}}
-                                  />
-                              )}
-                              {todayDay.status === 1 && (
-                                  <Ionicons
-                                    name="checkmark-circle-outline"
-                                    size={15}
-                                    color={theme.success}
-                                    style={{marginLeft:1}}
-                                  />
-                              )}
-                              {todayDay.status === 2 && (
-                                  <Ionicons
-                                    name="close-circle-outline"
-                                    size={15}
-                                    color={theme.danger}
-                                    style={{marginLeft:1}}
-                                  />
-                              )}
-                            </View>
+                           <TouchableOpacity onPress={() => toggleHabitView(habit.id)}>
+                             <Text style={[styles.status, { color: theme.primary }]}>{t("view")}</Text>
+                           </TouchableOpacity>
+                         </View>
 
-                          <TouchableOpacity onPress={() => toggleHabitView(habit.id)}>
-                            <Text style={[styles.status, { color: theme.primary }]}>{t("view")}</Text>
-                          </TouchableOpacity>
-                        </View>
+                         <View style={styles.actions}>
+                           <TouchableOpacity
+                             style={[styles.btnSmall, { backgroundColor: theme.success }]}
+                             onPress={() => changeStatus(habit.id, todayDay.id, 1)}
+                           >
+                             <Ionicons name="checkmark" size={16} color="#fff" />
+                             <Text style={styles.btnSmallText}>{t("done")}</Text>
+                           </TouchableOpacity>
+                           <TouchableOpacity
+                             style={[styles.btnSmall, { backgroundColor: theme.danger }]}
+                             onPress={() => changeStatus(habit.id, todayDay.id, 2)}
+                           >
+                             <Ionicons name="close" size={16} color="#fff" />
+                             <Text style={styles.btnSmallText}>{t("skipped")}</Text>
+                           </TouchableOpacity>
+                         </View>
 
-                      </>
+                       </>
                     ) : (
-                      <Text style={[styles.status, { color: theme.text }]}>
-                        {t("expired")}
-                      </Text>
+                       <Text style={[styles.status, { color: theme.text }]}>
+                         {t("expired")}
+                       </Text>
                     )}
                     {!todayDay && (
                       <TouchableOpacity onPress={() => toggleHabitView(habit.id)}>
@@ -333,7 +332,7 @@ const styles = StyleSheet.create({
   name: { fontSize: 16, fontWeight: "600" },
   meta: { fontSize: 13, marginTop: 4 },
 
-  actions: { flexDirection: "row", marginTop: 10 },
+  actions: { flexDirection: "row", marginTop: 10, gap: 8, justifyContent: "flex-end" },
   btn: {
     flex: 1,
     padding: 10,
@@ -341,7 +340,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 6,
   },
+  btnSmall: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 4,
+    minWidth: 90,
+  },
   btnText: { color: "#fff", fontWeight: "600" },
+  btnSmallText: { color: "#fff", fontWeight: "600", fontSize: 12 },
 
   status: {fontSize: 13 },
 

@@ -24,6 +24,8 @@ interface TaskRowProps {
   onRemoveAlarm: (task: UserTask) => void;
   onOpenMenu: (taskId: string) => void;
   onCloseMenu: () => void;
+  onLongPressDrag?: () => void;
+  isDragging?: boolean;
 }
 
 export default function TaskRow({
@@ -37,10 +39,13 @@ export default function TaskRow({
   onRemoveAlarm,
   onOpenMenu,
   onCloseMenu,
+  onLongPressDrag,
+  isDragging,
 }: TaskRowProps) {
   const { theme } = useTheme();
   const menuAnim = useRef(new Animated.Value(0)).current;
   const itemRef = useRef<View>(null);
+  const titleRef = useRef<View>(null);
   const [itemLayout, setItemLayout] = useState<{ y: number; height: number } | null>(null);
 
   // Menu animation
@@ -52,30 +57,37 @@ export default function TaskRow({
     }).start();
   }, [isMenuOpen]);
 
-  // Press handlers
+  // Press handlers - Title long press
   let startX = 0;
   let startY = 0;
-  const handlePressIn = (e: any) => {
+  const handleTitlePressIn = (e: any) => {
     startX = e.nativeEvent.pageX;
     startY = e.nativeEvent.pageY;
   };
-  const handlePress = (e: any) => {
+  const handleTitlePress = (e: any) => {
     const dx = Math.abs(e.nativeEvent.pageX - startX);
     const dy = Math.abs(e.nativeEvent.pageY - startY);
     if (dx >= 6 || dy >= 6) return;
     onPress();
   };
-  const handleLongPress = () => {
+  const handleTitleLongPress = () => {
     Vibration.vibrate(20);
-    if (itemRef.current) {
-      itemRef.current.measureInWindow((_x, y, _width, height) => {
+    if (titleRef.current) {
+      titleRef.current.measureInWindow((_x, y, _width, height) => {
         setItemLayout({ y, height });
       });
     }
     onOpenMenu(item.id);
   };
 
-  const taskColor =
+  // Burger icon long press - Reorder
+  const handleBurgerLongPress = () => {
+    Vibration.vibrate([20, 30, 20]);
+    onLongPressDrag?.();
+  };
+
+  // Qiyinlik nuqta rangi (status asosida)
+  const difficultyColor =
     item.status === 1
       ? theme.success
       : item.status === 3
@@ -83,6 +95,10 @@ export default function TaskRow({
         : theme.isDark
           ? "#FBBF24"
           : "#C47A00";
+
+  // Sarlavha rangi: default, faqat bajarilaganlarda success
+  const titleColor = item.done ? theme.success : theme.text;
+
   const createdTime = new Date(item.time).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -91,39 +107,60 @@ export default function TaskRow({
   const displayTitle = item.title.slice(0, 30);
 
   return (
-    <View ref={itemRef}>
-      <TouchableOpacity
-        activeOpacity={0.65}
-        onPressIn={handlePressIn}
-        onPress={handlePress}
-        onLongPress={handleLongPress}
-        style={[
-          styles.row,
-          item.isDeleted && styles.archivedRow,
-        ]}
-      >
-        <View style={styles.taskLine}>
-          <View style={[styles.dot, { backgroundColor: taskColor }]} />
+    <View ref={itemRef} style={[isDragging && { opacity: 0.6 }]}>
+      <View style={styles.taskLine}>
+        <View style={[styles.dot, { backgroundColor: difficultyColor }]} />
+        
+        {/* Title section - with menu trigger */}
+        <TouchableOpacity
+          ref={titleRef}
+          activeOpacity={0.65}
+          onPressIn={handleTitlePressIn}
+          onPress={handleTitlePress}
+          onLongPress={handleTitleLongPress}
+          style={styles.titleSection}
+        >
           <Text
             numberOfLines={1}
             ellipsizeMode="clip"
-            style={[styles.title, { color: taskColor }, item.done && styles.doneTitle]}
+            style={[
+              styles.title,
+              { color: titleColor },
+              item.isDeleted && styles.strikethrough,
+            ]}
           >
             {displayTitle}
           </Text>
-          {item.alarmDate && (
-            <Ionicons
-              name="alarm-outline"
-              size={15}
-              color={theme.placeholder}
-              style={styles.alarmIcon}
-            />
-          )}
-          <Text style={[styles.time, { color: theme.placeholder }]}>
-            {createdTime}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+
+        {/* Burger icon - Reorder trigger */}
+        <TouchableOpacity
+          onLongPress={handleBurgerLongPress}
+          activeOpacity={0.6}
+          style={styles.burgerButton}
+        >
+          <Ionicons
+            name="menu"
+            size={16}
+            color={isDragging ? theme.primary : theme.placeholder}
+          />
+        </TouchableOpacity>
+
+        {/* Alarm icon */}
+        {item.alarmDate && (
+          <Ionicons
+            name="alarm-outline"
+            size={15}
+            color={theme.placeholder}
+            style={styles.alarmIcon}
+          />
+        )}
+        
+        {/* Time */}
+        <Text style={[styles.time, { color: theme.placeholder }]}>
+          {createdTime}
+        </Text>
+      </View>
 
       {/* Context Menu */}
       {isMenuOpen && (
@@ -149,24 +186,34 @@ const styles = StyleSheet.create({
     paddingVertical: 0.5,
   },
   archivedRow: {
-    opacity: 0.55,
+    // opacity o'chirildi - faqat strikethrough qo'yiladi
   },
   taskLine: {
     flexDirection: "row",
     alignItems: "center",
     minHeight: 24,
-    gap: 10,
+    gap: 8,
+    paddingHorizontal: 18,
+    paddingVertical: 6,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
+    flexShrink: 0,
+  },
+  titleSection: {
+    flex: 1,
+    paddingVertical: 2,
   },
   title: {
-    flex: 1,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
     lineHeight: 22,
+  },
+  burgerButton: {
+    padding: 4,
+    marginHorizontal: -4,
   },
   time: {
     fontSize: 11,
@@ -174,9 +221,9 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   alarmIcon: {
-    marginLeft: 2,
+    marginLeft: -2,
   },
-  doneTitle: {
+  strikethrough: {
     textDecorationLine: "line-through",
   },
 });
