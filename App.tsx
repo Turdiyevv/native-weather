@@ -11,6 +11,7 @@ import * as Notifications from "expo-notifications";
 
 import { ThemeProvider, useTheme } from "./theme/ThemeContext";
 import { LanguageProvider } from "./i18n/LanguageContext";
+import { MenuStateProvider } from "./utills/MenuStateContext";
 
 import LoginPage from "./pages/LogIn";
 import LoginCodePage from "./pages/LoginCodePage";
@@ -175,9 +176,11 @@ const App: React.FC = () => {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <LanguageProvider>
-          <ThemeProvider>
-            <AppNavigator />
-          </ThemeProvider>
+          <MenuStateProvider>
+            <ThemeProvider>
+              <AppNavigator />
+            </ThemeProvider>
+          </MenuStateProvider>
         </LanguageProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

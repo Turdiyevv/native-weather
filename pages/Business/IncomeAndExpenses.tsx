@@ -8,7 +8,7 @@ import {
     ScrollView,
     Platform,
     TouchableOpacity,
-    Keyboard, Animated, Vibration,
+    Keyboard, Animated, Vibration, BackHandler,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -17,6 +17,7 @@ import TodoItem from "../../components/Business/TodoItem";
 import TextField from "../../components/global/TextField";
 import { BusinessEntry } from "../types/userTypes";
 import {getActiveUser} from "../../service/storage";
+import { useMenuState } from "../../utills/MenuStateContext";
 import {
     addBusinessEntry,
     deleteBusinessEntry,
@@ -43,6 +44,7 @@ export default function Business({ route }: Props) {
   const dateStr = new Date(selectedDate).toISOString().slice(0, 10); // YYYY-MM-DD
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const { setHamburgerMenuOpen, hamburgerMenuOpen } = useMenuState();
 
   const [entries, setEntries] = useState<BusinessEntry[]>([]);
   const [isExpense, setIsExpense] = useState(false);
@@ -102,20 +104,40 @@ export default function Business({ route }: Props) {
     setComment("");
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      const user = await getActiveUser();
-      if (!user) return;
-      await getOrCreateBusinessByDate(user.username, dateStr);
-      const list = await getBusinessEntriesByDate(
-        user.username,
-        dateStr
-      );
-      setEntries(list);
-      calculateTotals(list);
-    };
-    loadData();
-  }, [dateStr]);
+   useEffect(() => {
+     const loadData = async () => {
+       const user = await getActiveUser();
+       if (!user) return;
+       await getOrCreateBusinessByDate(user.username, dateStr);
+       const list = await getBusinessEntriesByDate(
+         user.username,
+         dateStr
+       );
+       setEntries(list);
+       calculateTotals(list);
+     };
+     loadData();
+   }, [dateStr]);
+
+   // Hamburger menu ochilganda business modal yopilsin
+   useEffect(() => {
+     if (hamburgerMenuOpen && modalVisible) {
+       closeMenu();
+     }
+   }, [hamburgerMenuOpen, modalVisible]);
+
+   // Back button behavior - agar menu ochilgan bo'lsa yopish, yopiq bo'lsa default
+   useEffect(() => {
+     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+       if (modalVisible) {
+         closeMenu();
+         return true; // Yana back event chiqmasini oldini olish
+       }
+       return false; // Default behavior - pop/go back
+     });
+
+     return () => backHandler.remove();
+   }, [modalVisible]);
 
   const onSave = async () => {
       if (!amount) return;

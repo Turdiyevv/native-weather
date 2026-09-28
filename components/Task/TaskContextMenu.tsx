@@ -5,6 +5,9 @@ import {
   Animated,
   StyleSheet,
   Dimensions,
+  Modal,
+  Pressable,
+  View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "../global/ConfirmModal";
@@ -45,10 +48,10 @@ export default function TaskContextMenu({
   const [showPicker, setShowPicker] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Menu joylashuvini aniqlash
+  // Menu joylashuvini aniqlash (Modal uchun ekran koordinatalari)
   const getMenuPosition = () => {
     if (!itemLayout) {
-      // Default: pastda ochiladi
+      // Default: yuqorida ochiladi
       return { top: 64 };
     }
 
@@ -58,10 +61,10 @@ export default function TaskContextMenu({
     // Pastda yetarli joy bormi?
     if (spaceBelow >= MENU_HEIGHT + PADDING) {
       // Pastda ochiladi (itemning tagida)
-      return { top: itemLayout.height };
+      return { top: itemBottom };
     } else {
       // Yuqorida ochiladi (itemning tepasida)
-      return { bottom: itemLayout.height };
+      return { top: itemLayout.y - MENU_HEIGHT };
     }
   };
 
@@ -94,13 +97,16 @@ export default function TaskContextMenu({
 
   return (
     <>
-      {/* Overlay */}
-      <TouchableOpacity
-        style={styles.menuOverlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
-        <Animated.View style={menuStyle}>
+      <Modal transparent visible={true} animationType="none">
+        {/* Overlay - ekranning barcha joyini qoplab, bosganda menu yopiladi */}
+        <Pressable style={styles.menuOverlay} onPress={onClose}>
+          {/* Menu - faqat men touch event o'tkazmayman */}
+          <View
+            style={styles.menuContainer}
+            onStartShouldSetResponder={() => true}
+            onTouchEnd={(e) => e.stopPropagation()}
+          >
+            <Animated.View style={menuStyle}>
           {/* Qo'ng'iroq */}
           <TouchableOpacity
             style={[
@@ -156,39 +162,41 @@ export default function TaskContextMenu({
             />
           </TouchableOpacity>
 
-          {/* Tahrirlash */}
-          <TouchableOpacity
-            style={[
-              styles.menuButton,
-              { borderColor: theme.background },
-              (!!task?.isDeleted || !!task?.done) && { opacity: 0.4 },
-            ]}
-            onPress={() => {
-              onEdit(task, false);
-              onClose();
-            }}
-            disabled={!!task?.isDeleted || !!task?.done}
-          >
-            <Text style={[styles.menuText, { color: theme.text }]}>
-              {t("edit")}
-            </Text>
-            <Ionicons name="create-outline" size={20} color="blue" />
-          </TouchableOpacity>
+           {/* Tahrirlash */}
+           <TouchableOpacity
+             style={[
+               styles.menuButton,
+               { borderColor: theme.background },
+               (!!task?.isDeleted || !!task?.done) && { opacity: 0.4 },
+             ]}
+             onPress={() => {
+               onEdit(task, false);
+               onClose();
+             }}
+             disabled={!!task?.isDeleted || !!task?.done}
+           >
+             <Text style={[styles.menuText, { color: theme.text }]}>
+               {t("edit")}
+             </Text>
+             <Ionicons name="create-outline" size={20} color="blue" />
+           </TouchableOpacity>
 
-          {/* O'chirish */}
-          <TouchableOpacity
-            style={[
-              styles.menuButtonDel,
-              !!task?.isDeleted && { opacity: 0.4 },
-            ]}
-            onPress={() => setModalVisible(true)}
-            disabled={!!task?.isDeleted}
-          >
-            <Text style={[styles.menuText, { color: "red" }]}>{t("archiveTask")}</Text>
-            <Ionicons name="archive-outline" size={20} color="red" />
-          </TouchableOpacity>
-        </Animated.View>
-      </TouchableOpacity>
+           {/* O'chirish */}
+           <TouchableOpacity
+             style={[
+               styles.menuButtonDel,
+               !!task?.isDeleted && { opacity: 0.4 },
+             ]}
+             onPress={() => setModalVisible(true)}
+             disabled={!!task?.isDeleted}
+           >
+             <Text style={[styles.menuText, { color: "red" }]}>{t("archiveTask")}</Text>
+             <Ionicons name="archive-outline" size={20} color="red" />
+           </TouchableOpacity>
+            </Animated.View>
+          </View>
+        </Pressable>
+      </Modal>
 
       {/* Confirm modal */}
       <ConfirmModal
@@ -221,13 +229,13 @@ export default function TaskContextMenu({
 
 const styles = StyleSheet.create({
   menuOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: "rgba(0,0,0,0.2)",
-    zIndex: 999,
+  },
+  menuContainer: {
+    position: "absolute",
+    right: 10,
+    width: 220,
   },
   taskTitle: { fontSize: 16 },
   menuButtonTitle: {

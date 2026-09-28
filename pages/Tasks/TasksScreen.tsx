@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  BackHandler,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { showMessage } from "react-native-flash-message";
@@ -16,6 +17,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { useTheme } from "../../theme/ThemeContext";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { useMenuState } from "../../utills/MenuStateContext";
 import {
   getActiveUser,
   softDeleteTask,
@@ -96,6 +98,7 @@ function countFilter(tasks: UserTask[], filter: FilterType): number {
 export default function TasksScreen() {
   const { theme } = useTheme();
   const { t }     = useLanguage();
+  const { hamburgerMenuOpen, setTaskMenuOpen } = useMenuState();
   const navigation = useNavigation<NavProp>();
 
   const [tasks,         setTasks]         = useState<UserTask[]>([]);
@@ -121,9 +124,41 @@ export default function TasksScreen() {
     }
   }, [navigation]);
 
-  useFocusEffect(useCallback(() => { loadTasks(); }, [loadTasks]));
+   useFocusEffect(useCallback(() => { loadTasks(); }, [loadTasks]));
 
-  useEffect(() => {
+   // Hamburger menu ochilganda context menu yopilsin
+   useEffect(() => {
+     if (hamburgerMenuOpen) {
+       setOpenMenuId(null);
+       setTaskMenuOpen(false); // Set taskMenuOpen to false when hamburger opens
+     }
+   }, [hamburgerMenuOpen, setTaskMenuOpen]);
+
+   // Context menu ochilganda hamburger menu yopilsin (agar open bo'lsa)
+   useEffect(() => {
+     if (openMenuId) {
+       setTaskMenuOpen(true);
+     } else {
+       setTaskMenuOpen(false);
+     }
+   }, [openMenuId, setTaskMenuOpen]);
+
+   // Back button behavior - agar menu ochilgan bo'lsa yopish, yopiq bo'lsa default
+   useFocusEffect(
+     useCallback(() => {
+       const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+         if (openMenuId) {
+           setOpenMenuId(null);
+           return true; // Yana back event chiqmasini oldini olish
+         }
+         return false; // Default behavior - pop/go back
+       });
+
+       return () => backHandler.remove();
+     }, [openMenuId])
+   );
+
+   useEffect(() => {
     // Filter almashganda noto'g'ri itemga drag state qolib ketmasin.
     setDraggingTaskId(null);
   }, [filter]);
@@ -372,7 +407,7 @@ export default function TasksScreen() {
               style={{ flexDirection: "row", alignItems: "center", gap: 4, opacity: canMoveUp ? 1 : 0.45 }}
             >
               <Ionicons name="arrow-up-outline" size={16} color={theme.primary} />
-              <Text style={[styles.dragHintText, { color: theme.primary }]}>Yuqori</Text>
+              <Text style={[styles.dragHintText, { color: theme.primary }]}>{t("moveUp")}</Text>
             </TouchableOpacity>
             <Text style={[styles.dragHintDivider, { color: theme.subText }]}>|</Text>
             <TouchableOpacity
@@ -381,12 +416,12 @@ export default function TasksScreen() {
               style={{ flexDirection: "row", alignItems: "center", gap: 4, opacity: canMoveDown ? 1 : 0.45 }}
             >
               <Ionicons name="arrow-down-outline" size={16} color={theme.primary} />
-              <Text style={[styles.dragHintText, { color: theme.primary }]}>Pastga</Text>
+              <Text style={[styles.dragHintText, { color: theme.primary }]}>{t("moveDown")}</Text>
             </TouchableOpacity>
             <Text style={[styles.dragHintDivider, { color: theme.subText }]}>|</Text>
             <TouchableOpacity onPress={() => setDraggingTaskId(null)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
               <Ionicons name="close-outline" size={16} color={theme.danger} />
-              <Text style={[styles.dragHintText, { color: theme.danger }]}>Bekor</Text>
+              <Text style={[styles.dragHintText, { color: theme.danger }]}>{t("cancel")}</Text>
             </TouchableOpacity>
           </View>
         ) : (

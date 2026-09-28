@@ -191,10 +191,10 @@ const styles = StyleSheet.create({
   taskLine: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: 24,
+    minHeight: 20,
     gap: 8,
-    paddingHorizontal: 18,
-    paddingVertical: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
   },
   dot: {
     width: 8,

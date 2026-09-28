@@ -8,9 +8,10 @@ import {useTheme} from "../../theme/ThemeContext";
 
 interface HeaderProps {
     onProfilePress: () => void;
+    onMenuPress?: () => void;
     title?: string | any;
 }
-const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress,title }) => {
+const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress, onMenuPress, title }) => {
     const { theme } = useTheme();
     const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,20 +54,24 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress,title }) => {
 
   return (
     <View style={[styles.header, {borderColor: theme.placeholder, backgroundColor: theme.background}]}>
+      <TouchableOpacity onPress={onMenuPress} style={styles.menuButton}>
+        <Ionicons name="menu-outline" size={24} color={theme.text} />
+      </TouchableOpacity>
+      
       <View style={styles.identityBlock}>
-        <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
-        <Text style={styles.keyUsername}>@{username || "username"}</Text>
-      </View>
-      <View style={styles.headerActions}>
-        {title && <Text style={[styles.pageTitle, { color: theme.subText }]}>{title}</Text>}
-        <TouchableOpacity onPress={onProfilePress}>
-          {avatar ? (
-            <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
-          ) : (
-            <Ionicons name="person-circle-outline" size={52} color={theme.placeholder} />
-          )}
-        </TouchableOpacity>
-      </View>
+         <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
+         <Text style={styles.keyUsername}>@{username || "username"}</Text>
+       </View>
+       <View style={styles.headerActions}>
+         {title && <Text style={[styles.pageTitle, { color: theme.subText }]}>{title}</Text>}
+         <TouchableOpacity onPress={onProfilePress}>
+           {avatar ? (
+             <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
+           ) : (
+             <Ionicons name="person-circle-outline" size={52} color={theme.placeholder} />
+           )}
+         </TouchableOpacity>
+       </View>
     </View>
   );
 };
@@ -80,7 +85,12 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingLeft: 10,
     height: 60,
-    borderBottomWidth: 0.3
+    borderBottomWidth: 0.3,
+    gap: 8,
+  },
+  menuButton: {
+    padding: 8,
+    marginRight: 4,
   },
   identityBlock: { flex: 1 },
   headerActions: { flexDirection: "row", alignItems: "center", gap: 10 },
