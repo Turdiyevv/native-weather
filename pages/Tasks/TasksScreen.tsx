@@ -16,7 +16,12 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { useTheme } from "../../theme/ThemeContext";
 import { useLanguage } from "../../i18n/LanguageContext";
-import { getActiveUser, softDeleteTask, updateTask } from "../../service/storage";
+import {
+  getActiveUser,
+  softDeleteTask,
+  updateTask,
+  updateUserTasks,
+} from "../../service/storage";
 import { UserTask } from "../types/userTypes";
 import { RootStackParamList } from "../types/types";
 import TaskRow from "../../components/Task/TaskRow";
@@ -77,6 +82,11 @@ function buildSections(tasks: UserTask[], filter: FilterType) {
   return grouped.sort((a, b) => b.dateKey - a.dateKey);
 }
 
+const getTaskDateKey = (task: UserTask) => {
+  const d = new Date(task.time);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+};
+
 // ─── Filter chip hisobi ────────────────────────────────────────────────────────
 function countFilter(tasks: UserTask[], filter: FilterType): number {
   return tasks.filter(t => applyFilter(t, filter)).length;
@@ -113,9 +123,17 @@ export default function TasksScreen() {
 
   useFocusEffect(useCallback(() => { loadTasks(); }, [loadTasks]));
 
+  useEffect(() => {
+    // Filter almashganda noto'g'ri itemga drag state qolib ketmasin.
+    setDraggingTaskId(null);
+  }, [filter]);
+
   // Blur da menyuni yopish
   useEffect(() => {
-    return navigation.addListener("blur", () => setOpenMenuId(null));
+    return navigation.addListener("blur", () => {
+      setOpenMenuId(null);
+      setDraggingTaskId(null);
+    });
   }, [navigation]);
 
   // ─── Scroll — FAB yashirish ─────────────────────────────────────────────────
@@ -201,18 +219,67 @@ export default function TasksScreen() {
     showMessage({ message: t("alarmRemoved"), type: "success" });
   };
 
+  const onStartDrag = (taskId: string) => {
+    setOpenMenuId(null);
+    setDraggingTaskId(taskId);
+  };
+
+  const moveDraggingTask = async (direction: "up" | "down") => {
+    if (!draggingTaskId) return;
+
+    const dragTask = tasks.find(t => t.id === draggingTaskId);
+    if (!dragTask) return;
+
+    const sameDayVisible = tasks
+      .filter(t => applyFilter(t, filter) && getTaskDateKey(t) === getTaskDateKey(dragTask))
+      .map(t => t.id);
+
+    const currentSectionIndex = sameDayVisible.indexOf(draggingTaskId);
+    if (currentSectionIndex === -1) return;
+
+    const targetSectionIndex = direction === "up" ? currentSectionIndex - 1 : currentSectionIndex + 1;
+    if (targetSectionIndex < 0 || targetSectionIndex >= sameDayVisible.length) {
+      return;
+    }
+
+    const targetId = sameDayVisible[targetSectionIndex];
+    const fromIndex = tasks.findIndex(t => t.id === draggingTaskId);
+    const toIndex = tasks.findIndex(t => t.id === targetId);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    const nextTasks = [...tasks];
+    const [moved] = nextTasks.splice(fromIndex, 1);
+    nextTasks.splice(toIndex, 0, moved);
+
+    const user = await getActiveUser();
+    if (!user) return;
+
+    await updateUserTasks(user.username, nextTasks);
+    setTasks(nextTasks);
+  };
+
   // ─── Reorder logikasi ─────────────────────────────────────────────────────
   // (Future implementation: Advanced drag-and-drop with swipe gestures)
 
   // ─── Sections ──────────────────────────────────────────────────────────────
   const sections = buildSections(tasks, filter);
 
+  const draggingTask = draggingTaskId ? tasks.find(t => t.id === draggingTaskId) : null;
+  const sameDayVisibleIds = draggingTask
+    ? tasks
+        .filter(t => applyFilter(t, filter) && getTaskDateKey(t) === getTaskDateKey(draggingTask))
+        .map(t => t.id)
+    : [];
+  const draggingVisibleIndex = draggingTaskId ? sameDayVisibleIds.indexOf(draggingTaskId) : -1;
+  const canMoveUp = draggingVisibleIndex > 0;
+  const canMoveDown = draggingVisibleIndex !== -1 && draggingVisibleIndex < sameDayVisibleIds.length - 1;
+
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
     <TouchableWithoutFeedback onPress={() => openMenuId && setOpenMenuId(null)}>
       <View style={[styles.screen, { backgroundColor: theme.background }]}>
 
-        {/* ── Doimiy filter chip paneli ─── */}
+        {/*─ Doimiy filter chip paneli ─── */}
         <View style={[styles.filterPanel, { backgroundColor: theme.background }]}>
           <View style={styles.filterRow}>
             {FILTERS.map(f => {
@@ -290,7 +357,7 @@ export default function TasksScreen() {
                 onRemoveAlarm={onRemoveAlarm}
                 onOpenMenu={id => setOpenMenuId(id)}
                 onCloseMenu={() => setOpenMenuId(null)}
-                onLongPressDrag={() => setDraggingTaskId(item.id)}
+                onLongPressDrag={() => onStartDrag(item.id)}
               />
             )}
           />
@@ -299,9 +366,22 @@ export default function TasksScreen() {
         {/* ── FAB ─── */}
         {draggingTaskId ? (
           <View style={[styles.dragHint, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <TouchableOpacity onPress={() => {}} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <TouchableOpacity
+              onPress={() => moveDraggingTask("up")}
+              disabled={!canMoveUp}
+              style={{ flexDirection: "row", alignItems: "center", gap: 4, opacity: canMoveUp ? 1 : 0.45 }}
+            >
               <Ionicons name="arrow-up-outline" size={16} color={theme.primary} />
               <Text style={[styles.dragHintText, { color: theme.primary }]}>Yuqori</Text>
+            </TouchableOpacity>
+            <Text style={[styles.dragHintDivider, { color: theme.subText }]}>|</Text>
+            <TouchableOpacity
+              onPress={() => moveDraggingTask("down")}
+              disabled={!canMoveDown}
+              style={{ flexDirection: "row", alignItems: "center", gap: 4, opacity: canMoveDown ? 1 : 0.45 }}
+            >
+              <Ionicons name="arrow-down-outline" size={16} color={theme.primary} />
+              <Text style={[styles.dragHintText, { color: theme.primary }]}>Pastga</Text>
             </TouchableOpacity>
             <Text style={[styles.dragHintDivider, { color: theme.subText }]}>|</Text>
             <TouchableOpacity onPress={() => setDraggingTaskId(null)} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
@@ -341,7 +421,7 @@ const styles = StyleSheet.create({
   // Filter chips
   filterPanel: {
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 6,
     justifyContent: "center",
     backgroundColor: "transparent",
   },
@@ -354,12 +434,12 @@ const styles = StyleSheet.create({
   chip: {
     flex: 1,
     paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderRadius: 12,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 42,
+    minHeight: 36,
   },
   chipText: {
     fontSize: 11,

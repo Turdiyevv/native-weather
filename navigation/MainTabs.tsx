@@ -8,8 +8,6 @@ import { useNavigation } from "@react-navigation/native";
 import TasksScreen from "../pages/Tasks/TasksScreen";
 import HabitsPage from "../pages/Habits/HabitsPage";
 import Business from "../pages/Business/Business";
-import Earnings from "../pages/Earnings/Earnings";
-import ChatPage from "../pages/chats/ChatPage";
 import CustomHeader from "../components/Task/CustomHeader";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../pages/types/types";
@@ -23,8 +21,8 @@ function MyTabBar({ state, navigation, theme, onActiveTitleChange }: any) {
     { name: "TopTabs", icon: "file-tray-full-outline", label: t("tasks") },
     { name: "Habits", icon: "checkbox-outline", label: t("habits") },
     { name: "Business", icon: "podium-outline", label: t("business") },
-    { name: "Chat", icon: "chatbox-ellipses-outline", label: t("chat") },
-    { name: "Earnings", icon: "wallet-outline", label: t("earnings") },
+    // { name: "Chat", icon: "chatbox-ellipses-outline", label: t("chat") },
+    // { name: "Earnings", icon: "wallet-outline", label: t("earnings") },
   ];
 
   useEffect(() => {
@@ -100,8 +98,8 @@ export default function MainTabs() {
         <Tab.Screen name="TopTabs" component={TasksScreen} />
         <Tab.Screen name="Habits" component={HabitsPage} />
         <Tab.Screen name="Business" component={Business} />
-        <Tab.Screen name="Chat" component={ChatPage} />
-        <Tab.Screen name="Earnings" component={Earnings} />
+        {/* <Tab.Screen name="Chat" component={ChatPage} /> */}
+        {/* <Tab.Screen name="Earnings" component={Earnings} /> */}
       </Tab.Navigator>
     </View>
   );
