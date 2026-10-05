@@ -3,17 +3,17 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getActiveUser } from '../../service/storage';
 import { User } from '../../pages/types/userTypes';
-import { useFocusEffect} from "@react-navigation/native";
-import {useTheme} from "../../theme/ThemeContext";
+import { useFocusEffect } from "@react-navigation/native";
+import { useTheme } from "../../theme/ThemeContext";
 
 interface HeaderProps {
-    onProfilePress: () => void;
-    onMenuPress?: () => void;
-    title?: string | any;
+  onProfilePress: () => void;
+  title?: string | any;
 }
-const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress, onMenuPress, title }) => {
-    const { theme } = useTheme();
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress, title }) => {
+  const { theme } = useTheme();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadCurrentUserData = useCallback(async () => {
@@ -27,11 +27,13 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress, onMenuPress, titl
       setIsLoading(false);
     }
   }, []);
+
   useFocusEffect(
     useCallback(() => {
       loadCurrentUserData();
     }, [loadCurrentUserData])
   );
+
   if (isLoading) {
     return (
       <View style={styles.header}>
@@ -39,39 +41,40 @@ const CustomHeader: React.FC<HeaderProps> = ({ onProfilePress, onMenuPress, titl
       </View>
     );
   }
+
   if (!currentUser) {
-      return (
-          <View style={styles.header}>
-              <Text>No active user found.</Text>
-               <TouchableOpacity onPress={onProfilePress}>
-                 <Ionicons name="person-circle-outline" size={50} color="#555" />
-               </TouchableOpacity>
-          </View>
-      );
+    return (
+      <View style={styles.header}>
+        <Text>No active user found.</Text>
+        <TouchableOpacity onPress={onProfilePress}>
+          <Ionicons name="person-circle-outline" size={50} color="#555" />
+        </TouchableOpacity>
+      </View>
+    );
   }
+
   const { firstName, avatar } = currentUser.userinfo;
   const { username } = currentUser;
 
   return (
-    <View style={[styles.header, {borderColor: theme.placeholder, backgroundColor: theme.background}]}>
-      <TouchableOpacity onPress={onMenuPress} style={styles.menuButton}>
-        <Ionicons name="menu-outline" size={24} color={theme.text} />
-      </TouchableOpacity>
-      
+    <View style={[styles.header, { borderColor: theme.placeholder, backgroundColor: theme.background }]}>
       <View style={styles.identityBlock}>
-         <Text style={[styles.username, {color: theme.text}]}>{firstName || "Name"}</Text>
-         <Text style={styles.keyUsername}>@{username || "username"}</Text>
-       </View>
-       <View style={styles.headerActions}>
-         {title && <Text style={[styles.pageTitle, { color: theme.subText }]}>{title}</Text>}
-         <TouchableOpacity onPress={onProfilePress}>
-           {avatar ? (
-             <Image source={{ uri: avatar }} style={[styles.avatar,{borderColor: theme.border}, {backgroundColor: theme.background}]} />
-           ) : (
-             <Ionicons name="person-circle-outline" size={52} color={theme.placeholder} />
-           )}
-         </TouchableOpacity>
-       </View>
+        <Text style={[styles.username, { color: theme.text }]}>{firstName || "Name"}</Text>
+        <Text style={styles.keyUsername}>@{username || "username"}</Text>
+      </View>
+      <View style={styles.headerActions}>
+        {title && <Text style={[styles.pageTitle, { color: theme.subText }]}>{title}</Text>}
+        <TouchableOpacity onPress={onProfilePress}>
+          {avatar ? (
+            <Image
+              source={{ uri: avatar }}
+              style={[styles.avatar, { borderColor: theme.border }, { backgroundColor: theme.background }]}
+            />
+          ) : (
+            <Ionicons name="person-circle-outline" size={52} color={theme.placeholder} />
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -85,12 +88,7 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingLeft: 10,
     height: 60,
-    borderBottomWidth: 0.3,
     gap: 8,
-  },
-  menuButton: {
-    padding: 8,
-    marginRight: 4,
   },
   identityBlock: { flex: 1 },
   headerActions: { flexDirection: "row", alignItems: "center", gap: 10 },
