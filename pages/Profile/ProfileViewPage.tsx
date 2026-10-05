@@ -88,19 +88,8 @@ export function ProfileViewPage() {
       loadActiveUser();
     });
 
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "MainTabs" }],
-        })
-      );
-      return true;
-    });
-
     return () => {
       unsubscribe();
-      backHandler.remove();
     };
   }, [navigation]);
 
@@ -168,7 +157,7 @@ export function ProfileViewPage() {
       <Header
         title={t("profileInfo")}
         isBack={true}
-        onBack={() => navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainTabs" }] }))}
+        onBack={() => navigation.goBack()}
       />
 
       <View style={styles.languagePosition}>
