@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   Animated,
-  BackHandler,
   Image,
   Modal,
 } from "react-native";
