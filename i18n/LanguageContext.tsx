@@ -7,7 +7,11 @@ const LANGUAGE_KEY = "appLanguage";
 
 const translations: Record<Language, Record<string, string>> = {
   uz: {
-    priorityEasy: "Yengil", priorityMedium: "O'rtacha", priorityHard: "Og'ir", noDeadline: "Deadline belgilanmadi",
+    priorityEasy: "Oson", priorityMedium: "O‘rtacha", priorityHard: "Qiyin", noDeadline: "Muddat belgilanmagan",
+    taskTitleAndDescription: "Vazifa nomi va tafsilotlari", taskTitle: "Vazifa nomi", taskDescription: "Tafsilotlar",
+    taskInputHint: "Birinchi qatorga vazifa nomini, keyingi qatorlarga esa tafsilotlarini yozing.",
+    priorityLabel: "Murakkablik darajasi", deadline: "Muddat", alarm: "Eslatma", noReminder: "Eslatma o‘rnatilmagan",
+    clearDeadline: "Muddatni olib tashlash", activeUserNotFound: "Faol foydalanuvchi topilmadi.",
     all: "Barchasi", today: "Bugun", yesterday: "Kecha", language: "Til", notificationTask: "Vazifa eslatmasi", notificationHabit: "Odat vaqti", timeUp: "Vaqt bo'ldi", notificationSaved: "Bildirishnoma saqlandi!", notificationError: "Bildirishnoma xatosi", welcome: "Xush kelibsiz!", loginSubtitle: "Boshqaruv markazingizga kiring",
     accounts: "Hisoblar", username: "Username", password: "Password", noSpaces: "Bo'sh joylarsiz kiriting !",
     login: "Kirish", passwordLogin: "Parol orqali kirish", register: "(Registratsiya)", securityCode: "Xavfsizlik kodi",
@@ -22,6 +26,10 @@ const translations: Record<Language, Record<string, string>> = {
   },
   ru: {
     priorityEasy: "Лёгкая", priorityMedium: "Средняя", priorityHard: "Тяжёлая", noDeadline: "Срок не указан",
+    taskTitleAndDescription: "Название и описание задачи", taskTitle: "Название задачи", taskDescription: "Описание",
+    taskInputHint: "Укажите название в первой строке, а описание — в следующих.",
+    priorityLabel: "Уровень сложности", deadline: "Срок", alarm: "Напоминание", noReminder: "Напоминание не установлено",
+    clearDeadline: "Убрать срок", activeUserNotFound: "Активный пользователь не найден.",
     all: "Все", today: "Сегодня", yesterday: "Вчера", language: "Язык", notificationTask: "Напоминание о задаче", notificationHabit: "Время привычки", timeUp: "Время пришло", notificationSaved: "Напоминание сохранено!", notificationError: "Ошибка напоминания", welcome: "Добро пожаловать!", loginSubtitle: "Войдите в центр управления", accounts: "Аккаунты",
     username: "Имя пользователя", password: "Пароль", noSpaces: "Введите без пробелов", login: "Войти",
     passwordLogin: "Войти по паролю", register: "(Регистрация)", securityCode: "Код безопасности", enterCode: "Введите код",
@@ -35,6 +43,10 @@ const translations: Record<Language, Record<string, string>> = {
   },
   en: {
     priorityEasy: "Easy", priorityMedium: "Medium", priorityHard: "Hard", noDeadline: "No deadline set",
+    taskTitleAndDescription: "Task title and description", taskTitle: "Task title", taskDescription: "Description",
+    taskInputHint: "Enter the task title on the first line and its description on the following lines.",
+    priorityLabel: "Difficulty", deadline: "Due date", alarm: "Reminder", noReminder: "No reminder set",
+    clearDeadline: "Clear due date", activeUserNotFound: "The active user could not be found.",
     all: "All", today: "Today", yesterday: "Yesterday", language: "Language", notificationTask: "Task reminder", notificationHabit: "Habit time", timeUp: "Time is up", notificationSaved: "Reminder saved!", notificationError: "Reminder error", welcome: "Welcome!", loginSubtitle: "Sign in to your control center", accounts: "Accounts",
     username: "Username", password: "Password", noSpaces: "Enter without spaces", login: "Sign in",
     passwordLogin: "Sign in with password", register: "(Registration)", securityCode: "Security code", enterCode: "Enter the code",

@@ -65,6 +65,7 @@ export interface TextFieldProps {
   minHeight?: number;
   editable?: boolean;
   multiline?: number | any;
+  textAlignVertical?: "auto" | "top" | "bottom" | "center";
   keyboardType?: KeyboardTypeOptions;
   sumFormat?: boolean;
 }

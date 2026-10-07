@@ -14,6 +14,7 @@ import DateTimePicker, {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { showMessage } from "react-native-flash-message";
 import { CommonActions } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import TextField from "../global/TextField";
@@ -23,6 +24,7 @@ import FilePickerComponent from "../global/FilePicker";
 import ConfirmModal from "../global/ConfirmModal";
 import Header from "../global/Header";
 import { UserTask } from "../../pages/types/userTypes";
+import { RootStackParamList } from "../../pages/types/types";
 import {
   addTask,
   updateTask,
@@ -32,20 +34,23 @@ import {
 import { useTheme } from "../../theme/ThemeContext";
 import { useLanguage } from "../../i18n/LanguageContext";
 
-const DANGER_COLOR = "#fb5151";
+type AddPageProps = NativeStackScreenProps<RootStackParamList, "AddPage">;
 
-export default function AddPage({ navigation, route }: any) {
+export default function AddPage({ navigation, route }: AddPageProps) {
   const { theme } = useTheme();
   const { t, language } = useLanguage();
   const insets = useSafeAreaInsets();
+  const dateLocale =
+    language === "uz" ? "uz-UZ" : language === "ru" ? "ru-RU" : "en-US";
 
   const taskToEdit: UserTask | undefined = route.params?.task;
   const isEditMode = !!taskToEdit;
 
-  const [title, setTitle] = useState<string>(taskToEdit?.title ?? "");
-  const [description, setDescription] = useState<string>(
-    taskToEdit?.description ?? ""
-  );
+  // The first line is stored as the task title; all following lines become the description.
+  const [taskText, setTaskText] = useState<string>(() => {
+    if (!taskToEdit) return "";
+    return [taskToEdit.title, taskToEdit.description].filter(Boolean).join("\n");
+  });
   const [deadline, setDeadline] = useState<Date | null>(
     taskToEdit?.deadline ? new Date(taskToEdit.deadline) : null
   );
@@ -53,7 +58,7 @@ export default function AddPage({ navigation, route }: any) {
   const [isArchived, setIsArchived] = useState<boolean>(
     taskToEdit?.isDeleted ?? false
   );
-  const [attachments, setAttachments] = useState<string[]>(
+  const [attachments, setAttachments] = useState<UserTask["files"]>(
     taskToEdit?.files ?? []
   );
 
@@ -64,12 +69,11 @@ export default function AddPage({ navigation, route }: any) {
   // Muhimlik darajalari (til o'zgarganda qayta hisoblanadi)
   const priorityOptions = useMemo(
     () => [
-      { id: 1, text: t("priorityEasy"), color: "green" },
-      { id: 2, text: t("priorityMedium"), color: "orange" },
-      { id: 3, text: t("priorityHard"), color: DANGER_COLOR },
+      { id: 1, text: t("priorityEasy"), color: theme.success },
+      { id: 2, text: t("priorityMedium"), color: theme.primary },
+      { id: 3, text: t("priorityHard"), color: theme.danger },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [language]
+    [language, theme]
   );
 
   /**
@@ -112,8 +116,9 @@ export default function AddPage({ navigation, route }: any) {
   const handleSave = async () => {
     if (isSaving) return;
 
-    const trimmedTitle = title.trim();
-    const trimmedDescription = description.trim();
+    const lines = taskText.trim().split(/\r?\n/);
+    const trimmedTitle = lines.shift()?.trim() ?? "";
+    const trimmedDescription = lines.join("\n").trim();
 
     if (trimmedTitle === "" || trimmedDescription === "") {
       showMessage({ message: t("taskFieldsRequired"), type: "warning" });
@@ -123,7 +128,10 @@ export default function AddPage({ navigation, route }: any) {
     setIsSaving(true);
     try {
       const activeUser = await getActiveUser();
-      if (!activeUser) return;
+      if (!activeUser) {
+        showMessage({ message: t("activeUserNotFound"), type: "danger" });
+        return;
+      }
 
       const deadlineISO = deadline ? deadline.toISOString() : null;
 
@@ -170,7 +178,11 @@ export default function AddPage({ navigation, route }: any) {
     setArchiveModalVisible(false);
     try {
       const activeUser = await getActiveUser();
-      if (!activeUser || !taskToEdit) return;
+      if (!activeUser) {
+        showMessage({ message: t("activeUserNotFound"), type: "danger" });
+        return;
+      }
+      if (!taskToEdit) return;
 
       await softDeleteTask(activeUser.username, taskToEdit.id);
       setIsArchived(true);
@@ -202,22 +214,23 @@ export default function AddPage({ navigation, route }: any) {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Asosiy ma'lumotlar */}
+        {/* One text area: first line is the title, remaining lines are the description. */}
         <View style={cardStyle}>
           <TextField
-            label={t("tasks")}
-            value={title}
-            onChangeText={setTitle}
-            placeholder={t("name")}
-          />
-          <TextField
-            label={t("note")}
-            value={description}
-            onChangeText={setDescription}
-            placeholder={t("note")}
+            label={t("taskTitleAndDescription")}
+            value={taskText}
+            onChangeText={setTaskText}
+            placeholder={`${t("taskTitle")}\n${t("taskDescription")}`}
             multiline={true}
-            minHeight={100}
+            minHeight={180}
+            textAlignVertical="top"
           />
+          <Text style={[styles.inputHint, { color: theme.subText }]}>
+            {t("taskInputHint")}
+          </Text>
+          <Text style={[styles.priorityLabel, { color: theme.subText }]}>
+            {t("priorityLabel")}
+          </Text>
           <View style={styles.selectsBox}>
             {priorityOptions.map((option) => (
               <SingleCheckBox
@@ -250,15 +263,19 @@ export default function AddPage({ navigation, route }: any) {
             onPress={() => setShowPicker((prev) => !prev)}
           >
             <Text style={[styles.dateText, { color: theme.text }]}>
-              {deadline ? deadline.toLocaleDateString() : t("noDeadline")}
+              {deadline
+                ? deadline.toLocaleDateString(dateLocale)
+                : t("noDeadline")}
             </Text>
           </TouchableOpacity>
 
           {deadline && (
             <TouchableOpacity
               activeOpacity={0.7}
-              style={styles.clearButton}
+              style={[styles.clearButton, { backgroundColor: theme.danger }]}
               onPress={() => setDeadline(null)}
+              accessibilityRole="button"
+              accessibilityLabel={t("clearDeadline")}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <Text style={styles.clearText}>X</Text>
@@ -283,7 +300,9 @@ export default function AddPage({ navigation, route }: any) {
               value={isArchived}
               onChange={() => setArchiveModalVisible(true)}
             />
-            <Text style={styles.archiveText}>{t("archiveTask")}</Text>
+            <Text style={[styles.archiveText, { color: theme.danger }]}>
+              {t("archiveTask")}
+            </Text>
           </View>
         )}
 
@@ -293,7 +312,7 @@ export default function AddPage({ navigation, route }: any) {
           disabled={isSaving}
           style={[
             styles.addButton,
-            { backgroundColor: theme.primary },
+            { backgroundColor: theme.primary, shadowColor: theme.primary },
             isSaving && styles.addButtonDisabled,
           ]}
           onPress={handleSave}
@@ -333,6 +352,17 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     paddingHorizontal: 2,
   },
+  inputHint: {
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: -4,
+    marginBottom: 12,
+  },
+  priorityLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
   containerInputs: {
     marginTop: 18,
     padding: 12,
@@ -351,10 +381,7 @@ const styles = StyleSheet.create({
   archiveRow: {
     marginBottom: 10,
   },
-  archiveText: {
-    marginLeft: 10,
-    color: DANGER_COLOR,
-  },
+  archiveText: { marginLeft: 10 },
   deadlineContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -373,7 +400,6 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     marginLeft: 10,
-    backgroundColor: "#ff4d4d",
     borderRadius: 10,
     paddingVertical: 6,
     paddingHorizontal: 10,
@@ -390,7 +416,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 14,
-    shadowColor: "#4F46E5",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.18,
     shadowRadius: 14,

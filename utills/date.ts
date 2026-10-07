@@ -1,9 +1,9 @@
-export const formatDateTime = (date: string | Date): string => {
+export const formatDateTime = (date: string | Date, locale = "uz-UZ"): string => {
   const d = new Date(date);
 
   if (isNaN(d.getTime())) return "";
 
-  return d.toLocaleString("uz-UZ", {
+  return d.toLocaleString(locale, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

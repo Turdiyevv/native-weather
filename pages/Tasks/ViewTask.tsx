@@ -30,16 +30,18 @@ type ViewTaskRouteProp = RouteProp<RootStackParamList, "ViewTask">;
 const ViewPage: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const route = useRoute<ViewTaskRouteProp>();
   const taskToEdit = route.params?.task;
   const options = [
-    { id: 1, text: "Yengil", color: "green" },
-    { id: 2, text: "O'rtacha", color: "orange" },
-    { id: 3, text: "Og'ir", color: "#fb5151" },
+    { id: 1, text: t("priorityEasy"), color: theme.success },
+    { id: 2, text: t("priorityMedium"), color: theme.primary },
+    { id: 3, text: t("priorityHard"), color: theme.danger },
   ];
   const selected = taskToEdit ? taskToEdit.status : 1;
   const [modalVisible, setModalVisible] = useState(false);
+  const locale =
+    language === "uz" ? "uz-UZ" : language === "ru" ? "ru-RU" : "en-US";
 
   // Qiyinlik nuqta rangi (status asosida)
   const difficultyColor =
@@ -47,9 +49,7 @@ const ViewPage: React.FC = () => {
       ? theme.success
       : taskToEdit?.status === 3
         ? theme.danger
-        : theme.isDark
-          ? "#FBBF24"
-          : "#C47A00";
+        : theme.primary;
 
   // Title rangi: default, faqat bajarilaganlarda success
   const titleColor = taskToEdit?.done ? theme.success : theme.text;
@@ -106,7 +106,7 @@ const ViewPage: React.FC = () => {
                 {taskToEdit.title}
               </Text>
               <View style={styles.metaRow}>
-                <Text style={{ color: theme.subText, fontSize: 12 }}>{formatDateTime(taskToEdit.time)}</Text>
+                <Text style={{ color: theme.subText, fontSize: 12 }}>{formatDateTime(taskToEdit.time, locale)}</Text>
                 {taskToEdit.done && (
                   <Text style={[styles.statusBadge, { color: theme.success, borderColor: theme.success }]}>
                     {t("finished")}
@@ -140,10 +140,10 @@ const ViewPage: React.FC = () => {
           </View>
 
           <InfoRow label={t("category")} value={taskToEdit?.done ? t("finished") : t("unfinished")} />
-          <InfoRow label={t("deadline")} value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline) : "-"} />
-          <InfoRow label={t("alarm")} value={taskToEdit.alarmDate ? formatDateTime(taskToEdit.alarmDate) : "-"} />
+          <InfoRow label={t("deadline")} value={taskToEdit.deadline ? formatDateTime(taskToEdit.deadline, locale) : t("noDeadline")} />
+          <InfoRow label={t("alarm")} value={taskToEdit.alarmDate ? formatDateTime(taskToEdit.alarmDate, locale) : t("noReminder")} />
 
-          <Text style={[styles.statusLabel, { color: theme.subText }]}>Status</Text>
+          <Text style={[styles.statusLabel, { color: theme.subText }]}>{t("priorityLabel")}</Text>
           <View style={styles.selectsBox}>
             {options.map((option) => (
               <SingleCheckBox
@@ -185,7 +185,7 @@ const ViewPage: React.FC = () => {
 
         <View style={styles.actionRow}>
           <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.button, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={[styles.buttonText, { color: theme.danger }]}>O'chirish</Text>
+            <Text style={[styles.buttonText, { color: theme.danger }]}>{t("delete")}</Text>
             <Ionicons name={"trash"} size={16} color={theme.danger} />
           </TouchableOpacity>
 
@@ -199,7 +199,7 @@ const ViewPage: React.FC = () => {
             }}
             style={[styles.button, { backgroundColor: theme.primary, borderColor: theme.primary }]}
           >
-            <Text style={[styles.buttonText, { color: "#fff" }]}>Tahrirlash</Text>
+            <Text style={[styles.buttonText, { color: "#fff" }]}>{t("edit")}</Text>
             <Ionicons name={"pencil"} size={16} color="#fff" />
           </TouchableOpacity>
         </View>
